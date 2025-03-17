@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL_PBL2}
+    username: ${DB_USER_NAME_PBL2}
+    password: ${DB_USER_PASSWORD_PBL2}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+      show-sql: true # true ??? JPA ??? ?? ??
+      format-sql: true # JPA? ???? Hibernate? ????? ???? SQL? ???? ????.
+      generate-ddl: true
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+  web:
+    client:
+      connection-timeout: 30000
+      read-timeout: 30000
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+jwt:
+  secret: ${JWT_TOKEN_PBL_2}
+server:
+  address: 0.0.0.0
+  port: 30001
+
+sftp:
+  username: ${SSH_USERNAME_PBL2}
+  port: ${SSH_PORT_PBL2}
+  password: ${SSH_PASSWORD_PBL2}
+  host: ${SSH_HOST_PBL2}

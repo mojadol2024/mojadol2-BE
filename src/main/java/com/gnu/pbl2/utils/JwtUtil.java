@@ -3,7 +3,10 @@ package com.gnu.pbl2.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -11,14 +14,15 @@ import org.springframework.stereotype.Component;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 @RequiredArgsConstructor
 @Component
 public class JwtUtil {
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-    @Value("${custom.security.key}")
+    @Value("${jwt.secret}")
     private String salt;
 
     @Value("${jwt.access-token.expiration-time}")
@@ -28,23 +32,20 @@ public class JwtUtil {
     private Long refreshExpiration;
 
     private Key getSigningKey() {
-        return new SecretKeySpec(salt.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
+        byte[] keyBytes = Base64.getEncoder().encode(salt.getBytes(StandardCharsets.UTF_8));
+        return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
     public String generateAccessToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-
-        return createToken(claims, username, accessExpiration);
+        return createToken(username, accessExpiration);
     }
 
     public String generateRefreshToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, refreshExpiration);
+        return createToken(username, refreshExpiration);
     }
 
-    private String createToken(Map<String, Object> claims, String subject, long expirationTime) {
+    private String createToken(String subject, long expirationTime) {
         return Jwts.builder()
-                .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -57,15 +58,12 @@ public class JwtUtil {
             final String extractedUsername = extractUsername(token);
             return (extractedUsername.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } catch (Exception e) {
-            System.out.println("JWT validation error: " + e.getMessage());
+            logger.error("JWT validation error: {}", e.getMessage());
             return false;
         }
     }
 
     public String extractUsername(String token) {
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
         return extractAllClaims(token).getSubject();
     }
 

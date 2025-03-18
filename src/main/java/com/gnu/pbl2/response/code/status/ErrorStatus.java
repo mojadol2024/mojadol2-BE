@@ -34,6 +34,8 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_EMAIL_IN_USE(HttpStatus.CONFLICT, "USER4004", "사용 중인 이메일입니다."),
     USER_PHONENUMBER_IN_USE(HttpStatus.CONFLICT, "USER4005", "사용 중인 전화번호입니다."),
 
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4001", "아이디 또는 비밀번호가 일치하지 않습니다."),
+
 
     // LostItem 관련 에러
     LOST_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "LOSTITEM404", "해당 분실물 게시글을 찾을 수 없습니다."),

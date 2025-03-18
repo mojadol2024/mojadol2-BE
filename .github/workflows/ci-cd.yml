@@ -65,7 +65,7 @@ jobs:
               --network mojadol-network \
               --restart always \
               redis:latest \
-              mojadol-redis --appendonly yes --replica-read-only no
+              redis-server --appendonly yes --replica-read-only no
             docker run -d \
               --restart=always \
               --name pbl2-be \

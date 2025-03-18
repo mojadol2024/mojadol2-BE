@@ -83,5 +83,5 @@ jobs:
               -e JWT_TOKEN_PBL_2=${{ secrets.JWT_TOKEN_PBL_2 }} \
               -e JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }} \
               -e JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }} \
-              -v /home/bgt/Gaechuck-Backend:/home/bgt/Gaechuck-Backend \
-              ${{ secrets.DOCKERHUB_USERNAME }}/gaechuck-be:latest
+              -v /home/bgt/pbl2:/home/bgt/pbl2 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest

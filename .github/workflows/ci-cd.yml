@@ -57,7 +57,7 @@ jobs:
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
             docker network create mojadol-network || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
-            docker rm -f mojadol-be || true
+            docker rm -f pbl2-be || true
             docker rm -f mojadol-redis || true
             docker run -d \
               --name mojadol-redis \

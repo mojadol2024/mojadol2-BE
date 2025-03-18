@@ -22,8 +22,8 @@ spring:
       read-timeout: 30000
   data:
     redis:
-      host: localhost
-      port: 4479
+      host: ${REDIS_HOST_PBL2}
+      port: ${REDIS_PORT_PBL2}
 
 jwt:
   secret: ${JWT_TOKEN_PBL_2}
@@ -41,5 +41,3 @@ sftp:
   port: ${SSH_PORT_PBL2}
   password: ${SSH_PASSWORD_PBL2}
   host: ${SSH_HOST_PBL2}
-
-  #redis = 4479, db = 33305 back = 4400 front = 4000

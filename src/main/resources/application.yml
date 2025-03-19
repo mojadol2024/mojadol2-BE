@@ -34,7 +34,7 @@ jwt:
 
 server:
   address: 0.0.0.0
-  port: 30001
+  port: 4400
 
 sftp:
   username: ${SSH_USERNAME_PBL2}

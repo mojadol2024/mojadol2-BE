@@ -1,5 +1,6 @@
 package com.gnu.pbl2.utils;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,8 +25,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     private static final List<String> EXCLUDE_URL = List.of(
-            "/auth/", "/token/", "/swagger-ui.html", "/swagger-ui/",
-            "/v3/api-docs/", "/favicon.ico", "/api-docs/", "/error", "/images/"
+            "/mojadol/api/v1/auth/**"
     );
 
     @Override
@@ -33,13 +33,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
+        System.out.println(authorizationHeader);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             chain.doFilter(request, response);
             return;
         }
 
-        String jwt = authorizationHeader.substring(7);
-        String username = jwtUtil.extractUsername(jwt);
+        String jwt = authorizationHeader.substring(7).trim();
+        String username = null;
+
+        try {
+            username = jwtUtil.extractUsername(jwt);
+        } catch (ExpiredJwtException e) {
+            // Access Token이 만료되었을 경우
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("토큰 만료");
+            return;
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);

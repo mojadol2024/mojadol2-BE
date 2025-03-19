@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class TokenService {
     private final RedisTemplate<String, String> redisTemplate;
+    private final JwtUtil jwtUtil;
 
     public void saveToken(String key, String token, long duration, TimeUnit unit) {
         redisTemplate.opsForValue().set(key, token, duration, unit);
@@ -21,7 +22,10 @@ public class TokenService {
     }
 
     public void deleteToken(String key) {
-        redisTemplate.delete(key);
+
+        String name = jwtUtil.extractUsername(key);
+
+        redisTemplate.delete(name);
     }
 
 }

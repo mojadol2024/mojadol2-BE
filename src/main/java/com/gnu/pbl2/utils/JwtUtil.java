@@ -16,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -32,20 +34,26 @@ public class JwtUtil {
     private Long refreshExpiration;
 
     private Key getSigningKey() {
-        byte[] keyBytes = Base64.getEncoder().encode(salt.getBytes(StandardCharsets.UTF_8));
+        logger.info("Loaded salt: '{}'", salt);
+        logger.info("Loaded salt: '{}'", accessExpiration);
+        logger.info("Loaded salt: '{}'", refreshExpiration.getClass());
+        byte[] keyBytes = salt.getBytes(StandardCharsets.UTF_8);
         return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
     public String generateAccessToken(String username) {
-        return createToken(username, accessExpiration);
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims,username, accessExpiration);
     }
 
     public String generateRefreshToken(String username) {
-        return createToken(username, refreshExpiration);
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, username, refreshExpiration);
     }
 
-    private String createToken(String subject, long expirationTime) {
+    private String createToken(Map<String, Object> claims, String subject, long expirationTime) {
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -55,15 +63,19 @@ public class JwtUtil {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            final String extractedUsername = extractUsername(token);
-            return (extractedUsername.equals(userDetails.getUsername()) && !isTokenExpired(token));
+            String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } catch (Exception e) {
-            logger.error("JWT validation error: {}", e.getMessage());
+            System.out.println("JWT Validation Error: " + e.getMessage());
             return false;
         }
     }
 
     public String extractUsername(String token) {
+        System.out.println("extractUsername"+token);
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
         return extractAllClaims(token).getSubject();
     }
 

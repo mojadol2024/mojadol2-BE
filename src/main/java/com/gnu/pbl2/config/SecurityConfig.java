@@ -47,14 +47,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화 (JWT 사용 시 필요)
+                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/auth/**", "/token/**", "/swagger-ui.html",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/favicon.ico",
-                                "/api-docs/**", "/error", "/images/**"
-                        ).permitAll()
+                        .requestMatchers("/mojadol/api/v1/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

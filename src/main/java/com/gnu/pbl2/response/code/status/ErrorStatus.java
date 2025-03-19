@@ -32,9 +32,14 @@ public enum ErrorStatus implements BaseErrorCode {
     MASTER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4002", "해당 유저가 없습니다."),
     MASTER_NOT_AUTHORITY(HttpStatus.FORBIDDEN, "USER4003", "권한이 없습니다."),
     USER_EMAIL_IN_USE(HttpStatus.CONFLICT, "USER4004", "사용 중인 이메일입니다."),
-    USER_PHONENUMBER_IN_USE(HttpStatus.CONFLICT, "USER4005", "사용 중인 전화번호입니다."),
+    USER_PHONE_NUMBER_IN_USE(HttpStatus.CONFLICT, "USER4005", "사용 중인 전화번호입니다."),
 
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4001", "아이디 또는 비밀번호가 일치하지 않습니다."),
+    USER_SQL_UNIQUE(HttpStatus.CONFLICT, "USER409", "중복된 데이터가 있습니다."),
+    USER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "USER400", "데이터가 잘못 되었습니다."),
+
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4001", "사용자가 존재하지 않습니다."),
+    USER_BAD_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH4002", "아이디 또는 비밀번호가 일치하지 않습니다."),
+
 
 
     // LostItem 관련 에러

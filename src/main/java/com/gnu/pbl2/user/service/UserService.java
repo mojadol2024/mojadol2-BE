@@ -1,5 +1,6 @@
 package com.gnu.pbl2.user.service;
 
+import com.gnu.pbl2.exception.handler.MailHandler;
 import com.gnu.pbl2.exception.handler.UserHandler;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.dto.UserRequestDto;
@@ -8,6 +9,7 @@ import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.entity.enums.Tier;
 import com.gnu.pbl2.user.repository.UserRepository;
 import com.gnu.pbl2.utils.JwtUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,11 +31,7 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    private final RedisTemplate<String, String> redisTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     public String signUp(UserRequestDto userRequestDto) {
         try {
@@ -47,9 +46,32 @@ public class UserService {
             throw new UserHandler(ErrorStatus.USER_SQL_UNIQUE);
 
         } catch (Exception e) {
-            logger.error("🔥 예상치 못한 오류 발생: ", e);
             throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public Optional<User> signUpCheck(UserRequestDto userRequestDto) {
+        try {
+            if(userRequestDto.getUserLoginId() != null) {
+                return userRepository.findByUserLoginId(userRequestDto.getUserLoginId());
+            } else if (userRequestDto.getEmail() != null) {
+                return userRepository.findByEmail(userRequestDto.getEmail());
+            } else if (userRequestDto.getNickname() != null) {
+                return userRepository.findByNickname(userRequestDto.getNickname());
+            }
+            throw new UserHandler(ErrorStatus.USER_BAD_REQUEST);
+
+        } catch (Exception e) {
+            throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updatePassword(UserRequestDto userRequestDto) {
+        User user = userRepository.findByUserLoginIdAndEmail(userRequestDto.getUserLoginId(), userRequestDto.getEmail())
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        user.setUserPw(passwordEncoder.encode(userRequestDto.getUserPw()));
     }
 
 

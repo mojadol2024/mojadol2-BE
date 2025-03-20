@@ -27,7 +27,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
@@ -39,8 +39,6 @@ public class UserController {
     private final JwtUtil jwtUtil;
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
-    private final RedisTemplate redisTemplate;
-
 
     //회원가입
     @PostMapping("/signUp")
@@ -49,11 +47,11 @@ public class UserController {
             String response = userService.signUp(userRequestDto);
             return ResponseEntity.ok(ApiResponse.onSuccess(response + "회원가입 성공"));
         } catch (HttpClientErrorException.BadRequest e){
-            return ResponseEntity.status(ErrorStatus.USER_BAD_REQUEST.getHttpStatus())
-                    .body(ApiResponse.onFailure(ErrorStatus.USER_BAD_REQUEST.getCode(), ErrorStatus.USER_BAD_REQUEST.getMessage()));
+            // 데이터가 잘못됨
+            throw new UserHandler(ErrorStatus.USER_BAD_REQUEST);
         } catch (Exception e) {
-            return ResponseEntity.status(ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus())
-                    .body(ApiResponse.onFailure(ErrorStatus.INTERNAL_SERVER_ERROR.getCode(), ErrorStatus.INTERNAL_SERVER_ERROR.getMessage()));
+            // 그 외 에러
+            throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -81,24 +79,30 @@ public class UserController {
 
             return ResponseEntity.ok().headers(headers).body(ApiResponse.onSuccess("로그인 성공"));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(ErrorStatus.USER_BAD_CREDENTIALS.getHttpStatus())
-                    .body(ApiResponse.onFailure(ErrorStatus.USER_BAD_CREDENTIALS.getCode(), ErrorStatus.USER_BAD_CREDENTIALS.getMessage()));
+            // 아이디 비밀번호 불일치
+            throw new UserHandler(ErrorStatus.USER_BAD_CREDENTIALS);
         } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(ErrorStatus.USER_NOT_FOUND.getHttpStatus())
-                    .body(ApiResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), ErrorStatus.USER_NOT_FOUND.getMessage()));
+            // 유저가 없음
+            throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus())
-                    .body(ApiResponse.onFailure(ErrorStatus.INTERNAL_SERVER_ERROR.getCode(), ErrorStatus.INTERNAL_SERVER_ERROR.getMessage()));
+            // 그 외의 에러
+            throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    // 로그아웃
     @PostMapping("/signOut")
     public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String accessToken) {
-        tokenService.deleteToken(accessToken);
-        return ResponseEntity.ok(ApiResponse.onSuccess("로그아웃 완료"));
+        try {
+            tokenService.deleteToken(accessToken);
+            return ResponseEntity.ok(ApiResponse.onSuccess("로그아웃 완료"));
+        } catch (Exception e) {
+            throw new UserHandler(ErrorStatus.ACCESS_TOKEN_EXPIRED);
+        }
     }
 
+    // 리프레시
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody TokenRequestDto request) {
         String refreshToken = request.getRefreshToken();
@@ -107,8 +111,7 @@ public class UserController {
         // Redis에서 저장된 리프레시 토큰 가져오기
         String storedRefreshToken = tokenService.getToken(username);
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-            return ResponseEntity.status(ErrorStatus.REFRESH_TOKEN_NOT_MATCH.getHttpStatus())
-                    .body(ApiResponse.onFailure(ErrorStatus.REFRESH_TOKEN_NOT_MATCH.getCode(), ErrorStatus.REFRESH_TOKEN_NOT_MATCH.getMessage()));
+            throw new UserHandler(ErrorStatus.REFRESH_TOKEN_NOT_MATCH);
         }
 
         String newAccessToken = jwtUtil.generateAccessToken(username);
@@ -116,5 +119,25 @@ public class UserController {
         headers.set(HttpHeaders.AUTHORIZATION, newAccessToken);
 
         return ResponseEntity.ok().headers(headers).body(ApiResponse.onSuccess("리프레시 성공"));
+    }
+
+    // 아이디 유니크 체크
+    // 메일 유니크 체크
+    // 닉네임 유니크 체크
+    @PostMapping("/signUpCheck")
+    public ResponseEntity<?> signUpCheck(@RequestBody UserRequestDto userRequestDto) {
+        try {
+
+            Optional<User> user = userService.signUpCheck(userRequestDto);
+
+            if (user.isEmpty()) {
+                return ResponseEntity.ok(ApiResponse.onSuccess("중복되는 데이터가 없습니다."));
+            } else {
+                return ResponseEntity.ok(ApiResponse.onSuccess("데이터가 중복됩니다."));
+            }
+
+        } catch (Exception e) {
+            throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

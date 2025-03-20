@@ -34,9 +34,6 @@ public class JwtUtil {
     private Long refreshExpiration;
 
     private Key getSigningKey() {
-        logger.info("Loaded salt: '{}'", salt);
-        logger.info("Loaded salt: '{}'", accessExpiration);
-        logger.info("Loaded salt: '{}'", refreshExpiration.getClass());
         byte[] keyBytes = salt.getBytes(StandardCharsets.UTF_8);
         return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
@@ -66,13 +63,11 @@ public class JwtUtil {
             String username = extractUsername(token);
             return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } catch (Exception e) {
-            System.out.println("JWT Validation Error: " + e.getMessage());
             return false;
         }
     }
 
     public String extractUsername(String token) {
-        System.out.println("extractUsername"+token);
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }

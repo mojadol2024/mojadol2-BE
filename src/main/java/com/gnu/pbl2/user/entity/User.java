@@ -1,5 +1,6 @@
 package com.gnu.pbl2.user.entity;
 
+import com.gnu.pbl2.coverLetter.entity.CoverLetter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import com.gnu.pbl2.user.entity.enums.Tier;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +45,9 @@ public class User implements UserDetails {
 
     @Column(length = 20, unique = true)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CoverLetter> coverLetters;
 
     @PrePersist
     protected void onCreate() {

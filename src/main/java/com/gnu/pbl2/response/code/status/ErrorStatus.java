@@ -40,40 +40,22 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4001", "사용자가 존재하지 않습니다."),
     USER_BAD_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH4002", "아이디 또는 비밀번호가 일치하지 않습니다."),
 
+    // Mail 관련 응답
+    MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MAIL5000", "메일 전송에 실패하였습니다."),
+    MAIL_INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4000", "유효하지 않은 이메일 주소입니다."),
+    MAIL_SERVER_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "MAIL5030", "메일 서버가 응답하지 않습니다."),
+    MAIL_TEMPLATE_NOT_FOUND(HttpStatus.NOT_FOUND, "MAIL4040", "메일 템플릿을 찾을 수 없습니다."),
+    MAIL_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4040", "해당 이메일을 가진 사용자를 찾을 수 없습니다."),
+    MAIL_PROCESS_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MAIL5001", "메일 처리 중 오류가 발생하였습니다."),
+
+    // CoverLetter 관련 응답
+    COVER_LETTER_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COVER_LETTER5000", "자소서 작성에 실패하였습니다."),
+    COVER_LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "COVER_LETTER4000", "자소서 데이터가 없습니다.")
 
 
-    // LostItem 관련 에러
-    LOST_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "LOSTITEM404", "해당 분실물 게시글을 찾을 수 없습니다."),
-    LOST_ITEM_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "LOSTITEM400", "분실물 요청 데이터가 유효하지 않습니다."),
-    LOST_ITEM_ALREADY_EXISTS(HttpStatus.CONFLICT, "LOSTITEM409", "해당 분실물 게시글이 이미 존재합니다."),
-    LOST_ITEM_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "LOSTITEM5001", "분실물 게시글 삭제에 실패하였습니다."),
-    LOST_ITEM_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "LOSTITEM5002", "분실물 게시글 수정에 실패하였습니다."),
 
-    // Menu 관련 에러
-    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU404", "메뉴를 찾을 수 없습니다."),
-    MENU_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "MENU400", "메뉴 요청 데이터가 유효하지 않습니다."),
-
-    // Notification 관련 에러
-    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION404", "안내 게시글을 찾을 수 없습니다."),
-    NOTIFICATION_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "NOTIFICATION400", "안내 게시글 요청 데이터가 유효하지 않습니다."),
-
-    // Rent 관련 에러
-    RENT_NOT_FOUND(HttpStatus.NOT_FOUND, "RENT404", "렌트 물품을 찾을 수 없습니다."),
-    RENT_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "RENT400", "렌트 게시글 요청 데이터가 유효하지 않습니다."),
-    RENT_ITEM_OUT_OF_STOCK(HttpStatus.CONFLICT, "RENT409", "렌트물건의 현재 수량이 부족합니다."),
-
-    // ChatUrl 관련 에러
-    URL_NOT_FOUND(HttpStatus.NOT_FOUND, "URL404", "URL을 찾을 수 없습니다."),
-    URL_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "URL400", "URL 요청 데이터가 유효하지 않습니다."),
-
-    // Coalition 관련 에러
-    COALITION_NOT_FOUND(HttpStatus.NOT_FOUND, "COALITION404", "제휴 업체를 찾을 수 없습니다."),
-    COALITION_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "COALITION400", "게시글 요청 데이터가 유효하지 않습니다."),
-
-    //게시글 관련 에러
-    STUDENT_COUNCIL_BOARD_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "COUNCIL5000", "총학생회 작성 게시물을 찾지 못했습니다."),
-    STUDENT_COUNCIL_BOARD_POST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "COUNCIL5001", "총학생회 게시물 작성에 실패하였습니다.")
     ;
+
 
     private final HttpStatus httpStatus;
     private final String code;

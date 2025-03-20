@@ -14,7 +14,6 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
-
     open-in-view: false # Lazy Loading 경고 API응답속도 최적화를 위해 false
   web:
     client:
@@ -22,8 +21,20 @@ spring:
       read-timeout: 30000
   data:
     redis:
-      host: ${REDIS_HOST_PBL2}
+      host: localhost
       port: ${REDIS_PORT_PBL2}
+  mail:
+    host: stmp.gmail.com
+    port: 587
+    username: ${MY_MAIL_USERNAME}
+    password: ${MY_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 
 jwt:
   secret: ${JWT_TOKEN_PBL_2}
@@ -41,3 +52,11 @@ sftp:
   port: ${SSH_PORT_PBL2}
   password: ${SSH_PASSWORD_PBL2}
   host: ${SSH_HOST_PBL2}
+
+
+firebase:
+  project-id: ${FIREBASE_PROJECT_ID}
+  private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
+  private-key: ${FIREBASE_PRIVATE_KEY}
+  client-email: ${FIREBASE_CLIENT_EMAIL}
+  client-id: ${FIREBASE_CLIENT_ID}

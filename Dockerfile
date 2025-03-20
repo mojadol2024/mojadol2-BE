@@ -31,7 +31,7 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 # Expose the port that your Spring Boot application listens on
-EXPOSE 30001
+EXPOSE 4400
 
 # Define the command to run your Spring Boot application
 CMD ["java", "-jar", "app.jar"]

@@ -44,26 +44,29 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" >> .env
-          echo "DB_USER_NAME_PBL2=${{ secrets.DB_USER_NAME_PBL2 }}" >> .env
-          echo "DB_PASSWORD_PBL2=${{ secrets.DB_PASSWORD_PBL2 }}" >> .env
-          echo "REDIS_HOST_PBL2=${{ secrets.REDIS_HOST_PBL2 }}" >> .env
-          echo "REDIS_PORT_PBL2=${{ secrets.REDIS_PORT_PBL2 }}" >> .env
-          echo "SSH_USERNAME_PBL2=${{ secrets.SSH_USERNAME_PBL2 }}" >> .env
-          echo "SSH_PORT_PBL2=${{ secrets.SSH_PORT_PBL2 }}" >> .env
-          echo "SSH_PASSWORD_PBL2=${{ secrets.SSH_PASSWORD_PBL2 }}" >> .env
-          echo "SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }}" >> .env
-          echo "JWT_TOKEN_PBL_2=${{ secrets.JWT_TOKEN_PBL_2 }}" >> .env
-          echo "JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}" >> .env
-          echo "JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}" >> .env
-          echo "FIREBASE_PROJECT_ID_PBL2=${{ secrets.FIREBASE_PROJECT_ID_PBL2 }}" >> .env
-          echo "FIREBASE_PRIVATE_KEY_ID_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_ID_PBL2 }}" >> .env
-          echo "FIREBASE_PRIVATE_KEY_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_PBL2 }}" >> .env
-          echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> .env
-          echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> .env
+          echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "DB_USER_NAME_PBL2=${{ secrets.DB_USER_NAME_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "DB_PASSWORD_PBL2=${{ secrets.DB_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "REDIS_HOST_PBL2=${{ secrets.REDIS_HOST_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "REDIS_PORT_PBL2=${{ secrets.REDIS_PORT_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "SSH_USERNAME_PBL2=${{ secrets.SSH_USERNAME_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "SSH_PORT_PBL2=${{ secrets.SSH_PORT_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "SSH_PASSWORD_PBL2=${{ secrets.SSH_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "JWT_TOKEN_PBL_2=${{ secrets.JWT_TOKEN_PBL_2 }}" >> /home/bgt/pbl2/.env
+          echo "JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}" >> /home/bgt/pbl2/.env
+          echo "JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}" >> /home/bgt/pbl2/.env
+          echo "FIREBASE_PROJECT_ID_PBL2=${{ secrets.FIREBASE_PROJECT_ID_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "FIREBASE_PRIVATE_KEY_ID_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_ID_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "FIREBASE_PRIVATE_KEY_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> /home/bgt/pbl2/.env
+          echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /home/bgt/pbl2/.env
+
 
       - name: Debug .env file
-        run: cat .env
+        run: |
+          ls -lah /home/bgt/pbl2/
+          cat /home/bgt/pbl2/.env
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.0
         with:

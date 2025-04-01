@@ -93,4 +93,4 @@ jobs:
               -e FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }} \
               -e FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }} \
               -v /home/bgt/pbl2:/home/bgt/pbl2 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
+              byeongyeongtae/pbl2-be:latest

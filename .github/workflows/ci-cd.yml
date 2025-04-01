@@ -33,7 +33,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Container Image (Debian 기반으로 변경)
+      - name: Build Container Image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -93,4 +93,4 @@ jobs:
               -e FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }} \
               -e FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }} \
               -v /home/bgt/pbl2:/home/bgt/pbl2 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
+              ${{ secrets.DOCKERHUB_USERNAME }}/pbl2:latest

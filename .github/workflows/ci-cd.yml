@@ -83,5 +83,10 @@ jobs:
               -e JWT_TOKEN_PBL_2=${{ secrets.JWT_TOKEN_PBL_2 }} \
               -e JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }} \
               -e JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }} \
+              -e FIREBASE_PROJECT_ID_PBL2=${{ secrets.FIREBASE_PROJECT_ID_PBL2 }} \
+              -e FIREBASE_PRIVATE_KEY_ID_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_ID_PBL2 }} \
+              -e FIREBASE_PRIVATE_KEY_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_PBL2 }} \
+              -e FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }} \
+              -e FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }} \
               -v /home/bgt/pbl2:/home/bgt/pbl2 \
               ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest

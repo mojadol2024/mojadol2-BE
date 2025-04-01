@@ -44,6 +44,8 @@ jobs:
 
       - name: Create .env file
         run: |
+          mkdir -p /home/bgt/pbl2
+          touch /home/bgt/pbl2/.env
           echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" >> /home/bgt/pbl2/.env
           echo "DB_USER_NAME_PBL2=${{ secrets.DB_USER_NAME_PBL2 }}" >> /home/bgt/pbl2/.env
           echo "DB_PASSWORD_PBL2=${{ secrets.DB_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env

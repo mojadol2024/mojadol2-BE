@@ -90,7 +90,7 @@ jobs:
               redis:latest \
               redis-server --appendonly yes --replica-read-only no
             docker run -d \
-              --env-file /tmp/pbl2 .env \
+              --env-file /tmp/pbl2/.env \
               --restart=always \
               --name pbl2-be \
               --network mojadol-network \

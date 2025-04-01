@@ -44,8 +44,8 @@ jobs:
 
       - name: Create .env file
         run: |
-          mkdir -p /home/bgt/pbl2
-          touch /home/bgt/pbl2/.env
+          mkdir -p /tmp/pbl2
+          touch /tmp/pbl2/.env
           echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" >> /home/bgt/pbl2/.env
           echo "DB_USER_NAME_PBL2=${{ secrets.DB_USER_NAME_PBL2 }}" >> /home/bgt/pbl2/.env
           echo "DB_PASSWORD_PBL2=${{ secrets.DB_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env
@@ -94,7 +94,7 @@ jobs:
               redis:latest \
               redis-server --appendonly yes --replica-read-only no
             docker run -d \
-              --env-file /home/bgt/pbl2/.env \
+              --env-file /tmp/pbl2 .env \
               --restart=always \
               --name pbl2-be \
               --network mojadol-network \

@@ -17,19 +17,19 @@ import java.util.Map;
 public class firebaseConfig {
     // 혹시나 알림 서비스 할까 싶어서 넣어놓음 안하면 지울게요
 
-    @Value("${firebase_project_id_pbl2}")
+    @Value("${firebase_project_id}")
     private String firebase_project_id;
 
-    @Value("${firebase_private_key_id_pbl2}")
+    @Value("${firebase_private_key_id}")
     private String firebase_private_key_id;
 
-    @Value("${firebase_private_key_pbl2}")
+    @Value("${firebase_private_key}")
     private String firebase_private_key;
 
-    @Value("${firebase_client_email_pbl2}")
+    @Value("${firebase_client_email}")
     private String firebase_client_email;
 
-    @Value("${firebase_client_id_pbl2}")
+    @Value("${firebase_client_id}")
     private String firebase_client_id;
 
     @PostConstruct

@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = "com.gnu.pbl2.user.repository")
-@EntityScan(basePackages = "com.gnu.pbl2.user.entity")
+@EnableJpaRepositories(basePackages = {"com.gnu.pbl2.user.repository", "com.gnu.pbl2.coverLetter.repository"})
+@EntityScan(basePackages = {"com.gnu.pbl2.user.entity", "com.gnu.pbl2.coverLetter.entity"})
 public class Pbl2Application {
 
     public static void main(String[] args) {

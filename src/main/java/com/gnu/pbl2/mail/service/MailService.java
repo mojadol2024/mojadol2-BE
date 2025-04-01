@@ -58,7 +58,7 @@ public class MailService {
             User user = userRepository.findByUserLoginIdAndEmail(userRequestDto.getUserLoginId(), userRequestDto.getEmail())
                     .orElseThrow(() -> new MailHandler(ErrorStatus.USER_NOT_FOUND));
 
-            tokenService.saveToken(user.getUserLoginId() + user.getEmail(), verificationCode, 5, TimeUnit.MINUTES);
+            tokenService.saveMailToken(user.getUserLoginId() + user.getEmail(), verificationCode, 5, TimeUnit.MINUTES);
 
             MailDto mailDto = new MailDto();
             mailDto.setTitle("면접의 정석 " + user.getUsername() + "님 아이디 찾기");
@@ -73,7 +73,7 @@ public class MailService {
 
     public String mailCheck(MailRequestDto mailRequestDto) {
         try {
-            String redisCode = tokenService.getToken(mailRequestDto.getUserLoginId() + mailRequestDto.getEmail());
+            String redisCode = tokenService.getMailToken(mailRequestDto.getUserLoginId() + mailRequestDto.getEmail());
 
             if (mailRequestDto.getCode().equals(redisCode)) {
                 return "일치합니다.";

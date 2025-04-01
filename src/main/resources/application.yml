@@ -60,3 +60,7 @@ firebase:
   private-key: ${FIREBASE_PRIVATE_KEY}
   client-email: ${FIREBASE_CLIENT_EMAIL}
   client-id: ${FIREBASE_CLIENT_ID}
+
+spellchecker:
+  dic-path: /Users/byeongyeongtae/Downloads/ko-aff-dic-0.7.94/ko.dic
+  aff-path: /Users/byeongyeongtae/Downloads/ko-aff-dic-0.7.94/ko.aff

@@ -7,6 +7,7 @@ import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.dto.TokenRequestDto;
 import com.gnu.pbl2.user.dto.UserRequestDto;
 import com.gnu.pbl2.user.dto.UserResponseDto;
+import com.gnu.pbl2.user.entity.CustomUserDetails;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.service.TokenService;
 import com.gnu.pbl2.user.service.UserService;
@@ -66,12 +67,13 @@ public class UserController {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
-            String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            Long userId = userDetails.getId(); // userId 가져오기
+            String accessToken = jwtUtil.generateAccessToken(userId);
+            String refreshToken = jwtUtil.generateRefreshToken(userId);
 
             // 리프레시 토큰 저장 (Redis 또는 DB)
-            tokenService.saveToken(userDetails.getUsername(), refreshToken, 120, TimeUnit.MINUTES);
+            tokenService.saveToken(userId, refreshToken, 120, TimeUnit.MINUTES);
 
             HttpHeaders headers = new HttpHeaders();
             headers.set(HttpHeaders.AUTHORIZATION, accessToken);
@@ -86,7 +88,6 @@ public class UserController {
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
-            // 그 외의 에러
             throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -106,15 +107,15 @@ public class UserController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody TokenRequestDto request) {
         String refreshToken = request.getRefreshToken();
-        String username = jwtUtil.extractUsername(refreshToken);
+        Long userId = jwtUtil.extractUserId(refreshToken);
 
         // Redis에서 저장된 리프레시 토큰 가져오기
-        String storedRefreshToken = tokenService.getToken(username);
+        String storedRefreshToken = tokenService.getToken(userId);
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
             throw new UserHandler(ErrorStatus.REFRESH_TOKEN_NOT_MATCH);
         }
 
-        String newAccessToken = jwtUtil.generateAccessToken(username);
+        String newAccessToken = jwtUtil.generateAccessToken(userId);
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, newAccessToken);
 

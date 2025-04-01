@@ -1,5 +1,6 @@
 package com.gnu.pbl2.utils;
 
+import com.gnu.pbl2.user.entity.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,7 +23,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Component
 public class JwtUtil {
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     @Value("${jwt.secret}")
     private String salt;
@@ -38,14 +38,14 @@ public class JwtUtil {
         return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(Long userId) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims,username, accessExpiration);
+        return createToken(claims, String.valueOf(userId), accessExpiration);
     }
 
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(Long userId) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, refreshExpiration);
+        return createToken(claims, String.valueOf(userId), refreshExpiration);
     }
 
     private String createToken(Map<String, Object> claims, String subject, long expirationTime) {
@@ -60,18 +60,23 @@ public class JwtUtil {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            String username = extractUsername(token);
-            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+            Long userId = extractUserId(token);
+            if (userDetails instanceof CustomUserDetails) {
+                Long storedUserId = ((CustomUserDetails) userDetails).getId();
+                return (userId.equals(storedUserId) && !isTokenExpired(token));
+            }
+            return false;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public String extractUsername(String token) {
+    public Long extractUserId(String token) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        return extractAllClaims(token).getSubject();
+        String subject = extractAllClaims(token).getSubject();
+        return Long.parseLong(subject);
     }
 
     private Claims extractAllClaims(String token) {

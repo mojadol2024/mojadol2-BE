@@ -5,7 +5,6 @@ import lombok.Getter;
 @Getter
 public enum Tier {
     FREE("Free Membership"),
-    SILVER("Silver Membership"),
     GOLD("Gold Membership");
 
     private final String description;

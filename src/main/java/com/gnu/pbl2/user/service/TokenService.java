@@ -13,19 +13,25 @@ public class TokenService {
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtUtil jwtUtil;
 
-    public void saveToken(String key, String token, long duration, TimeUnit unit) {
+    public void saveToken(Long key, String token, long duration, TimeUnit unit) {
+        redisTemplate.opsForValue().set("user:" + key + ":token", token, duration, unit);
+    }
+
+    public String getToken(Long key) {
+        return redisTemplate.opsForValue().get("user:" + key + ":token");
+    }
+
+    public void deleteToken(String token) {
+        Long userId = jwtUtil.extractUserId(token);
+        redisTemplate.delete(String.valueOf(userId));
+    }
+
+    public void saveMailToken(String key, String token, long duration, TimeUnit unit) {
         redisTemplate.opsForValue().set(key, token, duration, unit);
     }
 
-    public String getToken(String key) {
+    public String getMailToken(String key) {
         return redisTemplate.opsForValue().get(key);
-    }
-
-    public void deleteToken(String key) {
-
-        String name = jwtUtil.extractUsername(key);
-
-        redisTemplate.delete(name);
     }
 
 }

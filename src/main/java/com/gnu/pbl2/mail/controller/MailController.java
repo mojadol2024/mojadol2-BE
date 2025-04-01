@@ -61,7 +61,6 @@ public class MailController {
 
     @PostMapping("/updatePassword")
     public ResponseEntity<?> updatePassword(@RequestBody UserRequestDto userRequestDto) {
-        System.out.println("AuthController updatePassword" + new Date());
         try {
             userService.updatePassword(userRequestDto);
 

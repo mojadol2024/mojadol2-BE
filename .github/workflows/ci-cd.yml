@@ -62,6 +62,8 @@ jobs:
           echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> .env
           echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> .env
 
+      - name: Debug .env file
+        run: cat .env
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -87,7 +89,7 @@ jobs:
               redis:latest \
               redis-server --appendonly yes --replica-read-only no
             docker run -d \
-              --env-file .env \
+              --env-file /home/bgt/pbl2/.env \
               --restart=always \
               --name pbl2-be \
               --network mojadol-network \

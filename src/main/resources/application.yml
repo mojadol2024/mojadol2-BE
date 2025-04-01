@@ -55,11 +55,11 @@ sftp:
 
 
 firebase:
-  project-id: ${FIREBASE_PROJECT_ID}
-  private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
-  private-key: ${FIREBASE_PRIVATE_KEY}
-  client-email: ${FIREBASE_CLIENT_EMAIL}
-  client-id: ${FIREBASE_CLIENT_ID}
+  project-id: ${FIREBASE_PROJECT_ID_PBL2}
+  private-key-id: ${FIREBASE_PRIVATE_KEY_ID_PBL2}
+  private-key: ${FIREBASE_PRIVATE_KEY_PBL2}
+  client-email: ${FIREBASE_CLIENT_EMAIL_PBL2}
+  client-id: ${FIREBASE_CLIENT_ID_PBL2}
 
 spellchecker:
   dic-path: /Users/byeongyeongtae/Downloads/ko-aff-dic-0.7.94/ko.dic

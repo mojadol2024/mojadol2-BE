@@ -42,6 +42,10 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
 
+      - name: Check Secret Variables
+        run: |
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}"
+
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.0
         with:

@@ -63,6 +63,7 @@ jobs:
           echo "FIREBASE_PRIVATE_KEY_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_PBL2 }}" >> /tmp/pbl2/.env
           echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> /tmp/pbl2/.env
           echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /tmp/pbl2/.env
+          cat /tmp/pbl2/.env
           chmod 600 /tmp/pbl2/.env  # 보안 강화를 위해 권한 설정
 
       - name: SSH Remote Commands

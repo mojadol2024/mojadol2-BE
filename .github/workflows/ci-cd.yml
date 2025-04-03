@@ -45,8 +45,8 @@ jobs:
       - name: Build Nginx Container Image
         uses: docker/build-push-action@v5
         with:
-          context: ./pbl2/nginx  # Nginx Dockerfile 위치
-          file: ./pbl2/nginx/Dockerfile  # Nginx Dockerfile 지정
+          context: ./nginx  # Nginx Dockerfile 위치
+          file: ./nginx/Dockerfile  # Nginx Dockerfile 지정
           platforms: linux/amd64
           push: true  # 빌드한 이미지를 DockerHub로 푸시
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest

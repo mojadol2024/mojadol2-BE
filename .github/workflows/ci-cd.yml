@@ -115,7 +115,7 @@ jobs:
               --network mojadol-network \
               --restart always \
               redis:latest \
-              redis-server --appendonly yes --replica-read-only no
+              redis-server --port 4479 --appendonly yes --replica-read-only no
             
             # Nginx 컨테이너 업데이트
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest

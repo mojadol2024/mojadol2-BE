@@ -88,7 +88,8 @@ jobs:
               --network mojadol-network \
               --restart always \
               redis:latest \
-              redis-server --appendonly yes --replica-read-only no
+              redis-server --port 4479 --appendonly yes --replica-read-only no
+
             docker run -d \
               --env-file /tmp/pbl2/.env \
               -v /tmp/pbl2/.env:/tmp/pbl2/.env \

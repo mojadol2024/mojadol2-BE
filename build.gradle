@@ -62,13 +62,8 @@ dependencies {
     //mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    // lucene + nori 맞춤법 검사기
-    implementation 'org.apache.lucene:lucene-core:8.11.1'
-    implementation 'org.apache.lucene:lucene-analyzers-nori:8.11.1'
-    implementation 'org.apache.lucene:lucene-suggest:8.11.1'
-
-    implementation 'net.java.dev.jna:jna:5.12.1'
-    implementation 'net.java.dev.jna:jna-platform:5.12.1'
+    // jsch request
+    implementation 'com.jcraft:jsch:0.1.55'
 }
 
 tasks.named('test') {

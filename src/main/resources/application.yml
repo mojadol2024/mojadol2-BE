@@ -21,7 +21,7 @@ spring:
       read-timeout: 30000
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST_PBL2}
       port: ${REDIS_PORT_PBL2}
   mail:
     host: stmp.gmail.com
@@ -34,7 +34,10 @@ spring:
           auth: true
           starttls:
             enable: true
-
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 jwt:
   secret: ${JWT_TOKEN_PBL_2}
@@ -61,6 +64,3 @@ firebase:
   client-email: ${FIREBASE_CLIENT_EMAIL_PBL2}
   client-id: ${FIREBASE_CLIENT_ID_PBL2}
 
-spellchecker:
-  dic-path: /Users/byeongyeongtae/Downloads/ko-aff-dic-0.7.94/ko.dic
-  aff-path: /Users/byeongyeongtae/Downloads/ko-aff-dic-0.7.94/ko.aff

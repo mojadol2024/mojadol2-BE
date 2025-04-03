@@ -122,7 +122,7 @@ jobs:
             docker rm -f pbl2-nginx || true
             docker run -d \
               --name pbl2-nginx \
-              -e SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }}
+              -e SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }} \
               --network mojadol-network \
               -p 80:80 \
               --restart always \

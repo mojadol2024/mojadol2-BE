@@ -24,7 +24,7 @@ public class InterviewController {
         return ResponseEntity.ok().body(ApiResponse.onSuccess(responseDto));
     }
 
-    @PostMapping("/delete")
+    @GetMapping("/delete")
     public ResponseEntity<?> deleteVideo(@RequestParam("id") Long interviewId) {
 
         interviewService.deleteVideo(interviewId);

@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mojadol/api/v1/interview")
@@ -31,4 +33,22 @@ public class InterviewController {
 
         return ResponseEntity.ok().body(ApiResponse.onSuccess("삭제되었습니다."));
     }
+
+    // 본인 자소서 1개당 질문에 대한 영상 list pagenation안해도 될거 같음 자소서당 질문이 많아도 15개니까
+    @GetMapping("/list")
+    public ResponseEntity<?> interviewsList(@RequestParam("id") Long coverLetterId) {
+
+        List<InterviewResponseDto> responseDtos = interviewService.interviewsList(coverLetterId);
+
+        return ResponseEntity.ok().body(ApiResponse.onSuccess(responseDtos));
+    }
+
+    // 영상 재생 할 수 있는 상세 페이지
+    @GetMapping("/detail")
+    public ResponseEntity<?> interviewDetail(@RequestParam("id") Long interviewId) {
+        InterviewResponseDto response = interviewService.interviewDetail(interviewId);
+
+        return ResponseEntity.ok().body(ApiResponse.onSuccess(response));
+    }
+
 }

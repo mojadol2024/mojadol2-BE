@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/api/v1/video")
+@RequestMapping("/mojadol/api/v1/video")
 public class VideoController {
 
     private final Path baseDir = Paths.get("/home/bgt/pbl2/");

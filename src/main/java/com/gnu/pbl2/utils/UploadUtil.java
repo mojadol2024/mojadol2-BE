@@ -138,6 +138,6 @@ public class UploadUtil {
     }
 
     public String filePath(String videoUrl) {
-        return "http://" + host + ":4400" + "/api/v1/video/" + videoUrl;
+        return "http://" + host + ":4400" + "/mojadol/api/v1/video/" + videoUrl;
     }
 }

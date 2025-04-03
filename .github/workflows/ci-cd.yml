@@ -42,6 +42,15 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
 
+      - name: Build Nginx Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./pbl2/nginx  # Nginx Dockerfile 위치
+          file: ./pbl2/nginx/Dockerfile  # Nginx Dockerfile 지정
+          platforms: linux/amd64
+          push: true  # 빌드한 이미지를 DockerHub로 푸시
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
+
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -55,9 +64,11 @@ jobs:
           script: |
             set -ex  # 에러 발생 시 즉시 종료 + 실행된 명령어 로그 출력
             
+            # 환경변수 저장할 디렉토리 구조
             mkdir -p /tmp/pbl2
             touch /tmp/pbl2/.env
             
+            # 환경 변수 저장
             echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" >> /tmp/pbl2/.env
             echo "DB_USER_NAME_PBL2=${{ secrets.DB_USER_NAME_PBL2 }}" >> /tmp/pbl2/.env
             echo "DB_PASSWORD_PBL2=${{ secrets.DB_PASSWORD_PBL2 }}" >> /tmp/pbl2/.env
@@ -75,21 +86,17 @@ jobs:
             echo "FIREBASE_PRIVATE_KEY_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_PBL2 }}" >> /tmp/pbl2/.env
             echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> /tmp/pbl2/.env
             echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /tmp/pbl2/.env
-            chmod 600 /tmp/pbl2/.env  # 보안 강화를 위해 권한 설정
+            chmod 600 /tmp/pbl2/.env
             
+            # DockerHub 로그인
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            
+            # Docker 네트워크 생성 (없으면 생성)
             docker network create mojadol-network || true
+            
+            # 백엔드 컨테이너 업데이트
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
             docker rm -f pbl2-be || true
-            docker rm -f mojadol-redis || true
-            docker run -d \
-              --name mojadol-redis \
-              -p 4479:4479 \
-              --network mojadol-network \
-              --restart always \
-              redis:latest \
-              redis-server --port 4479 --appendonly yes --replica-read-only no
-
             docker run -d \
               --env-file /tmp/pbl2/.env \
               -v /tmp/pbl2/.env:/tmp/pbl2/.env \
@@ -99,3 +106,23 @@ jobs:
               -p 4400:4400 \
               -v /home/bgt/pbl2:/home/bgt/pbl2 \
               ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
+            
+            # Redis 컨테이너 실행
+            docker rm -f mojadol-redis || true
+            docker run -d \
+              --name mojadol-redis \
+              -p 4479:4479 \
+              --network mojadol-network \
+              --restart always \
+              redis:latest \
+              redis-server --appendonly yes --replica-read-only no
+            
+            # Nginx 컨테이너 업데이트
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
+            docker rm -f pbl2-nginx || true
+            docker run -d \
+              --name pbl2-nginx \
+              --network mojadol-network \
+              -p 80:80 \
+              --restart always \
+              ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest

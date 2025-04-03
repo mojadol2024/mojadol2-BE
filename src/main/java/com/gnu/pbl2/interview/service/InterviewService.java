@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -77,6 +78,30 @@ public class InterviewService {
             e.printStackTrace();
             throw new InterviewHandler(ErrorStatus.INTERVIEW_DELETE_ERROR);
         }
+    }
+
+    public List<InterviewResponseDto> interviewsList(Long coverLetterId) {
+        try {
+            List<Interview> interviews = interviewRepository.findByCoverLetterIdAndDeletedAt(coverLetterId, 1);
+
+            List<InterviewResponseDto> response = new ArrayList<>();
+            for (Interview interview: interviews) {
+                interview.setVideoUrl(uploadUtil.filePath(interview.getVideoUrl()));
+                response.add(InterviewResponseDto.toDto(interview));
+            }
+
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new InterviewHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public InterviewResponseDto interviewDetail(Long interviewId) {
+        Interview response = interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new InterviewHandler(ErrorStatus.INTERVIEW_NOT_FOUND));
+
+        return InterviewResponseDto.toDto(response);
     }
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행

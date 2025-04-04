@@ -18,7 +18,7 @@ http {
     # 서버 블록 설정
     server {
         listen 80;
-        server_name ${SSH_HOST_PBL2};
+        server_name ${SSH_HOST_PBL2:-localhost};
 
         location / {
             root /usr/share/nginx/html;

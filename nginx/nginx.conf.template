@@ -26,6 +26,11 @@ http {
             try_files $uri /index.html;
         }
 
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
 
 
         # 백엔드 요청 프록시 (http://backend-container:4000 로 전달)

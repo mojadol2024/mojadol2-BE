@@ -127,3 +127,9 @@ jobs:
               -p 80:80 \
               --restart always \
               ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
+
+            docker exec pbl2-nginx rm -rf /usr/share/nginx/html/*
+            
+            docker cp build/. pbl2-nginx:/usr/share/nginx/html/
+            
+            docker restart pbl2-nginx

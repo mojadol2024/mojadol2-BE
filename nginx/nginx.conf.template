@@ -1,4 +1,4 @@
-# nginx 기본 설정
+ # nginx 기본 설정
 worker_processes auto;
 events {
     worker_connections 1024;
@@ -21,9 +21,12 @@ http {
         server_name ${SSH_HOST_PBL2};
 
         location / {
-            root /usr/share/nginx/html;
-            index index.html index.htm;
+            root /usr/share/nginx/html/build;
+            index index.html;
+            try_files $uri /index.html;
         }
+
+
 
         # 백엔드 요청 프록시 (http://backend-container:4000 로 전달)
         location /api/ {

@@ -1,6 +1,9 @@
 package com.gnu.pbl2.config;
 
+import com.gnu.pbl2.user.service.CustomUserService;
 import com.gnu.pbl2.utils.JwtRequestFilter;
+import com.gnu.pbl2.utils.JwtUtil;
+import com.gnu.pbl2.utils.UserAgentFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,20 +24,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.security.config.Elements.PASSWORD_ENCODER;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtRequestFilter jwtRequestFilter;
     private final UserDetailsService userDetailsService;
+    private final JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // 개발용 추후 프론트 서버 배포 후 도메인 지정해야함
+        configuration.setAllowedOrigins(List.of("http://localhost:4000", "http://myeonjub.store/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);

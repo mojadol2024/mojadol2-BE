@@ -20,6 +20,14 @@ http {
         listen 80;
         server_name ${SSH_HOST_PBL2:-localhost};
 
+        if ($http_user_agent ~* (Java|Dalvik|crawler|GenomeCrawler|HeadlessChrome)) {
+        return 403;
+        }
+
+        location ~* /(wp-admin|wordpress|setup-config\.php|\.git|php) {
+            return 403;
+        }
+
         location / {
             root /usr/share/nginx/html;
             index index.html;

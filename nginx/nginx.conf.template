@@ -67,6 +67,16 @@ http {
 
         # 백엔드 요청 프록시 (http://pbl2-be:4400 로 전달)
         location /api/ {
+
+            if ($request_method = 'OPTIONS') {
+                add_header 'Access-Control-Allow-Origin' 'http://localhost:4000' always;
+                add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE' always;
+                add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+                add_header 'Access-Control-Allow-Credentials' 'true' always;
+                add_header 'Content-Length' 0;
+                add_header 'Content-Type' 'text/plain charset=UTF-8';
+                return 204;
+            }
             proxy_pass http://pbl2-be:4400/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;

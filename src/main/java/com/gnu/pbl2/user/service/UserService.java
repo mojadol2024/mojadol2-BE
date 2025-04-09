@@ -32,6 +32,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public String signUp(UserRequestDto userRequestDto) {
         try {
@@ -72,6 +73,38 @@ public class UserService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         user.setUserPw(passwordEncoder.encode(userRequestDto.getUserPw()));
+    }
+
+    public String checkPassword(UserRequestDto userRequestDto, String accessToken) {
+
+        Long userId = jwtUtil.extractUserId(accessToken);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        if (passwordEncoder.matches(userRequestDto.getUserPw(), user.getUserPw())) {
+            return "비밀번호가 일치합니다.";
+        } else {
+            return "비밀번호가 일치하지 않습니다.";
+        }
+    }
+
+    public String updateProfile(UserRequestDto userRequestDto, String accessToken) {
+
+        try {
+            Long userId = jwtUtil.extractUserId(accessToken);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+            user.setUserPw(passwordEncoder.encode(userRequestDto.getUserPw()));
+            user.setNickname(userRequestDto.getNickname());
+
+            userRepository.save(user);
+
+            return user.getUsername();
+        } catch (Exception e) {
+            throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

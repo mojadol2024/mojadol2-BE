@@ -20,13 +20,14 @@ http {
         listen 80;
         server_name ${SSH_HOST_PBL2:-localhost};
 
-        if ($http_user_agent ~* (Java|Dalvik|crawler|GenomeCrawler|HeadlessChrome|HttpClient|urllib|Go-http-client)) {
+        if ($http_user_agent ~* (curl|wget|python-requests|Java|Dalvik|crawler|GenomeCrawler|HeadlessChrome|HttpClient|urllib|Go-http-client|axios|node-fetch|libwww-perl)) {
             return 403;
         }
 
-        location ~* /(wp-admin|wordpress|setup-config\.php|\.git|php) {
+        location ~* /(wp-admin|wp-includes|wp-content|wordpress|wp1|site|shop|test|cms|setup-config\.php|wlwmanifest\.xml|xmlrpc\.php|stalker_portal|\.git|\.env|\.DS_Store|\.htaccess|\.bash_history|\.ssh|phpmyadmin|pma|admin|login|config|\.php) {
             return 403;
         }
+
 
         location / {
             root /usr/share/nginx/html;

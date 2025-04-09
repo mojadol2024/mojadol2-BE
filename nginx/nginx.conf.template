@@ -15,10 +15,20 @@ http {
     sendfile        on;
     keepalive_timeout  65;
 
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+    gzip_min_length 256;
+    gzip_vary on;
+
     # 서버 블록 설정
     server {
         listen 80;
-        server_name ${SSH_HOST_PBL2:-localhost};
+        server_name www.myeonjub.store myeonjub.store ${SSH_HOST_PBL2:-localhost};
+
+        # 보안 헤더 추가
+        add_header X-Content-Type-Options nosniff;
+        add_header X-Frame-Options DENY;
+        add_header X-XSS-Protection "1; mode=block";
 
         location / {
             root /usr/share/nginx/html;
@@ -38,7 +48,7 @@ http {
             add_header Cache-Control "public, max-age=31536000, immutable";
         }
 
-        # 백엔드 요청 프록시 (http://backend-container:4000 로 전달)
+        # 백엔드 요청 프록시 (http://pbl2-be:4400 로 전달)
         location /api/ {
             proxy_pass http://pbl2-be:4400/;
             proxy_set_header Host $host;
@@ -46,5 +56,16 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
         }
+
+        location = /favicon.ico {
+            access_log off;
+            log_not_found off;
+        }
+
+        location = /robots.txt {
+            access_log off;
+            log_not_found off;
+        }
+
     }
 }

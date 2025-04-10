@@ -11,8 +11,8 @@ import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.utils.UploadUtil;
 import com.jcraft.jsch.ChannelSftp;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InterviewService {
 
     private final UploadUtil uploadUtil;
@@ -33,35 +34,29 @@ public class InterviewService {
 
     public InterviewResponseDto saveVideo(MultipartFile file, Long coverLetterId) {
         try {
-            // url이 있을려면 id값이 필요함 id값이 있을려면 url을 저장해야함 ?? 그럼 빈값이나 default값을 저장하고 이후에 update해야함? db2번 가는거 개에반데 방법이 없긴해
-            // UUID를 pk로 주고하는 방법도 있지만 그건 보기 너무 불편함.. 혹시나 UUID로 해야한다면 바꿔도 되긴해
             CoverLetter coverLetter = coverLetterRepository.findById(coverLetterId)
                     .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
 
             Interview interview = new Interview();
             interview.setCoverLetter(coverLetter);
 
-            //일단 interviewId값이 필요해서 default값을 저장
             Interview tempInterview = interviewRepository.saveAndFlush(interview);
-
-            // directory 구조 : home/bgt/pbl2/interview-videos/interviewId/영상
             String postDirectory = uploadUtil.postDirectory(directoryName, tempInterview.getInterviewId());
 
-            // session 연결
             ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
             uploadUtil.recreateDirectory(channelSftp, postDirectory);
             String remoteFilePath = uploadUtil.save(file, channelSftp, postDirectory);
 
-            tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/"+ remoteFilePath); // 원격 서버의 파일 경로 저장
-
+            tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/"+ remoteFilePath);
             Interview response = interviewRepository.save(tempInterview);
-
             response.setVideoUrl(uploadUtil.filePath(response.getVideoUrl()));
+
+            log.info("영상 저장 완료: interviewId={}, videoUrl={}", response.getInterviewId(), response.getVideoUrl());
 
             return InterviewResponseDto.toDto(response);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("영상 저장 실패: coverLetterId={}, error={}", coverLetterId, e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERVIEW_SAVE_ERROR);
         }
     }
@@ -74,8 +69,10 @@ public class InterviewService {
 
             interview.setIsDeleted(0);
             interview.setDeletedAt(LocalDateTime.now());
+
+            log.info("영상 삭제 처리 완료: interviewId={}", interviewId);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("영상 삭제 실패: interviewId={}, error={}", interviewId, e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERVIEW_DELETE_ERROR);
         }
     }
@@ -90,9 +87,11 @@ public class InterviewService {
                 response.add(InterviewResponseDto.toDto(interview));
             }
 
+            log.info("인터뷰 리스트 조회 성공: coverLetterId={}, count={}개", coverLetterId, response.size());
+
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("인터뷰 리스트 조회 실패: coverLetterId={}, error={}", coverLetterId, e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -101,10 +100,12 @@ public class InterviewService {
         Interview response = interviewRepository.findById(interviewId)
                 .orElseThrow(() -> new InterviewHandler(ErrorStatus.INTERVIEW_NOT_FOUND));
 
+        log.info("인터뷰 상세 조회 성공: interviewId={} ", interviewId);
+
         return InterviewResponseDto.toDto(response);
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+    @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void deleteExpiredVideos() {
         try {
@@ -114,11 +115,13 @@ public class InterviewService {
             for (Interview interview : expiredInterviews) {
                 String postDirectory = uploadUtil.postDirectory(directoryName, interview.getInterviewId());
                 ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
-                uploadUtil.deleteDirectory(channelSftp, postDirectory); // 디렉토리 삭제
+                uploadUtil.deleteDirectory(channelSftp, postDirectory);
 
                 interviewRepository.delete(interview);
+                log.info("30일 경과 인터뷰 삭제 완료: interviewId={} ", interview.getInterviewId());
             }
         }catch (Exception e) {
+            log.error("30일 경과 인터뷰 삭제 실패: error={}", e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERVIEW_SCHEDULE_ERROR);
         }
 

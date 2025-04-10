@@ -11,6 +11,7 @@ import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
 import com.gnu.pbl2.utils.SpellCheckerUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class CoverLetterService {
 
     private final CoverLetterRepository coverLetterRepository;
@@ -34,17 +36,19 @@ public class CoverLetterService {
 
     public CoverLetterResponseDto letterWrite(CoverLetterRequestDto coverLetterRequestDto, Long id) {
         try {
-
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.USER_NOT_FOUND));
 
             CoverLetter coverLetter = new CoverLetter(coverLetterRequestDto.getData(), user, coverLetterRequestDto.getTitle());
             CoverLetter savedCoverLetter = coverLetterRepository.save(coverLetter);
 
+            log.info("자소서 저장 완료: coverLetterId={}", savedCoverLetter.getCoverLetterId());
+
             return new CoverLetterResponseDto(savedCoverLetter);
         } catch (CoverLetterHandler e) {
             throw e;
         } catch (Exception e) {
+            log.error("자소서 저장 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);
         }
     }
@@ -60,10 +64,13 @@ public class CoverLetterService {
             coverLetter.setData(coverLetterRequestDto.getData());
             CoverLetter updatedCoverLetter = coverLetterRepository.save(coverLetter);
 
+            log.info("자소서 수정 완료: coverLetterId={}", updatedCoverLetter.getCoverLetterId());
+
             return new CoverLetterResponseDto(updatedCoverLetter);
         } catch (CoverLetterHandler e) {
             throw e;
         } catch (Exception e) {
+            log.error("자소서 수정 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);
         }
     }
@@ -76,9 +83,12 @@ public class CoverLetterService {
             letterUserCheck(coverLetter.getUser(), id);
             coverLetter.setIsDeleted(0);
             coverLetterRepository.save(coverLetter);
+
+            log.info("자소서 삭제 완료: coverLetterId={}", coverLetterRequestDto.getCoverLetterId());
         } catch (CoverLetterHandler e) {
             throw e;
         } catch (Exception e) {
+            log.error("자소서 삭제 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);
         }
     }
@@ -86,7 +96,6 @@ public class CoverLetterService {
     public Map<String, Object> letterList(Pageable pageable, Long userId) {
         try {
             Page<CoverLetter> page = coverLetterRepository.findByUserId(userId, pageable);
-
 
             List<CoverLetterResponseDto> content = page.getContent().stream()
                     .map(CoverLetterResponseDto::new)
@@ -97,9 +106,11 @@ public class CoverLetterService {
             result.put("first", page.isFirst());
             result.put("last", page.isLast());
 
-            return result;
+            log.info("자소서 리스트 조회 성공: userId={}, size={}", userId, content.size());
 
+            return result;
         } catch (Exception e) {
+            log.error("자소서 리스트 조회 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);
         }
     }
@@ -111,10 +122,13 @@ public class CoverLetterService {
 
             letterUserCheck(coverLetter.getUser(), userId);
 
+            log.info("자소서 상세 조회 성공: coverLetterId={}", coverLetterId);
+
             return new CoverLetterResponseDto(coverLetter);
         } catch (CoverLetterHandler e) {
             throw e;
         } catch (Exception e) {
+            log.error("자소서 상세 조회 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);
         }
     }
@@ -126,44 +140,40 @@ public class CoverLetterService {
         try {
             RestTemplate restTemplate = new RestTemplate();
 
-            // 요청 파라미터 설정
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("q", text);
             params.add("where", "nexearch");
             params.add("color_blindness", "0");
             params.add("passportKey", passportKey);
 
-            // HTTP 요청 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.add("User-Agent", "Mozilla/5.0");
 
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
 
-            // API 요청
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 
-            // JSON 문자열 가져오기
             String responseBody = response.getBody();
 
-            // JSON 파싱하여 Map으로 변환
             ObjectMapper objectMapper = new ObjectMapper();
-
             Map<String, Object> resultMap = objectMapper.readValue(responseBody, Map.class);
 
-            // 필요한 데이터 추출
             Map<String, Object> message = (Map<String, Object>) resultMap.get("message");
             Map<String, Object> result = (Map<String, Object>) message.get("result");
 
-            // 최종 결과 Map 생성
             Map<String, Object> finalResult = Map.of(
                     "errata_count", result.get("errata_count"),
                     "origin_html", result.get("origin_html"),
                     "html", result.get("html"),
                     "notag_html", result.get("notag_html")
             );
+
+            log.info("맞춤법 검사 완료: errata_count={}", result.get("errata_count"));
+
             return finalResult;
         } catch (Exception e) {
+            log.error("맞춤법 검사 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.SPELLCHECKER_INTERNAL_SERVER_ERROR);
         }
     }
@@ -175,5 +185,4 @@ public class CoverLetterService {
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_BAD_REQUEST);
         }
     }
-
 }

@@ -37,8 +37,13 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_SQL_UNIQUE(HttpStatus.CONFLICT, "USER409", "중복된 데이터가 있습니다."),
     USER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "USER400", "데이터가 잘못 되었습니다."),
 
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH4001", "사용자가 존재하지 않습니다."),
+    USER_RESIGN_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "USER5000", "회원탈퇴에 실패하였습니다."),
+    USER_DELETE_SCHEDULE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "USER5001","회원 삭제 스케줄러 실행 중 오류 발생"),
+
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "사용자가 존재하지 않습니다."),
     USER_BAD_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH4002", "아이디 또는 비밀번호가 일치하지 않습니다."),
+
+
 
     // Mail 관련 응답
     MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MAIL5000", "메일 전송에 실패하였습니다."),

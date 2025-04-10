@@ -47,6 +47,9 @@ public class User implements UserDetails {
     @Column(length = 20, unique = true)
     private String phoneNumber;
 
+    @Column
+    private LocalDateTime deletedTime;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CoverLetter> coverLetters;
 

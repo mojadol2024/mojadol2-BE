@@ -1,33 +1,27 @@
 package com.gnu.pbl2.user.service;
 
-import com.gnu.pbl2.exception.handler.MailHandler;
 import com.gnu.pbl2.exception.handler.UserHandler;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.dto.UserRequestDto;
-import com.gnu.pbl2.user.dto.UserResponseDto;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.entity.enums.Tier;
 import com.gnu.pbl2.user.repository.UserRepository;
 import com.gnu.pbl2.utils.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -41,12 +35,15 @@ public class UserService {
             user.setUserPw(passwordEncoder.encode(user.getUserPw()));
 
             User response = userRepository.save(user);
+            log.info("회원가입 성공: userId={}, username={}", response.getUserId(), response.getUsername());
             return response.getUsername();
 
         } catch (DataIntegrityViolationException e) {
+            log.warn("회원가입 중 중복 에러 발생: {}", e.getMessage());
             throw new UserHandler(ErrorStatus.USER_SQL_UNIQUE);
 
         } catch (Exception e) {
+            log.error("회원가입 중 내부 에러", e);
             throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -63,6 +60,7 @@ public class UserService {
             throw new UserHandler(ErrorStatus.USER_BAD_REQUEST);
 
         } catch (Exception e) {
+            log.error("회원가입 중복 검사 중 내부 에러", e);
             throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -73,26 +71,24 @@ public class UserService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         user.setUserPw(passwordEncoder.encode(userRequestDto.getUserPw()));
+        log.info("비밀번호 재설정 완료: userId={}", user.getUserId());
     }
 
-    public String checkPassword(UserRequestDto userRequestDto, String accessToken) {
-
+    public boolean checkPassword(UserRequestDto userRequestDto, String accessToken) {
         Long userId = jwtUtil.extractUserId(accessToken);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        if (passwordEncoder.matches(userRequestDto.getUserPw(), user.getUserPw())) {
-            return "비밀번호가 일치합니다.";
-        } else {
-            return "비밀번호가 일치하지 않습니다.";
-        }
+        boolean match = passwordEncoder.matches(userRequestDto.getUserPw(), user.getUserPw());
+        log.info("비밀번호 확인 결과: userId={}, 일치여부={}", userId, match);
+        return match;
     }
 
     public String updateProfile(UserRequestDto userRequestDto, String accessToken) {
+        Long userId = jwtUtil.extractUserId(accessToken);
 
         try {
-            Long userId = jwtUtil.extractUserId(accessToken);
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -100,14 +96,48 @@ public class UserService {
             user.setNickname(userRequestDto.getNickname());
 
             userRepository.save(user);
+            log.info("프로필 수정 완료: userId={}", userId);
 
             return user.getUsername();
         } catch (Exception e) {
+            log.error("프로필 수정 중 에러 발생: userId={}", userId, e);
             throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    public String resignUser(String accessToken) {
+        Long userId = jwtUtil.extractUserId(accessToken);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        try {
+            user.setDeletedTime(LocalDateTime.now().plusMonths(3));
+            userRepository.save(user);
+            log.info("회원 탈퇴 예약 완료: userId={}, deletedTime={}", userId, user.getDeletedTime());
+        } catch (Exception e) {
+            log.error("회원 탈퇴 처리 중 예외 발생: userId={}", userId, e);
+            throw new UserHandler(ErrorStatus.USER_RESIGN_FAILED);
+        }
 
+        return "회원 탈퇴 예약이 완료되었습니다.";
+    }
+
+    // 스케줄러로 userdeletedtime이 되면 삭제 매일 낮12시에 작동
+    @Scheduled(cron = "0 0 12 * * ?")
+    @Transactional
+    public void deleteResignedUsers() {
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            List<User> resignedUsers = userRepository.findByDeletedTimeBefore(now);
+
+            for (User user : resignedUsers) {
+                log.info("회원 삭제 처리: userId={}", user.getUserId());
+                userRepository.delete(user);
+            }
+        } catch (Exception e) {
+            log.error("회원 삭제 스케줄러 예외 발생", e);
+            throw new UserHandler(ErrorStatus.USER_DELETE_SCHEDULE_FAILED);
+        }
+    }
 }

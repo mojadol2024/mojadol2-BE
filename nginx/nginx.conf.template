@@ -37,11 +37,11 @@ http {
         }
 
         if ($http_user_agent ~* (curl|wget|python-requests|Java|Dalvik|crawler|GenomeCrawler|HeadlessChrome|HttpClient|urllib|Go-http-client|axios|node-fetch|libwww-perl)) {
-            return 403;
+            return 444;
         }
 
         location ~* /(wp-admin|wp-includes|wp-content|wordpress|wp1|site|shop|test|cms|setup-config\.php|wlwmanifest\.xml|xmlrpc\.php|stalker_portal|\.git|\.env|\.DS_Store|\.htaccess|\.bash_history|\.ssh|phpmyadmin|pma|admin|login|config|\.php) {
-            return 403;
+            return 444;
         }
 
         # 레이트 리밋 적용

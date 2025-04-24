@@ -127,6 +127,7 @@ jobs:
               -e SSL_CERTIFICATE_PATH=${{ secrets.SSL_CERTIFICATE_PATH }} \
               --network mojadol-network \
               -p 80:80 \
+              -p 443:443 \
               --restart always \
               ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
 

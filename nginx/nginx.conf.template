@@ -24,8 +24,8 @@ http {
 
     # HTTP 요청을 HTTPS로 리디렉션
     server {
-        listen 80;
-        server_name www.myeonjub.store myeonjub.store;
+        listen 80; # HTTP 요청받은거
+        server_name www.myeonjub.store myeonjub.store; #사이트 도메인 추가
         return 301 https://$host$request_uri;  # 모든 HTTP 요청을 HTTPS로 리디렉션
     }
 
@@ -33,11 +33,11 @@ http {
     # HTTPS 설정 추가
     server {
         listen 443 ssl;  # 443 포트에서 SSL 사용
-        server_name www.myeonjub.store myeonjub.store;
+        server_name www.myeonjub.store myeonjub.store; #HTTPS 도메인
 
         # SSL 인증서 경로 설정
-        ssl_certificate /etc/letsencrypt/live/www.myeonjub.store/fullchain.pem;  # 인증서 경로
-        ssl_certificate_key /etc/letsencrypt/live/www.myeonjub.store/privkey.pem;  # 개인키 경로
+        ssl_certificate ${SSL_CERTIFICATE_PATH}fullchain.pem;  # 인증서 경로
+        ssl_certificate_key ${SSL_CERTIFICATE_PATH}privkey.pem;  # 개인키 경로
 
         # SSL 보안 설정 추가 (강화된 보안)
         ssl_protocols TLSv1.2 TLSv1.3;

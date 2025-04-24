@@ -124,6 +124,7 @@ jobs:
               --name pbl2-nginx \
               -v /etc/letsencrypt:/etc/letsencrypt \
               -e SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }} \
+              -e SSL_CERTIFICATE_PATH=${{ secrets.SSL_CERTIFICATE_PATH }} \
               --network mojadol-network \
               -p 80:80 \
               --restart always \

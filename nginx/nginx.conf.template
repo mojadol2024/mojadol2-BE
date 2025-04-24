@@ -21,78 +21,14 @@ http {
     gzip_min_length 256;
     gzip_vary on;
 
-    # 서버 블록 설정
+
+    # HTTP 요청을 HTTPS로 리디렉션
     server {
         listen 80;
-        server_name www.myeonjub.store myeonjub.store ${SSH_HOST_PBL2:-localhost};
-
-        # 보안 헤더 추가
-        add_header X-Content-Type-Options nosniff;
-        add_header X-Frame-Options DENY;
-        add_header X-XSS-Protection "1; mode=block";
-
-        if ($http_user_agent = "") {
-            return 403;
-        }
-
-        if ($http_user_agent ~* (curl|wget|python-requests|Java|Dalvik|crawler|GenomeCrawler|HeadlessChrome|HttpClient|urllib|Go-http-client|axios|node-fetch|libwww-perl)) {
-            return 444;
-        }
-
-        location ~* /(wp-admin|wp-includes|wp-content|wordpress|wp1|site|shop|test|cms|setup-config\.php|wlwmanifest\.xml|xmlrpc\.php|stalker_portal|\.git|\.env|\.DS_Store|\.htaccess|\.bash_history|\.ssh|phpmyadmin|pma|admin|login|config|\.php) {
-            return 444;
-        }
-
-        # 레이트 리밋 적용
-        location / {
-            limit_req zone=req_limit_per_ip burst=10 nodelay;
-
-            root /usr/share/nginx/html;
-            index index.html;
-            try_files $uri /index.html;
-        }
-
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
-
-        location /static/ {
-            root /usr/share/nginx/html;
-            expires 1y;
-            access_log off;
-            add_header Cache-Control "public, max-age=31536000, immutable";
-        }
-
-        # 백엔드 요청 프록시 (http://pbl2-be:4400 로 전달)
-        location /api/ {
-
-            if ($request_method = 'OPTIONS') {
-                add_header 'Access-Control-Allow-Origin' 'http://localhost:4000' always;
-                add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE' always;
-                add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
-                add_header 'Access-Control-Allow-Credentials' 'true' always;
-                add_header 'Content-Length' 0;
-                add_header 'Content-Type' 'text/plain charset=UTF-8';
-                return 204;
-            }
-            proxy_pass http://pbl2-be:4400/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-
-        location = /favicon.ico {
-            access_log off;
-            log_not_found off;
-        }
-
-        location = /robots.txt {
-            access_log off;
-            log_not_found off;
-        }
+        server_name www.myeonjub.store myeonjub.store;
+        return 301 https://$host$request_uri;  # 모든 HTTP 요청을 HTTPS로 리디렉션
     }
+
 
     # HTTPS 설정 추가
     server {
@@ -153,12 +89,5 @@ http {
             access_log off;
             log_not_found off;
         }
-    }
-
-    # HTTP 요청을 HTTPS로 리디렉션
-    server {
-        listen 80;
-        server_name www.myeonjub.store myeonjub.store;
-        return 301 https://$host$request_uri;  # 모든 HTTP 요청을 HTTPS로 리디렉션
     }
 }

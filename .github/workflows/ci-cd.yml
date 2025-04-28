@@ -147,7 +147,7 @@ jobs:
             docker restart pbl2-nginx
             
             # prometheus + grafana
-            docker pull prom/prometheus/prometheus:latest
+            docker pull prom/prometheus:latest
             docker rm -f prometheus || true
             docker run -d \
               --name prometheus \

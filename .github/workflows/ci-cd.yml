@@ -166,4 +166,4 @@ jobs:
               -e GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }} \
               -e GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }} \
               --restart always \
-              grafana:latest
+              grafana/grafana:latest

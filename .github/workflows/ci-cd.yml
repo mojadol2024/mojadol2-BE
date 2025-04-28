@@ -18,6 +18,15 @@ jobs:
   cicd:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Get Public IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
+      - name: Print Public IP
+        run: |
+          echo ${{ steps.ip.outputs.ipv4 }}
+
       - name: Test SSH Connection
         run: nc -zv ${{ secrets.SSH_HOST_PBL2 }} ${{ secrets.SSH_PORT_PBL2 }}
 

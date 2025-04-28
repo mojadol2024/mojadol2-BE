@@ -153,9 +153,9 @@ jobs:
               --name pbl2-prometheus \
               --network mojadol-network \
               -p 9090:9090 \
-              -v /home/bgt/prometheus.yml:/etc/prometheus/prometheus.yml \
+              -v /home/bgt/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml \
               --restart always \
-              prometheus:latest
+              prom/prometheus:latest
 
             docker pull grafana/grafana:latest
             docker rm -f pbl2-grafana || true

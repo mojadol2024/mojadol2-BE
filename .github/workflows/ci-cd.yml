@@ -147,7 +147,7 @@ jobs:
             docker restart pbl2-nginx
             
             # prometheus + grafana
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prometheus:latest
+            docker pull prom/prometheus/prometheus:latest
             docker rm -f prometheus || true
             docker run -d \
               --name prometheus \
@@ -157,7 +157,7 @@ jobs:
               --restart always \
               ${{ secrets.DOCKERHUB_USERNAME }}/prometheus:latest
 
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/grafana:latest
+            docker pull grafana/grafana:latest
             docker rm -f grafana || true
             docker run -d \
               --name grafana \

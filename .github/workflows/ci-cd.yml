@@ -136,3 +136,25 @@ jobs:
             docker cp /home/bgt/pbl2/fe/build/. pbl2-nginx:/usr/share/nginx/html/
             
             docker restart pbl2-nginx
+            
+            # prometheus + grafana
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/prometheus:latest
+            docker rm -f prometheus || true
+            docker run -d \
+              --name prometheus \
+              --network mojadol-network \
+              -p 9090:9090 \
+              -v /home/bgt/prometheus.yml:/etc/prometheus/prometheus.yml \
+              --restart always \
+              ${{ secrets.DOCKERHUB_USERNAME }}/prometheus:latest
+
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/grafana:latest
+            docker rm -f grafana || true
+            docker run -d \
+              --name grafana \
+              --network mojadol-network \
+              -p 3000:3000 \
+              -e GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }} \
+              -e GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }} \
+              --restart always \
+              ${{ secrets.DOCKERHUB_USERNAME }}/grafana:latest

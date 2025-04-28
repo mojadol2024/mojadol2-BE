@@ -24,7 +24,7 @@ spring:
       host: ${REDIS_HOST_PBL2}
       port: ${REDIS_PORT_PBL2}
   mail:
-    host: stmp.gmail.com
+    host: smtp.gmail.com
     port: 587
     username: ${MY_MAIL_USERNAME}
     password: ${MY_MAIL_PASSWORD}
@@ -63,4 +63,10 @@ firebase:
   private-key: ${FIREBASE_PRIVATE_KEY_PBL2}
   client-email: ${FIREBASE_CLIENT_EMAIL_PBL2}
   client-id: ${FIREBASE_CLIENT_ID_PBL2}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
 

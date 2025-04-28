@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.List;
@@ -23,9 +24,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserService customUserService;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private static final List<String> EXCLUDE_URL = List.of(
-            "/mojadol/api/v1/auth/**"
+            "/mojadol/api/v1/auth/**", "/actuator/**"
     );
 
     @Override
@@ -69,6 +71,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return EXCLUDE_URL.stream().anyMatch(url -> request.getRequestURI().startsWith(url));
+        String uri = request.getRequestURI();
+        return EXCLUDE_URL.stream().anyMatch(pattern -> pathMatcher.match(pattern, uri));
     }
+
 }

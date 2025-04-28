@@ -148,22 +148,22 @@ jobs:
             
             # prometheus + grafana
             docker pull prom/prometheus:latest
-            docker rm -f prometheus || true
+            docker rm -f pbl2-prometheus || true
             docker run -d \
-              --name prometheus \
+              --name pbl2-prometheus \
               --network mojadol-network \
               -p 9090:9090 \
               -v /home/bgt/prometheus.yml:/etc/prometheus/prometheus.yml \
               --restart always \
-              ${{ secrets.DOCKERHUB_USERNAME }}/prometheus:latest
+              prometheus:latest
 
             docker pull grafana/grafana:latest
-            docker rm -f grafana || true
+            docker rm -f pbl2-grafana || true
             docker run -d \
-              --name grafana \
+              --name pbl2-grafana \
               --network mojadol-network \
               -p 3000:3000 \
               -e GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }} \
               -e GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }} \
               --restart always \
-              ${{ secrets.DOCKERHUB_USERNAME }}/grafana:latest
+              grafana:latest

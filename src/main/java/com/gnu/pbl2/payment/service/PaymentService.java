@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,63 +29,94 @@ public class PaymentService {
     private final UserRepository userRepository;
 
     public PaymentResponseDto pay(PaymentRequestDto paymentRequestDto, Long userId) {
+        try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> {
+                        log.warn("결제 실패 - 사용자 없음: {}", userId);
+                        return new UserHandler(ErrorStatus.USER_NOT_FOUND);
+                    });
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        Payment payment = new Payment(paymentRequestDto.getAmount());
+            Payment payment = new Payment(paymentRequestDto.getAmount());
+            payment.setUser(user);
+            Payment response = paymentRepository.save(payment);
 
-        payment.setUser(user);
-
-        Payment response = paymentRepository.save(payment);
-
-        return PaymentResponseDto.toDto(response);
+            log.info("결제 성공 - userId: {}, paymentId: {}", userId, response.getPaymentId());
+            return PaymentResponseDto.toDto(response);
+        } catch (Exception e) {
+            log.error("결제 처리 중 예외 발생", e);
+            throw e;
+        }
     }
 
     public PaymentResponseDto cancel(Long paymentId, Long userId) {
+        try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> {
+                        log.warn("결제 취소 실패 - 사용자 없음: {}", userId);
+                        return new UserHandler(ErrorStatus.USER_NOT_FOUND);
+                    });
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            Payment payment = paymentRepository.findById(paymentId)
+                    .orElseThrow(() -> {
+                        log.warn("결제 취소 실패 - 결제 없음: {}", paymentId);
+                        return new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
+                    });
 
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND));
+            if (!user.getUserId().equals(payment.getUser().getUserId())) {
+                log.warn("결제 취소 실패 - 권한 없음: userId {}, paymentUserId {}", userId, payment.getUser().getUserId());
+                throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
+            }
 
-        if (!user.getUserId().equals(payment.getUser().getUserId())) {
-            throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
+            payment.setCompleted(0);
+            paymentRepository.save(payment);
+
+            log.info("결제 취소 성공 - userId: {}, paymentId: {}", userId, paymentId);
+            return PaymentResponseDto.toDto(payment);
+        } catch (Exception e) {
+            log.error("결제 취소 중 예외 발생", e);
+            throw e;
         }
-
-        payment.setCompleted(0);
-        paymentRepository.save(payment);
-
-        return PaymentResponseDto.toDto(payment);
     }
 
     public Map<String, Object> list(Long userId, Pageable pageable) {
+        try {
+            Page<Payment> page = paymentRepository.findByUserId(userId, pageable);
 
-        Page<Payment> page = paymentRepository.findByUserId(userId, pageable);
+            List<PaymentResponseDto> content = page.getContent().stream()
+                    .map(PaymentResponseDto::toDto)
+                    .collect(Collectors.toList());
 
-        List<PaymentResponseDto> content = page.getContent().stream()
-                .map(PaymentResponseDto::toDto)
-                .collect(Collectors.toList());
+            Map<String, Object> result = new HashMap<>();
+            result.put("content", content);
+            result.put("first", page.isFirst());
+            result.put("last", page.isLast());
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("content", content);
-        result.put("first", page.isFirst());
-        result.put("last", page.isLast());
-
-        return result;
+            log.info("결제 목록 조회 성공 - userId: {}, 항목 수: {}", userId, content.size());
+            return result;
+        } catch (Exception e) {
+            log.error("결제 목록 조회 중 예외 발생", e);
+            throw e;
+        }
     }
 
     public PaymentResponseDto detail(Long paymentId, Long userId) {
+        try {
+            Payment payment = paymentRepository.findById(paymentId)
+                    .orElseThrow(() -> {
+                        log.warn("결제 상세 조회 실패 - 결제 없음: {}", paymentId);
+                        return new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
+                    });
 
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND));
+            if (!payment.getUser().getUserId().equals(userId)) {
+                log.warn("결제 상세 조회 실패 - 권한 없음: userId {}, paymentUserId {}", userId, payment.getUser().getUserId());
+                throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
+            }
 
-        if (!payment.getUser().getUserId().equals(userId)) {
-            throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
+            log.info("결제 상세 조회 성공 - paymentId: {}", paymentId);
+            return PaymentResponseDto.toDto(payment);
+        } catch (Exception e) {
+            log.error("결제 상세 조회 중 예외 발생", e);
+            throw e;
         }
-        return PaymentResponseDto.toDto(payment);
     }
-
-
-
 }

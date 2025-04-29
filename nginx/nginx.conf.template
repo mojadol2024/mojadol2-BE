@@ -80,6 +80,12 @@ http {
             proxy_set_header X-Forwarded-Proto $scheme;
         }
 
+        location /grafana {
+                proxy_pass http://pbl2-grafana:3000;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+        }
+
         location = /favicon.ico {
             access_log off;
             log_not_found off;

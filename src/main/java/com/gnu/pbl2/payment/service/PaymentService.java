@@ -9,6 +9,7 @@ import com.gnu.pbl2.payment.repository.PaymentRepository;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
+import com.gnu.pbl2.voucher.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
+    private final VoucherService voucherService;
 
     public PaymentResponseDto pay(PaymentRequestDto paymentRequestDto, Long userId) {
         try {
@@ -36,9 +38,14 @@ public class PaymentService {
                         return new UserHandler(ErrorStatus.USER_NOT_FOUND);
                     });
 
-            Payment payment = new Payment(paymentRequestDto.getAmount());
+            Payment payment = new Payment();
             payment.setUser(user);
+            payment.setPaymentMethod(paymentRequestDto.getPaymentMethod());
+            payment.setAmount(paymentRequestDto.getAmount());
+            payment.setTitle(paymentRequestDto.getTitle());
             Payment response = paymentRepository.save(payment);
+
+            voucherService.goldVoucher(user, response);
 
             log.info("결제 성공 - userId: {}, paymentId: {}", userId, response.getPaymentId());
             return PaymentResponseDto.toDto(response);
@@ -67,8 +74,11 @@ public class PaymentService {
                 throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
             }
 
+            //0으로 변경해서 삭제
             payment.setCompleted(0);
             paymentRepository.save(payment);
+            //바우처 삭제
+            voucherService.cancelVoucherForPayment(payment);
 
             log.info("결제 취소 성공 - userId: {}, paymentId: {}", userId, paymentId);
             return PaymentResponseDto.toDto(payment);

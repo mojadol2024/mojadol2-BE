@@ -21,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByDeletedTimeBefore(LocalDateTime time);
 
+    List<User> findByDeletedTimeIsNull();
+
+
 }

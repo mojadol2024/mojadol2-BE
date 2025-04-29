@@ -124,6 +124,5 @@ public class InterviewService {
             log.error("30일 경과 인터뷰 삭제 실패: error={}", e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERVIEW_SCHEDULE_ERROR);
         }
-
     }
 }

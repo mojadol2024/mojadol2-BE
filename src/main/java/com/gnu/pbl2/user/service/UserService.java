@@ -7,6 +7,7 @@ import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.entity.enums.Tier;
 import com.gnu.pbl2.user.repository.UserRepository;
 import com.gnu.pbl2.utils.JwtUtil;
+import com.gnu.pbl2.voucher.service.VoucherService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final VoucherService voucherService;
 
     public String signUp(UserRequestDto userRequestDto) {
         try {
@@ -35,6 +37,8 @@ public class UserService {
             user.setUserPw(passwordEncoder.encode(user.getUserPw()));
 
             User response = userRepository.save(user);
+
+            voucherService.freeVoucher(response);
             log.info("회원가입 성공: userId={}, username={}", response.getUserId(), response.getUsername());
             return response.getUsername();
 

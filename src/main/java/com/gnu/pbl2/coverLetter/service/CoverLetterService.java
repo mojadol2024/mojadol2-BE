@@ -75,16 +75,16 @@ public class CoverLetterService {
         }
     }
 
-    public void letterDelete(CoverLetterRequestDto coverLetterRequestDto, Long id) {
+    public void letterDelete(Long coverLetterId, Long id) {
         try {
-            CoverLetter coverLetter = coverLetterRepository.findById(coverLetterRequestDto.getCoverLetterId())
+            CoverLetter coverLetter = coverLetterRepository.findById(coverLetterId)
                     .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
 
             letterUserCheck(coverLetter.getUser(), id);
             coverLetter.setIsDeleted(0);
             coverLetterRepository.save(coverLetter);
 
-            log.info("자소서 삭제 완료: coverLetterId={}", coverLetterRequestDto.getCoverLetterId());
+            log.info("자소서 삭제 완료: coverLetterId={}", coverLetterId);
         } catch (CoverLetterHandler e) {
             throw e;
         } catch (Exception e) {

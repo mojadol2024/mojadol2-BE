@@ -21,7 +21,7 @@ public class MailController {
     private final MailService mailService;
     private final UserService userService;
 
-    @PostMapping("/findUserId")
+    @PostMapping("/find-user-id")
     public ResponseEntity<?> findUserId(@RequestBody UserRequestDto userRequestDto) {
         log.info("[POST] 아이디 찾기 메일 발송 진입");
         try {
@@ -32,7 +32,7 @@ public class MailController {
         }
     }
 
-    @PostMapping("/findPassword")
+    @PostMapping("/find-password")
     public ResponseEntity<?> findPassword(@RequestBody UserRequestDto userRequestDto) {
         log.info("[POST] 비밀번호 찾기 메일 발송 진입");
         try {
@@ -43,7 +43,7 @@ public class MailController {
         }
     }
 
-    @PostMapping("/mailCheck")
+    @PostMapping("/mail-check")
     public ResponseEntity<?> mailCheck(@RequestBody MailRequestDto mailRequestDto) {
         log.info("[POST] 메일 인증 코드 확인 진입");
         try {
@@ -54,7 +54,7 @@ public class MailController {
         }
     }
 
-    @PostMapping("/updatePassword")
+    @PostMapping("/update-password")
     public ResponseEntity<?> updatePassword(@RequestBody UserRequestDto userRequestDto) {
         log.info("[POST] 비밀번호 재설정 요청 진입");
         try {

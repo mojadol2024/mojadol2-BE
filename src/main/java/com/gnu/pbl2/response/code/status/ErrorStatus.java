@@ -70,6 +70,10 @@ public enum ErrorStatus implements BaseErrorCode {
     //INTERVIEW_DIRECTORY_NOTFOUND_ERROR(HttpStatus.NOT_FOUND, "SFTP_NOTFOUND_ERROR 5004", "sftp 디렉토리를 못 찾았습니다.")
 
 
+    // Payment 관련 응답
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_ERROR 4004", "결제내역을 못 찾았습니다."),
+    PAYMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "PAYMENT_FORBIDDEN 4005", "본인 정보만 열람 할 수 있습니다.")
+
     ;
 
 

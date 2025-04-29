@@ -16,32 +16,30 @@ public class MyPageController {
 
     private final UserService userService;
 
-    @PostMapping("/checkPassword")
+    @PostMapping("/check-password")
     public ResponseEntity<?> checkPassword(@RequestHeader("Authorization") String accessToken,
                                            @RequestBody UserRequestDto userRequestDto) {
-        log.info("[MyPageController] [POST] checkPassword 요청 진입 - userLoginId={}", userRequestDto.getUserLoginId());
+        log.info("비밀번호 확인 요청 - userLoginId={}", userRequestDto.getUserLoginId());
 
         boolean response = userService.checkPassword(userRequestDto, accessToken);
-
-        return ResponseEntity.ok().body(ApiResponse.onSuccess(response ? "비밀번호가 일치합니다." : "비밀번호가 일치하지 않습니다."));
+        String message = response ? "비밀번호가 일치합니다." : "비밀번호가 일치하지 않습니다.";
+        return ResponseEntity.ok().body(ApiResponse.onSuccess(message));
     }
 
-    @PostMapping("/updateProfile")
+    @PatchMapping("/update-profile")
     public ResponseEntity<?> updateProfile(@RequestHeader("Authorization") String accessToken,
                                            @RequestBody UserRequestDto userRequestDto) {
-        log.info("[MyPageController] [POST] updateProfile 요청 진입 - userLoginId={}", userRequestDto.getUserLoginId());
+        log.info("프로필 수정 요청 - userLoginId={}", userRequestDto.getUserLoginId());
 
         String response = userService.updateProfile(userRequestDto, accessToken);
-
         return ResponseEntity.ok().body(ApiResponse.onSuccess(response));
     }
 
-    @PostMapping("/resignUser")
+    @DeleteMapping("/resign")
     public ResponseEntity<?> resignUser(@RequestHeader("Authorization") String accessToken) {
-        log.info("[MyPageController] [POST] resignUser 요청 진입");
+        log.info("회원 탈퇴 요청");
 
         String response = userService.resignUser(accessToken);
-
         return ResponseEntity.ok().body(ApiResponse.onSuccess(response));
     }
 }

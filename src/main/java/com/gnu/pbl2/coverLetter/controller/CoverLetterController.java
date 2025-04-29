@@ -41,14 +41,24 @@ public class CoverLetterController {
         return ResponseEntity.ok(ApiResponse.onSuccess(responseDto));
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<?> letterDelete(@RequestHeader("Authorization") String accessToken, @RequestBody CoverLetterRequestDto coverLetterRequestDto) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> letterDelete(@RequestHeader("Authorization") String accessToken,
+                                          @PathVariable Long id) {
         Long userId = jwtUtil.extractUserId(accessToken);
-        log.info("자소서 삭제 요청: userId={}, coverLetterId={}", userId, coverLetterRequestDto.getCoverLetterId());
+        log.info("자소서 삭제 요청: userId={}, coverLetterId={}", userId, id);
 
-        coverLetterService.letterDelete(coverLetterRequestDto, userId);
+        coverLetterService.letterDelete(id, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess("삭제 성공"));
     }
+
+    @PostMapping("/spell-checker")
+    public ResponseEntity<?> spellChecker(@RequestBody CoverLetterRequestDto coverLetterRequestDto) {
+        log.info("맞춤법 검사 요청");
+
+        Map<String, Object> response = coverLetterService.checkSpelling(coverLetterRequestDto.getData());
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
 
     @GetMapping("/list")
     public ResponseEntity<?> letterList(@RequestParam(defaultValue = "0") int page,
@@ -62,21 +72,13 @@ public class CoverLetterController {
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
-    @GetMapping("/detail")
+    @GetMapping("/detail/{id}")
     public ResponseEntity<?> letterDetail(@RequestHeader("Authorization") String accessToken,
-                                          @RequestParam Long coverLetterId) {
+                                          @PathVariable Long id) {
         Long userId = jwtUtil.extractUserId(accessToken);
-        log.info("자소서 상세 조회 요청: userId={}, coverLetterId={}", userId, coverLetterId);
+        log.info("자소서 상세 조회 요청: userId={}, coverLetterId={}", userId, id);
 
-        CoverLetterResponseDto response = coverLetterService.letterDetail(coverLetterId, userId);
-        return ResponseEntity.ok(ApiResponse.onSuccess(response));
-    }
-
-    @PostMapping("/SpellChecker")
-    public ResponseEntity<?> SpellChecker(@RequestBody CoverLetterRequestDto coverLetterRequestDto) {
-        log.info("맞춤법 검사 요청");
-
-        Map<String, Object> response = coverLetterService.checkSpelling(coverLetterRequestDto.getData());
+        CoverLetterResponseDto response = coverLetterService.letterDetail(id, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 }

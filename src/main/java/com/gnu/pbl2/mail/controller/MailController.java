@@ -54,7 +54,7 @@ public class MailController {
         }
     }
 
-    @PostMapping("/update-password")
+    @PatchMapping("/update-password")
     public ResponseEntity<?> updatePassword(@RequestBody UserRequestDto userRequestDto) {
         log.info("[POST] 비밀번호 재설정 요청 진입");
         try {

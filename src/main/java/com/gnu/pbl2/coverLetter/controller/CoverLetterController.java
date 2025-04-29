@@ -32,7 +32,7 @@ public class CoverLetterController {
         return ResponseEntity.ok(ApiResponse.onSuccess(responseDto));
     }
 
-    @PostMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<?> letterUpdate(@RequestHeader("Authorization") String accessToken, @RequestBody CoverLetterRequestDto coverLetterRequestDto) {
         Long userId = jwtUtil.extractUserId(accessToken);
         log.info("자소서 수정 요청: userId={}, coverLetterId={}", userId, coverLetterRequestDto.getCoverLetterId());

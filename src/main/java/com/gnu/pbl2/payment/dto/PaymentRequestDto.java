@@ -8,4 +8,6 @@ import lombok.Setter;
 public class PaymentRequestDto {
     private Integer amount;
     private Long paymentId;
+    private String paymentMethod;
+    private String title;
 }

@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/mojadol/api/v1/auth")
+@RequestMapping("/mojadol/api/v1")
 @Slf4j
 public class UserController {
 
@@ -36,8 +36,9 @@ public class UserController {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/signUp")
-    public ResponseEntity<ApiResponse<String>> signup(@RequestBody UserRequestDto userRequestDto) {
+    // 회원가입
+    @PostMapping("/users/sign-up")
+    public ResponseEntity<ApiResponse<String>> signUp(@RequestBody UserRequestDto userRequestDto) {
         log.info("[POST] 회원가입 요청");
         try {
             String response = userService.signUp(userRequestDto);
@@ -47,7 +48,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/signIn")
+    // 로그인
+    @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<String>> login(@RequestBody UserRequestDto userRequestDto) {
         log.info("[POST] 로그인 요청");
         try {
@@ -78,7 +80,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/signOut")
+    // 로그아웃
+    @PostMapping("/auth/logout")
     public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String accessToken) {
         log.info("[POST] 로그아웃 요청");
         try {
@@ -89,7 +92,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/refresh")
+    // 리프레시 토큰
+    @PostMapping("/auth/refresh")
     public ResponseEntity<?> refresh(@RequestBody TokenRequestDto request) {
         log.info("[POST] 리프레시 요청");
         String refreshToken = request.getRefreshToken();
@@ -107,9 +111,10 @@ public class UserController {
         return ResponseEntity.ok().headers(headers).body(ApiResponse.onSuccess("리프레시 성공"));
     }
 
-    @PostMapping("/signUpCheck")
+    // 회원가입 중복체크
+    @GetMapping("/users/check")
     public ResponseEntity<?> signUpCheck(@RequestBody UserRequestDto userRequestDto) {
-        log.info("[POST] 회원가입 중복체크 요청");
+        log.info("[GET] 회원가입 중복체크 요청");
         try {
             Optional<User> user = userService.signUpCheck(userRequestDto);
 

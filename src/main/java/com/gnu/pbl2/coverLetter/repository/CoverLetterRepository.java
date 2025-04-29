@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CoverLetterRepository extends JpaRepository<CoverLetter, Long> {
 
-    @Query("SELECT c FROM CoverLetter c WHERE c.user.id = :userId AND c.isDeleted = 1")
+    @Query("SELECT c FROM CoverLetter c WHERE c.user.userId = :userId AND c.isDeleted = 1")
     Page<CoverLetter> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
     Optional<CoverLetter> findByCoverLetterIdAndIsDeleted(Long coverLetterId, int isDeleted);

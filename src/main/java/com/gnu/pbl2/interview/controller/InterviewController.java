@@ -29,31 +29,31 @@ public class InterviewController {
         return ResponseEntity.ok().body(ApiResponse.onSuccess(responseDto));
     }
 
-    @GetMapping("/delete")
-    public ResponseEntity<?> deleteVideo(@RequestParam("id") Long interviewId) {
-        log.info("deleteVideo 요청 진입: interviewId={}", interviewId);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteVideo(@PathVariable Long id) {
+        log.info("deleteVideo 요청 진입: interviewId={}", id);
 
-        interviewService.deleteVideo(interviewId);
+        interviewService.deleteVideo(id);
 
         return ResponseEntity.ok().body(ApiResponse.onSuccess("삭제되었습니다."));
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> interviewsList(@RequestParam("id") Long coverLetterId) {
-        log.info("interviewsList 요청 진입: coverLetterId={}", coverLetterId);
+    @GetMapping("/list/{id}")
+    public ResponseEntity<?> interviewsList(@PathVariable Long id) {
+        log.info("interviewsList 요청 진입: coverLetterId={}", id);
 
-        List<InterviewResponseDto> responseDtos = interviewService.interviewsList(coverLetterId);
+        List<InterviewResponseDto> responseDtos = interviewService.interviewsList(id);
 
         return ResponseEntity.ok().body(ApiResponse.onSuccess(responseDtos));
     }
 
-    @GetMapping("/detail")
-    public ResponseEntity<?> interviewDetail(@RequestParam("id") Long interviewId) {
-        log.info("interviewDetail 요청 진입: interviewId={}", interviewId);
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> interviewDetail(@PathVariable Long id) {
+        log.info("interviewDetail 요청 진입: interviewId={}", id);
 
-        InterviewResponseDto response = interviewService.interviewDetail(interviewId);
+        InterviewResponseDto response = interviewService.interviewDetail(id);
 
         return ResponseEntity.ok().body(ApiResponse.onSuccess(response));
     }
-
 }
+

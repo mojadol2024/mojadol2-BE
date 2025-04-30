@@ -113,9 +113,17 @@ public class UserController {
 
     // 회원가입 중복체크
     @GetMapping("/users/check")
-    public ResponseEntity<?> signUpCheck(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<?> signUpCheck(@RequestParam(required = false) String userLoginId,
+                                         @RequestParam(required = false) String email,
+                                         @RequestParam(required = false) String nickname
+                                         ) {
         log.info("[GET] 회원가입 중복체크 요청");
         try {
+            UserRequestDto userRequestDto = new UserRequestDto();
+            userRequestDto.setUserLoginId(userLoginId);
+            userRequestDto.setNickname(nickname);
+            userRequestDto.setEmail(email);
+
             Optional<User> user = userService.signUpCheck(userRequestDto);
 
             if (user.isEmpty()) {

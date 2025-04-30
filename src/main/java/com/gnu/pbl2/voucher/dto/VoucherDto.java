@@ -15,9 +15,6 @@ public class VoucherDto {
     private LocalDateTime issuedAt;
     private LocalDateTime expiredAt;
 
-
-
-
     public static VoucherDto toDto(Voucher voucher) {
         VoucherDto dto = new VoucherDto();
         dto.setTotalCount(voucher.getTotalCount());

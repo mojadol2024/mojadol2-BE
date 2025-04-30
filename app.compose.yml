@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  pbl2-be:
+    image: ${DOCKERHUB_USERNAME}/pbl2-be:latest
+    container_name: pbl2-be
+    restart: always
+    networks:
+      - mojadol-network
+    ports:
+      - "4400:4400"
+    volumes:
+      - /home/bgt/pbl2:/home/bgt/pbl2
+    env_file:
+      - .env
+
+
+  redis:
+    image: redis:latest
+    container_name: mojadol-redis
+    ports:
+      - "4479:4479"
+    networks:
+      - mojadol-network
+    restart: always
+    command: redis-server --port 4479 --appendonly yes --replica-read-only no
+
+  nginx:
+    image: ${DOCKERHUB_USERNAME}/pbl2-nginx:latest
+    container_name: pbl2-nginx
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /home/bgt/pbl2/fe/build:/usr/share/nginx/html
+    networks:
+      - mojadol-network
+    restart: always
+
+networks:
+  mojadol-network:
+    driver: bridge

@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   pbl2-be:
-    image: ${DOCKERHUB_USERNAME}/pbl2-be:latest
+    image: ${{secrets.DOCKERHUB_USERNAME}}/pbl2-be:latest
     container_name: pbl2-be
     restart: always
     networks:
@@ -11,7 +11,7 @@ services:
     volumes:
       - /home/bgt/pbl2:/home/bgt/pbl2
     env_file:
-      - .env
+      - /tmp/pbl2/.env
 
 
   redis:
@@ -27,7 +27,6 @@ services:
   nginx:
     image: ${DOCKERHUB_USERNAME}/pbl2-nginx:latest
     container_name: pbl2-nginx
-    env_file: .env
     ports:
       - "80:80"
       - "443:443"
@@ -37,7 +36,9 @@ services:
     networks:
       - mojadol-network
     restart: always
+    env_file:
+    - /tmp/pbl2/.env
 
 networks:
   mojadol-network:
-    driver: bridge
+    external: true

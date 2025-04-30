@@ -18,15 +18,6 @@ jobs:
   cicd:
     runs-on: ubuntu-latest
     steps:
-
-      - name: Get Public IP
-        id: ip
-        uses: haythem/public-ip@v1.3
-
-      - name: Print Public IP
-        run: |
-          echo ${{ steps.ip.outputs.ipv4 }}
-
       - name: Test SSH Connection
         run: nc -zv ${{ secrets.SSH_HOST_PBL2 }} ${{ secrets.SSH_PORT_PBL2 }}
 
@@ -103,67 +94,8 @@ jobs:
             # Docker 네트워크 생성 (없으면 생성)
             docker network create mojadol-network || true
             
-            # 백엔드 컨테이너 업데이트
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
-            docker rm -f pbl2-be || true
-            docker run -d \
-              --env-file /tmp/pbl2/.env \
-              -v /tmp/pbl2/.env:/tmp/pbl2/.env \
-              --restart=always \
-              --name pbl2-be \
-              --network mojadol-network \
-              -p 4400:4400 \
-              -v /home/bgt/pbl2:/home/bgt/pbl2 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
-            
-            # Redis 컨테이너 실행
-            docker rm -f mojadol-redis || true
-            docker run -d \
-              --name mojadol-redis \
-              -p 4479:4479 \
-              --network mojadol-network \
-              --restart always \
-              redis:latest \
-              redis-server --port 4479 --appendonly yes --replica-read-only no
-            
-            # Nginx 컨테이너 업데이트
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
-            docker rm -f pbl2-nginx || true
-            docker run -d \
-              --name pbl2-nginx \
-              -v /etc/letsencrypt:/etc/letsencrypt \
-              -e SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }} \
-              -e SSL_CERTIFICATE_PATH=${{ secrets.SSL_CERTIFICATE_PATH }} \
-              --network mojadol-network \
-              -p 80:80 \
-              -p 443:443 \
-              --restart always \
-              ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
+            # 컨테이너 전부 정리
+            docker compose -f app.compose.yml -f monitoring.compose.yml down || true
 
-            docker exec pbl2-nginx rm -rf /usr/share/nginx/html/*
-            
-            docker cp /home/bgt/pbl2/fe/build/. pbl2-nginx:/usr/share/nginx/html/
-            
-            docker restart pbl2-nginx
-            
-            # prometheus + grafana
-            docker pull prom/prometheus:latest
-            docker rm -f pbl2-prometheus || true
-            docker run -d \
-              --name pbl2-prometheus \
-              --network mojadol-network \
-              -p 9090:9090 \
-              -v /home/bgt/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml \
-              --restart always \
-              prom/prometheus:latest
-
-            docker pull grafana/grafana:latest
-            docker rm -f pbl2-grafana || true
-            docker run -d \
-              --name pbl2-grafana \
-              --network mojadol-network \
-              -p 3000:3000 \
-              -e GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }} \
-              -e GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }} \
-              --restart always \
-              grafana/grafana:latest
+            # 최신 이미지로 다시 실행
+            docker compose -f app.compose.yml -f monitoring.compose.yml up -d

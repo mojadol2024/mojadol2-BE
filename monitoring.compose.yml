@@ -24,3 +24,7 @@ services:
 
 volumes:
   grafana-storage:
+
+networks:
+  mojadol-network:
+    external: true

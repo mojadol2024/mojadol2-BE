@@ -92,7 +92,7 @@ jobs:
             touch /home/bgt/pbl2/.env
 
             # 환경 변수 저장
-            echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" > /home/bgt/pbl2/.env
             echo "DB_USER_NAME_PBL2=${{ secrets.DB_USER_NAME_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "DB_PASSWORD_PBL2=${{ secrets.DB_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "REDIS_HOST_PBL2=${{ secrets.REDIS_HOST_PBL2 }}" >> /home/bgt/pbl2/.env

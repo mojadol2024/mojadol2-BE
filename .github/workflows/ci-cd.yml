@@ -94,5 +94,6 @@ jobs:
             # Docker 네트워크 생성 (없으면 생성)
             docker network create mojadol-network || true
             
-            docker-compose -f app.compose.yml -f monitoring.compose.yml down
+            docker-compose -f ./app.compose.yml -f ./monitoring.compose.yml down
+
             docker-compose -f ./app.compose.yml -f ./monitoring.compose.yml up -d

@@ -101,6 +101,7 @@ jobs:
             echo "SSH_PORT_PBL2=${{ secrets.SSH_PORT_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "SSH_PASSWORD_PBL2=${{ secrets.SSH_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "SSL_CERTIFICATE_PATH=${{ SSL_CERTIFICATE_PATH }}" >> /home/bgt/pbl2/.env
             echo "JWT_TOKEN_PBL_2=${{ secrets.JWT_TOKEN_PBL_2 }}" >> /home/bgt/pbl2/.env
             echo "JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}" >> /home/bgt/pbl2/.env
             echo "JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}" >> /home/bgt/pbl2/.env

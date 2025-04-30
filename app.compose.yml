@@ -11,7 +11,7 @@ services:
     volumes:
       - /home/bgt/pbl2:/home/bgt/pbl2
     env_file:
-      - /tmp/pbl2/.env
+      - /home/bgt/pbl2/.env
 
 
   redis:
@@ -37,7 +37,7 @@ services:
       - mojadol-network
     restart: always
     env_file:
-    - /tmp/pbl2/.env
+    - /home/bgt/pbl2/.env
 
 networks:
   mojadol-network:

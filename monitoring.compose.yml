@@ -5,14 +5,14 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
-      - /monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /home/bgt/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
-    container_name: grafana
+    container_name: pbl2-grafana
     ports:
       - "3000:3000"
     restart: unless-stopped

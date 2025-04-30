@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   pbl2-be:
-    image: ${DOCKERHUB_USERNAME}/pbl2-be:latest
+    image: byeongyeongtae/pbl2-be:latest
     container_name: pbl2-be
     restart: always
     networks:
@@ -25,7 +25,7 @@ services:
     command: redis-server --port 4479 --appendonly yes --replica-read-only no
 
   nginx:
-    image: ${DOCKERHUB_USERNAME}/pbl2-nginx:latest
+    image: byeongyeongtae/pbl2-nginx:latest
     container_name: pbl2-nginx
     ports:
       - "80:80"

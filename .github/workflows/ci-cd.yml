@@ -113,8 +113,8 @@ jobs:
             docker network create mojadol-network || true
 
             export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-            export GF_SECURITY_ADMIN_USER=${{ GF_SECURITY_ADMIN_USER }}
-            export GF_SECURITY_ADMIN_PASSWORD=${{ GF_SECURITY_ADMIN_PASSWORD }}
+            export GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }}
+            export GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }}
             
             # docker-compose로 다운 & 업
             docker-compose -f /home/bgt/pbl2/app.compose.yml -f /home/bgt/pbl2/monitoring.compose.yml down

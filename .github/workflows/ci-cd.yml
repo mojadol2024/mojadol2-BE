@@ -51,6 +51,13 @@ jobs:
           push: true  # 빌드한 이미지를 DockerHub로 푸시
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
 
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GT_KEY }}" | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -69,7 +76,7 @@ jobs:
             cd /home/bgt/pbl2
             
             # 최신 코드 pull 받기
-            git pull https://gyeongt:${{ secrets.PAT_TOKEN }}@github.com/mojadol2024/mojadol2-BE.git main
+            git pull git@github.com:mojadol2024/mojadol2-BE.git main
             
             # 이전 디렉토리로 돌아가기
             cd -

@@ -69,7 +69,7 @@ jobs:
             cd /home/bgt/pbl2
             
             # 최신 코드 pull 받기
-            git pull origin main
+            git pull https://gyeongt:${{ secrets.PAT_TOKEN }}@github.com/mojadol2024/mojadol2-BE.git main
             
             # 이전 디렉토리로 돌아가기
             cd -

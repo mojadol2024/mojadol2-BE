@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 services:
   pbl2-be:
     image: ${DOCKERHUB_USERNAME}/pbl2-be:latest

@@ -71,7 +71,7 @@ jobs:
       - name: Copy prometheus.yml
         run: |
           sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
-          /monitoring/prometheus.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/monitoring
+          ./monitoring/prometheus.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/monitoring
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
 

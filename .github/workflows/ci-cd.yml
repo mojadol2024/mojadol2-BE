@@ -95,4 +95,4 @@ jobs:
             docker network create mojadol-network || true
             
             docker-compose -f app.compose.yml -f monitoring.compose.yml down
-            docker-compose -f app.compose.yml -f monitoring.compose.yml up -d
+            docker-compose -f ./app.compose.yml -f ./monitoring.compose.yml up -d

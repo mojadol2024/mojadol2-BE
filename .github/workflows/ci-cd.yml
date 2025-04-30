@@ -64,7 +64,17 @@ jobs:
           script: |
             set -ex  # 에러 발생 시 즉시 종료 + 실행된 명령어 로그 출력
             
-            # 환경변수 저장할 디렉토리 구조
+            
+            # pbl2 디렉토리로 이동
+            cd /home/bgt/pbl2
+            
+            # 최신 코드 pull 받기
+            git pull origin main
+            
+            # 이전 디렉토리로 돌아가기
+            cd -
+            
+            # .env 파일 환경 변수 설정
             mkdir -p /tmp/pbl2
             touch /tmp/pbl2/.env
             
@@ -87,13 +97,14 @@ jobs:
             echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> /tmp/pbl2/.env
             echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /tmp/pbl2/.env
             chmod 600 /tmp/pbl2/.env
-            
+
             # DockerHub 로그인
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
             
             # Docker 네트워크 생성 (없으면 생성)
             docker network create mojadol-network || true
             
-            docker-compose -f ./app.compose.yml -f ./monitoring.compose.yml down
+            # docker-compose로 다운 & 업
+            docker-compose -f ./home/bgt/pbl2/mojadol2-BE/app.compose.yml -f ./home/bgt/pbl2/mojadol2-BE/monitoring.compose.yml down
+            docker-compose -f ./home/bgt/pbl2/mojadol2-BE/app.compose.yml -f ./home/bgt/pbl2/mojadol2-BE/monitoring.compose.yml up -d
 
-            docker-compose -f ./app.compose.yml -f ./monitoring.compose.yml up -d

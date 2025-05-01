@@ -27,7 +27,7 @@ services:
     networks:
       - mojadol-network
     depends_on:
-      - pbl2-zookeeper
+      - zookeeper
 
   kafka-2:
     image: wurstmeister/kafka:latest
@@ -45,7 +45,7 @@ services:
     networks:
       - mojadol-network
     depends_on:
-      - pbl2-zookeeper
+      - zookeeper
 
   kafka-3:
     image: wurstmeister/kafka:latest
@@ -63,7 +63,7 @@ services:
     networks:
       - mojadol-network
     depends_on:
-      - pbl2-zookeeper
+      - zookeeper
 
 networks:
   mojadol-network:

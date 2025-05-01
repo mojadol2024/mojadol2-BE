@@ -64,7 +64,7 @@ jobs:
       - name: Copy monitoring.compose.yml
         run: |
           sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
-          ./monitoring.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2
+          ./monitoring.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/monitoring
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
 
@@ -121,12 +121,13 @@ jobs:
             chmod 600 /home/bgt/pbl2/.env
             
             
+            # 모니터링 환경변수
             touch /home/bgt/monitoring/.env
             
-            # 모니터링 환경변수
             echo "GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }}" > /home/bgt/monitoring/.env
             echo "GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }}" >> /home/bgt/monitoring/.env
             echo "GF_SERVER_ROOT_URL=${{ secrets.GF_SERVER_ROOT_URL }}" >> /home/bgt/monitoring/.env
+            chmod 600 /home/bgt/monitoring/.env
 
             # DockerHub 로그인
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
@@ -136,10 +137,10 @@ jobs:
 
             # docker-compose로 다운 & 업
             docker-compose -f /home/bgt/pbl2/app.compose.yml \
-            -f /home/bgt/pbl2/monitoring.compose.yml \
+            -f /home/bgt/monitoring/monitoring.compose.yml \
             -f /home/bgt/kafka/kafka.compose.yml down
             
             docker-compose -f /home/bgt/pbl2/app.compose.yml \
-            -f /home/bgt/pbl2/monitoring.compose.yml \
+            -f /home/bgt/monitoring/monitoring.compose.yml \
             -f /home/bgt/kafka/kafka.compose.yml up -d
 

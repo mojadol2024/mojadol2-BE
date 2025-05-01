@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Configuration
-public class firebaseConfig {
+public class FirebaseConfig {
     // 혹시나 알림 서비스 할까 싶어서 넣어놓음 안하면 지울게요
 
     @Value("${firebase.project-id}")

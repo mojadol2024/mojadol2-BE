@@ -75,6 +75,13 @@ jobs:
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
 
+      - name: Copy kafka.compose.yml
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
+          ./kafka.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/kafka
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
+
 
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v1.0.0
@@ -128,6 +135,11 @@ jobs:
             docker network create mojadol-network || true
 
             # docker-compose로 다운 & 업
-            docker-compose -f /home/bgt/pbl2/app.compose.yml -f /home/bgt/pbl2/monitoring.compose.yml down
-            docker-compose -f /home/bgt/pbl2/app.compose.yml -f /home/bgt/pbl2/monitoring.compose.yml up -d
+            docker-compose -f /home/bgt/pbl2/app.compose.yml \
+            -f /home/bgt/pbl2/monitoring.compose.yml \
+            -f /home/bgt/kafka/kafka.compose.yml down
+            
+            docker-compose -f /home/bgt/pbl2/app.compose.yml \
+            -f /home/bgt/pbl2/monitoring.compose.yml \
+            -f /home/bgt/kafka/kafka.compose.yml up -d
 

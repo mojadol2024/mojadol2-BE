@@ -38,6 +38,13 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+  kafka:
+    bootstrap-servers: pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094
+    consumer:
+      group-id: group1
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 jwt:
   secret: ${JWT_TOKEN_PBL_2}

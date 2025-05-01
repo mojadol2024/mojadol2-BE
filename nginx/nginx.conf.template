@@ -86,6 +86,12 @@ http {
                 proxy_set_header X-Real-IP $remote_addr;
         }
 
+        location /prometheus {
+            proxy_pass http://pbl2-prometheus:9090;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
         location = /favicon.ico {
             access_log off;
             log_not_found off;

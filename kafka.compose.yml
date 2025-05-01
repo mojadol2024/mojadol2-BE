@@ -5,9 +5,9 @@ services:
     image: bitnami/zookeeper:latest
     container_name: pbl2-zookeeper
     ports:
-      - "22181:22181"
+      - "2181:2181"
     environment:
-      - ZOOKEEPER_CLIENT_PORT=22181
+      - ZOOKEEPER_CLIENT_PORT=2181
     networks:
       - mojadol-network
 
@@ -21,7 +21,7 @@ services:
         - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka1:29092 # Kafka 클라이언트가 접속할 때 사용할 주소
         - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT # 리스너 이름과 그에 해당하는 보안 프로토콜 매핑 INSIDE는 PLAINTEXT 암호화 없이 통신
         - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE # 브로커들끼리 통신할 때 어떤 리스너를 사용할지 지정
-        - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:22181 # Zookeeper의 호스트:포트 주소
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 # Zookeeper의 호스트:포트 주소
         - KAFKA_BROKER_ID=1 # 브로커 고유 ID.
         - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3 # Kafka 내부에서 사용하는 offset topic의 복제 계수
     networks:
@@ -39,7 +39,7 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka2:29093
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:22181
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_BROKER_ID=2
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
     networks:
@@ -57,7 +57,7 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka3:29094
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:22181
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_BROKER_ID=3
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
     networks:

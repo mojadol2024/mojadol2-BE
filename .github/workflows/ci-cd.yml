@@ -111,20 +111,21 @@ jobs:
             echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> /home/bgt/pbl2/.env
-            echo "GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }}" >> /home/bgt/pbl2/.env
-            echo "GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }}" >> /home/bgt/pbl2/.env
-            echo "GF_SERVER_ROOT_URL=${{ secrets.GF_SERVER_ROOT_URL }}" >> /home/bgt/pbl2/.env
             chmod 600 /home/bgt/pbl2/.env
+            
+            
+            touch /home/bgt/monitoring/.env
+            
+            # 모니터링 환경변수
+            echo "GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }}" > /home/bgt/monitoring/.env
+            echo "GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }}" >> /home/bgt/monitoring/.env
+            echo "GF_SERVER_ROOT_URL=${{ secrets.GF_SERVER_ROOT_URL }}" >> /home/bgt/monitoring/.env
 
             # DockerHub 로그인
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
             
             # Docker 네트워크 생성 (없으면 생성)
             docker network create mojadol-network || true
-
-            export GF_SECURITY_ADMIN_USER=$(grep -w 'GF_SECURITY_ADMIN_USER' /home/bgt/pbl2/.env | tr -d '\n' | cut -d '=' -f2-)
-            export GF_SECURITY_ADMIN_PASSWORD=$(grep -w 'GF_SECURITY_ADMIN_PASSWORD' /home/bgt/pbl2/.env | tr -d '\n' | cut -d '=' -f2-)
-            export GF_SERVER_ROOT_URL=$(grep -w 'GF_SERVER_ROOT_URL' /home/bgt/pbl2/.env | tr -d '\n' | cut -d '=' -f2-)
 
             # docker-compose로 다운 & 업
             docker-compose -f /home/bgt/pbl2/app.compose.yml -f /home/bgt/pbl2/monitoring.compose.yml down

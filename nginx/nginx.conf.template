@@ -81,15 +81,15 @@ http {
         }
 
         # 그라파나 요청 프록시
-        location /grafana {
-                proxy_pass http://pbl2-grafana:3000;
+        location /grafana/ {
+                proxy_pass http://pbl2-grafana:3000/;
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
         }
 
         # 프로메테우스 요청 프록시
-        location /prometheus {
-            proxy_pass http://pbl2-prometheus:9090;
+        location /prometheus/ {
+            proxy_pass http://pbl2-prometheus:9090/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
         }

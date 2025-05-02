@@ -7,6 +7,8 @@ import com.gnu.pbl2.interview.dto.InterviewRequestDto;
 import com.gnu.pbl2.interview.dto.InterviewResponseDto;
 import com.gnu.pbl2.interview.entity.Interview;
 import com.gnu.pbl2.interview.repository.InterviewRepository;
+import com.gnu.pbl2.kafka.KafkaProducer;
+import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.utils.UploadUtil;
 import com.jcraft.jsch.ChannelSftp;
@@ -29,8 +31,8 @@ public class InterviewService {
     private final UploadUtil uploadUtil;
     private final InterviewRepository interviewRepository;
     private final CoverLetterRepository coverLetterRepository;
+    private final KafkaProducer kafkaProducer;
 
-    private final String directoryName = "interview-videos";
 
     public InterviewResponseDto saveVideo(MultipartFile file, Long coverLetterId) {
         try {
@@ -40,20 +42,24 @@ public class InterviewService {
             Interview interview = new Interview();
             interview.setCoverLetter(coverLetter);
 
+            // 임시 인터뷰 저장
             Interview tempInterview = interviewRepository.saveAndFlush(interview);
-            String postDirectory = uploadUtil.postDirectory(directoryName, tempInterview.getInterviewId());
 
-            ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
-            uploadUtil.recreateDirectory(channelSftp, postDirectory);
-            String remoteFilePath = uploadUtil.save(file, channelSftp, postDirectory);
+            // Kafka로 전송할 Payload 구성
+            KafkaVideoPayload payload = KafkaVideoPayload.builder()
+                    .interviewId(tempInterview.getInterviewId())
+                    .fileBytes(file.getBytes())
+                    .originalFilename(file.getOriginalFilename())
+                    .coverLetterId(coverLetterId)
+                    .videoKey(tempInterview.getInterviewId().toString())
+                    .build();
 
-            tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/"+ remoteFilePath);
-            Interview response = interviewRepository.save(tempInterview);
-            response.setVideoUrl(uploadUtil.filePath(response.getVideoUrl()));
+            // Kafka로 비동기 전송
+            kafkaProducer.send(payload);
 
-            log.info("영상 저장 완료: interviewId={}, videoUrl={}", response.getInterviewId(), response.getVideoUrl());
+            log.info("Kafka 전송 완료: interviewId={}, fileName={}", tempInterview.getInterviewId(), file.getOriginalFilename());
 
-            return InterviewResponseDto.toDto(response);
+            return InterviewResponseDto.toDto(tempInterview);
 
         } catch (Exception e) {
             log.error("영상 저장 실패: coverLetterId={}, error={}", coverLetterId, e.getMessage());
@@ -61,7 +67,7 @@ public class InterviewService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void deleteVideo(Long interviewId) {
         try {
             Interview interview = interviewRepository.findById(interviewId)
@@ -103,26 +109,5 @@ public class InterviewService {
         log.info("인터뷰 상세 조회 성공: interviewId={} ", interviewId);
 
         return InterviewResponseDto.toDto(response);
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    @Transactional
-    public void deleteExpiredVideos() {
-        try {
-            LocalDateTime deleteDay = LocalDateTime.now().minusDays(30);
-            List<Interview> expiredInterviews = interviewRepository.findByIsDeletedAndDeletedAtBefore(0, deleteDay);
-
-            for (Interview interview : expiredInterviews) {
-                String postDirectory = uploadUtil.postDirectory(directoryName, interview.getInterviewId());
-                ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
-                uploadUtil.deleteDirectory(channelSftp, postDirectory);
-
-                interviewRepository.delete(interview);
-                log.info("30일 경과 인터뷰 삭제 완료: interviewId={} ", interview.getInterviewId());
-            }
-        }catch (Exception e) {
-            log.error("30일 경과 인터뷰 삭제 실패: error={}", e.getMessage());
-            throw new InterviewHandler(ErrorStatus.INTERVIEW_SCHEDULE_ERROR);
-        }
     }
 }

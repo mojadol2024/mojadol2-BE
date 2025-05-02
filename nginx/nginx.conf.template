@@ -50,6 +50,8 @@ http {
         add_header X-XSS-Protection "1; mode=block";
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
+        client_max_body_size 500M;
+
         # 레이트 리밋 적용
         location / {
             limit_req zone=req_limit_per_ip burst=10 nodelay;

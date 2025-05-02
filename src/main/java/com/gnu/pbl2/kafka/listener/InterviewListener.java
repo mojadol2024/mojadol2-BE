@@ -3,10 +3,10 @@ package com.gnu.pbl2.kafka.listener;
 import com.gnu.pbl2.interview.process.InterviewUploadProcessor;
 import com.gnu.pbl2.kafka.KafkaProducer;
 import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
+import com.gnu.pbl2.utils.CustomMultipartFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -19,11 +19,10 @@ public class InterviewListener {
     @KafkaListener(topics = "interview-video", groupId = "video-group")
     public void consume(KafkaVideoPayload payload) {
         try {
-            MultipartFile multipartFile = new MockMultipartFile(
+            MultipartFile multipartFile = new CustomMultipartFile(
                     payload.getOriginalFilename(),
-                    payload.getOriginalFilename(),
-                    "video/mp4",
-                    payload.getFileBytes()
+                    payload.getFileBytes(),
+                    "video/mp4"
             );
 
             interviewUploadProcessor.process(multipartFile, payload.getCoverLetterId(), payload.getVideoKey());

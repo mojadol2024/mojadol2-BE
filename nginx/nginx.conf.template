@@ -24,6 +24,13 @@ http {
     gzip_min_length 256;
     gzip_vary on;
 
+    # 카프카 로드밸런싱
+    upstream kafka_load_balancing {
+            server pbl2-kafka1:29092;
+            server pbl2-kafka2:29093;
+            server pbl2-kafka3:29094;
+    }
+
 
     # HTTP 요청을 HTTPS로 리디렉션
     server {
@@ -96,13 +103,6 @@ http {
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
         }
-
-        # 카프카 로드 밸런싱
-        upstream kafka_load_balancing {
-                    server pbl2-kafka1:29092;
-                    server pbl2-kafka2:29093;
-                    server pbl2-kafka3:29094;
-                }
 
         # 카프카 요청 프록시
         location /kafka {

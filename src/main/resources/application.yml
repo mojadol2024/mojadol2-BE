@@ -83,3 +83,9 @@ management:
       exposure:
         include: prometheus
 
+logging:
+  level:
+    org.springframework: debug
+    org.hibernate: debug
+    com.gnu.pbl2: debug
+

@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -48,15 +50,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 userId = jwtUtil.extractUserId(jwt);
             } catch (ExpiredJwtException e) {
                 // Access Token이 만료되었을 경우
+                log.error("토큰 만료 오류 발생, JWT: {}", jwt);
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("토큰 만료");
                 return;
             }
 
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                log.info("JWT 유효성 검증 시작, 사용자 ID: {}", userId);
                 UserDetails userDetails = customUserService.loadUserByUsername(userId.toString());
 
                 if (jwtUtil.validateToken(jwt, userDetails)) {
+                    log.info("JWT 유효성 검증 성공, 사용자 인증 완료");
                     SecurityContextHolder.getContext().setAuthentication(
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
                     );
@@ -64,6 +69,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
             chain.doFilter(request, response);
         } catch (Exception e) {
+            log.error("JWT 필터 처리 중 예외 발생: ", e);
             throw new UserHandler(ErrorStatus.JWT_FILTER_ERROR);
         }
 

@@ -140,7 +140,7 @@ jobs:
             -f /home/bgt/monitoring/monitoring.compose.yml \
             -f /home/bgt/kafka/kafka.compose.yml down
             
-            docker-compose --env-file /home/bgt/monitoring/.env -f /home/bgt/monitoring/monitoring.compose.yml up -d
-            docker-compose --env-file /home/bgt/pbl2/.env -f /home/bgt/pbl2/app.compose.yml up -d
-            docker-compose -f /home/bgt/kafka/kafka.compose.yml up -d
+            docker-compose --env-file /home/bgt/monitoring/.env -f /home/bgt/monitoring/monitoring.compose.yml up -d --pull always
+            docker-compose --env-file /home/bgt/pbl2/.env -f /home/bgt/pbl2/app.compose.yml up -d --pull always
+            docker-compose -f /home/bgt/kafka/kafka.compose.yml up -d --pull always
 

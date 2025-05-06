@@ -136,7 +136,7 @@ jobs:
             docker network create mojadol-network || true
 
             # docker-compose로 다운 & 업
-            docker-compose -f /home/bgt/pbl2/app.compose.yml \
+            docker compose -f /home/bgt/pbl2/app.compose.yml \
             -f /home/bgt/monitoring/monitoring.compose.yml \
             -f /home/bgt/kafka/kafka.compose.yml down
             

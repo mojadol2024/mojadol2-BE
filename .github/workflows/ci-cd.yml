@@ -138,7 +138,7 @@ jobs:
             # docker-compose로 다운 & 업
             docker compose -f /home/bgt/pbl2/app.compose.yml \
             -f /home/bgt/monitoring/monitoring.compose.yml \
-            -f /home/bgt/kafka/kafka.compose.yml down
+            -f /home/bgt/kafka/kafka.compose.yml down --remove-orphans
             
             docker compose --env-file /home/bgt/monitoring/.env -f /home/bgt/monitoring/monitoring.compose.yml up -d --pull always
             docker compose --env-file /home/bgt/pbl2/.env -f /home/bgt/pbl2/app.compose.yml up -d --pull always

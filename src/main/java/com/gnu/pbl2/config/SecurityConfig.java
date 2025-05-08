@@ -50,8 +50,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .requiresChannel(channel ->
+                        channel.anyRequest().requiresSecure() // HTTPS 설정 HTTPS 안쓰면 삭제
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/mojadol/api/v1/auth/**", "/mojadol/api/v1/users/**","/actuator/**").permitAll()
+                        .requestMatchers("/mojadol/api/v1/auth/**", "/mojadol/api/v1/users/**", "/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

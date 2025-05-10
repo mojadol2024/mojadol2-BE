@@ -1,9 +1,8 @@
 version: '3.3'
 
 services:
-  zookeeper:
-    image: bitnami/zookeeper:latest
-    container_name: pbl2-zookeeper
+  pbl2-zookeeper:
+    image: bitnami/zookeeper:3.8
     ports:
       - "2181:2181"
     environment:
@@ -12,8 +11,8 @@ services:
     networks:
       - mojadol-network
 
-  kafka-1:
-    image: wurstmeister/kafka:latest
+  pbl2-kafka1:
+    image: bitnami/kafka:3.4
     container_name: pbl2-kafka1
     ports:
       - "29092:29092"
@@ -22,16 +21,17 @@ services:
         - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka1:29092,OUTSIDE://pbl2-kafka1:29092
         - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT # 리스너 이름과 그에 해당하는 보안 프로토콜 매핑 INSIDE는 PLAINTEXT 암호화 없이 통신
         - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE # 브로커들끼리 통신할 때 어떤 리스너를 사용할지 지정
-        - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 # Zookeeper의 호스트:포트 주소
+        - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:2181 # Zookeeper의 호스트:포트 주소
         - KAFKA_BROKER_ID=1 # 브로커 고유 ID
         - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3 # Kafka 내부에서 사용하는 offset topic의 복제 계수
+        - KAFKA_CFG_KRAFT_MODE=false
     networks:
       - mojadol-network
     depends_on:
-      - zookeeper
+      - pbl2-zookeeper
 
-  kafka-2:
-    image: wurstmeister/kafka:latest
+  pbl2-kafka2:
+    image: bitnami/kafka:3.4
     container_name: pbl2-kafka2
     ports:
       - "29093:29093"
@@ -40,16 +40,17 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka2:29093,OUTSIDE://pbl2-kafka2:29093
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:2181
       - KAFKA_BROKER_ID=2
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_KRAFT_MODE=false
     networks:
       - mojadol-network
     depends_on:
-      - zookeeper
+      - pbl2-zookeeper
 
-  kafka-3:
-    image: wurstmeister/kafka:latest
+  pbl2-kafka3:
+    image: bitnami/kafka:3.4
     container_name: pbl2-kafka3
     ports:
       - "29094:29094"
@@ -58,13 +59,14 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka3:29094,OUTSIDE://pbl2-kafka3:29094
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:2181
       - KAFKA_BROKER_ID=3
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_KRAFT_MODE=false
     networks:
       - mojadol-network
     depends_on:
-      - zookeeper
+      - pbl2-zookeeper
 
 networks:
   mojadol-network:

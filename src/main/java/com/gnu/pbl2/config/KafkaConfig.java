@@ -44,15 +44,11 @@ public class KafkaConfig {
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "video-group");
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        consumerProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-
-        JsonDeserializer<KafkaVideoPayload> valueDeserializer = new JsonDeserializer<>(KafkaVideoPayload.class);
-        valueDeserializer.addTrustedPackages("*");
 
         return new DefaultKafkaConsumerFactory<>(
                 consumerProps,
                 new StringDeserializer(),
-                valueDeserializer
+                new JsonDeserializer<>(KafkaVideoPayload.class)
         );
     }
 

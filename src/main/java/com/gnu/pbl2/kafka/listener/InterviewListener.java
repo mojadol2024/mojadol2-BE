@@ -7,17 +7,19 @@ import com.gnu.pbl2.utils.CustomMultipartFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class InterviewListener {
 
     private final InterviewUploadProcessor interviewUploadProcessor;
     private final KafkaProducer kafkaProducer;
 
     @KafkaListener(topics = "interview-video", groupId = "video-group")
-    public void consume(KafkaVideoPayload payload) {
+    public void listen(KafkaVideoPayload payload) {
         try {
             MultipartFile multipartFile = new CustomMultipartFile(
                     payload.getOriginalFilename(),

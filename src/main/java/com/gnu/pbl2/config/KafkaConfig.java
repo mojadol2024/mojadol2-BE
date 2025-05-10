@@ -1,5 +1,6 @@
 package com.gnu.pbl2.config;
 
+import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -8,6 +9,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -16,6 +18,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.listener.MessageListenerContainer;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,36 +28,41 @@ import java.util.Map;
 public class KafkaConfig {
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
+    public KafkaTemplate<String, KafkaVideoPayload> kafkaTemplate() {
         Map<String, Object> producerProps = new HashMap<>();
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094");
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
-        DefaultKafkaProducerFactory<String, String> factory = new DefaultKafkaProducerFactory<>(producerProps);
-        return new KafkaTemplate<>(factory);
+        return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerProps));
     }
 
     @Bean
-    public MessageListenerContainer messageListenerContainer1() {
-        ContainerProperties containerProps = new ContainerProperties("topic1");
-        containerProps.setMessageListener(new MessageListener<String, String>() {
-            @Override
-            public void onMessage(ConsumerRecord<String, String> record) {
-                System.out.println("Received from cluster 1: " + record.value());
-            }
-        });
-
-        return new ConcurrentMessageListenerContainer<>(consumerFactory(), containerProps);
-    }
-
-    private ConsumerFactory<String, String> consumerFactory() {
+    public ConsumerFactory<String, KafkaVideoPayload> consumerFactory() {
         Map<String, Object> consumerProps = new HashMap<>();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094");
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "group1");
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "video-group");
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        consumerProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
-        return new DefaultKafkaConsumerFactory<>(consumerProps);
+        JsonDeserializer<KafkaVideoPayload> valueDeserializer = new JsonDeserializer<>(KafkaVideoPayload.class);
+        valueDeserializer.addTrustedPackages("*");
+
+        return new DefaultKafkaConsumerFactory<>(
+                consumerProps,
+                new StringDeserializer(),
+                valueDeserializer
+        );
     }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, KafkaVideoPayload> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, KafkaVideoPayload> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
+
+
 }

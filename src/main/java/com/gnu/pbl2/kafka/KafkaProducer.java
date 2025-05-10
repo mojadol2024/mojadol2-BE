@@ -13,21 +13,19 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class KafkaProducer {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, KafkaVideoPayload> kafkaTemplate;
 
     private static final String TOPIC = "interview-video";
 
-    public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
+    public KafkaProducer(KafkaTemplate<String, KafkaVideoPayload> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     // 메시지 보내기 메서드
     public void send(KafkaVideoPayload payload) {
         try {
-            // Kafka에 보내기 전에 JSON 형식으로 변환
-            String payloadJson = new ObjectMapper().writeValueAsString(payload);
-            kafkaTemplate.send(TOPIC, payloadJson);
-        } catch (JsonProcessingException e) {
+            kafkaTemplate.send(TOPIC, payload);
+        } catch (Exception e) {
             log.error("Kafka 메시지 전송 실패: {}", e.getMessage());
         }
     }

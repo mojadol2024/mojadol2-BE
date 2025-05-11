@@ -43,10 +43,14 @@ public class KafkaConfig {
         Map<String, Object> consumerProps = new HashMap<>();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094");
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "video-group");
+        consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
         JsonDeserializer<KafkaVideoPayload> deserializer = new JsonDeserializer<>(KafkaVideoPayload.class);
+        deserializer.setRemoveTypeHeaders(false);
         deserializer.addTrustedPackages("*");
+        deserializer.setUseTypeMapperForKey(true);
 
         return new DefaultKafkaConsumerFactory<>(
                 consumerProps,
@@ -54,6 +58,7 @@ public class KafkaConfig {
                 deserializer
         );
     }
+
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, KafkaVideoPayload> kafkaListenerContainerFactory() {

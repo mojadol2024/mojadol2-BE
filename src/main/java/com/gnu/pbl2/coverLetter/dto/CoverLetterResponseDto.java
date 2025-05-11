@@ -17,6 +17,4 @@ public class CoverLetterResponseDto {
         this.data = coverLetter.getData();
     }
 
-
-    public static toResponseDto()
 }

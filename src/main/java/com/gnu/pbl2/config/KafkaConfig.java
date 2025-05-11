@@ -34,6 +34,7 @@ public class KafkaConfig {
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094");
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        producerProps.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 52428800);
 
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerProps));
     }
@@ -46,6 +47,9 @@ public class KafkaConfig {
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+
+        consumerProps.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 52428800);
+        consumerProps.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, 52428800);
 
         JsonDeserializer<KafkaVideoPayload> deserializer = new JsonDeserializer<>(KafkaVideoPayload.class);
         deserializer.setRemoveTypeHeaders(false);

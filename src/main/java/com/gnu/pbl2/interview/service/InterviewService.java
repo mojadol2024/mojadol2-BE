@@ -47,11 +47,9 @@ public class InterviewService {
 
             // Kafka로 전송할 Payload 구성
             KafkaVideoPayload payload = KafkaVideoPayload.builder()
-                    .interviewId(tempInterview.getInterviewId())
+                    .interview(tempInterview)
                     .fileBytes(file.getBytes())
                     .originalFilename(file.getOriginalFilename())
-                    .coverLetterId(coverLetterId)
-                    .videoKey(tempInterview.getInterviewId().toString())
                     .build();
 
             // Kafka로 비동기 전송

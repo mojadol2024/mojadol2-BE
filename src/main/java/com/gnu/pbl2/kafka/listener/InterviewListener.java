@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class InterviewListener {
 
     private final InterviewUploadProcessor interviewUploadProcessor;
-    private final KafkaProducer kafkaProducer;
 
     @KafkaListener(topics = "interview-video", groupId = "video-group")
     public void listen(KafkaVideoPayload payload) {
@@ -27,10 +26,8 @@ public class InterviewListener {
                     "video/mp4"
             );
 
-            interviewUploadProcessor.process(multipartFile, payload.getCoverLetterId(), payload.getVideoKey());
-
-            kafkaProducer.send(payload);
-            log.info("영상 처리 완료: {}", payload.getVideoKey());
+            interviewUploadProcessor.process(multipartFile, payload.getInterview());
+            log.info("영상 처리 완료: {}", payload.getOriginalFilename());
         } catch (Exception e) {
             log.error("영상 처리 실패: {}", e.getMessage());
         }

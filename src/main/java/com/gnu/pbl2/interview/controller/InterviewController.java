@@ -24,9 +24,9 @@ public class InterviewController {
                                          @RequestParam("id") Long coverLetterId) {
         log.info("uploadVideo 요청 진입: coverLetterId={}", coverLetterId);
 
-        InterviewResponseDto responseDto = interviewService.saveVideo(video, coverLetterId);
+        interviewService.saveVideo(video, coverLetterId);
 
-        return ResponseEntity.ok().body(ApiResponse.onSuccess(responseDto));
+        return ResponseEntity.ok().body(ApiResponse.onSuccess("비동기 처리 성공"));
     }
 
     @DeleteMapping("/delete/{id}")

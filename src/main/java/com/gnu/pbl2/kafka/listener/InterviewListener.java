@@ -1,7 +1,6 @@
 package com.gnu.pbl2.kafka.listener;
 
 import com.gnu.pbl2.interview.process.InterviewUploadProcessor;
-import com.gnu.pbl2.kafka.KafkaProducer;
 import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import com.gnu.pbl2.utils.CustomMultipartFile;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class InterviewListener {
                     "video/mp4"
             );
 
-            interviewUploadProcessor.process(multipartFile, payload.getInterview());
+            interviewUploadProcessor.process(multipartFile, payload.getCoverLetterId());
             log.info("영상 처리 완료: {}", payload.getOriginalFilename());
         } catch (Exception e) {
             log.error("영상 처리 실패: {}", e.getMessage());

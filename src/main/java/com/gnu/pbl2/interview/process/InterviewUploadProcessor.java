@@ -22,25 +22,33 @@ public class InterviewUploadProcessor {
     private final InterviewRepository interviewRepository;
     private final CoverLetterRepository coverLetterRepository;
 
-    public void process(MultipartFile file, Interview interview) {
+    public void process(MultipartFile file, Long coverLetterId) {
+        CoverLetter coverLetter = coverLetterRepository.findById(coverLetterId)
+                .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
+
+        Interview interview = new Interview();
+        interview.setCoverLetter(coverLetter);
+
+        // 임시 인터뷰 저장
+        Interview tempInterview = interviewRepository.saveAndFlush(interview);
         try {
 
             String directoryName = "interview-videos";
 
             // 파일 처리
-            String postDirectory = uploadUtil.postDirectory(directoryName, interview.getInterviewId());
+            String postDirectory = uploadUtil.postDirectory(directoryName, tempInterview.getInterviewId());
             ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
             uploadUtil.recreateDirectory(channelSftp, postDirectory);
             String remoteFilePath = uploadUtil.save(file, channelSftp, postDirectory);
 
             // 영상 URL 업데이트
-            interview.setVideoUrl(directoryName + "/" + interview.getInterviewId() + "/" + remoteFilePath);
-            interviewRepository.save(interview);
+            tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/" + remoteFilePath);
+            interviewRepository.save(tempInterview);
 
-            log.info("Kafka Consumer - 영상 저장 완료: interviewId={}, videoUrl={}", interview.getInterviewId(), interview.getVideoUrl());
+            log.info("Kafka Consumer - 영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
 
         } catch (Exception e) {
-            log.error("Kafka Consumer - 영상 저장 실패: interviewId={}, error={}", interview.getInterviewId(), e.getMessage());
+            log.error("Kafka Consumer - 영상 저장 실패: interviewId={}, error={}", tempInterview.getInterviewId(), e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERVIEW_SAVE_ERROR);
         }
     }

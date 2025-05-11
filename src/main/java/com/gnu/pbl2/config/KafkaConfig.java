@@ -19,6 +19,7 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class KafkaConfig {
         Map<String, Object> producerProps = new HashMap<>();
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094");
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerProps));
     }
@@ -43,12 +44,14 @@ public class KafkaConfig {
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094");
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "video-group");
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+
+        JsonDeserializer<KafkaVideoPayload> deserializer = new JsonDeserializer<>(KafkaVideoPayload.class);
+        deserializer.addTrustedPackages("*");
 
         return new DefaultKafkaConsumerFactory<>(
                 consumerProps,
                 new StringDeserializer(),
-                new JsonDeserializer<>(KafkaVideoPayload.class)
+                deserializer
         );
     }
 

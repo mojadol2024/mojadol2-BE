@@ -87,5 +87,5 @@ logging:
   level:
     org.springframework: info
     org.hibernate: warn
-    com.gnu.pbl2: info
+    com.gnu.pbl2: error
 

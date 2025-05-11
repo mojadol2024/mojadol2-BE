@@ -23,6 +23,10 @@ services:
         - KAFKA_BROKER_ID=1 # 브로커 고유 ID
         - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3 # Kafka 내부에서 사용하는 offset topic의 복제 계수
         - KAFKA_CFG_KRAFT_MODE=false
+        - KAFKA_LISTENER_MAX_CONNECTIONS=1000
+        - KAFKA_LISTENER_MAX_MESSAGE_SIZE=52428800
+        - KAFKA_REPLICATION_MAX_BYTES=52428800
+        - KAFKA_MESSAGE_MAX_BYTES=52428800
     networks:
       - mojadol-network
     depends_on:
@@ -44,6 +48,10 @@ services:
       - KAFKA_BROKER_ID=2
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
       - KAFKA_CFG_KRAFT_MODE=false
+      - KAFKA_LISTENER_MAX_CONNECTIONS=1000
+      - KAFKA_LISTENER_MAX_MESSAGE_SIZE=52428800
+      - KAFKA_REPLICATION_MAX_BYTES=52428800
+      - KAFKA_MESSAGE_MAX_BYTES=52428800
     networks:
       - mojadol-network
     depends_on:
@@ -63,6 +71,10 @@ services:
       - KAFKA_BROKER_ID=3
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
       - KAFKA_CFG_KRAFT_MODE=false
+      - KAFKA_LISTENER_MAX_CONNECTIONS=1000
+      - KAFKA_LISTENER_MAX_MESSAGE_SIZE=52428800
+      - KAFKA_REPLICATION_MAX_BYTES=52428800
+      - KAFKA_MESSAGE_MAX_BYTES=52428800
     networks:
       - mojadol-network
     depends_on:

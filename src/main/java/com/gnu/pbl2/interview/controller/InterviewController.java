@@ -21,10 +21,10 @@ public class InterviewController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadVideo(@RequestParam("video") MultipartFile video,
-                                         @RequestParam("id") Long coverLetterId) {
-        log.info("uploadVideo 요청 진입: coverLetterId={}", coverLetterId);
+                                         @RequestParam("id") Long questionId) {
+        log.info("uploadVideo 요청 진입: questionId={}", questionId);
 
-        interviewService.saveVideo(video, coverLetterId);
+        interviewService.saveVideo(video, questionId);
 
         return ResponseEntity.ok().body(ApiResponse.onSuccess("비동기 처리 성공"));
     }

@@ -5,6 +5,8 @@ import com.gnu.pbl2.coverLetter.repository.CoverLetterRepository;
 import com.gnu.pbl2.exception.handler.InterviewHandler;
 import com.gnu.pbl2.interview.entity.Interview;
 import com.gnu.pbl2.interview.repository.InterviewRepository;
+import com.gnu.pbl2.question.entity.Question;
+import com.gnu.pbl2.question.repository.QuestionRepository;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.utils.UploadUtil;
 import com.jcraft.jsch.ChannelSftp;
@@ -20,14 +22,15 @@ public class InterviewUploadProcessor {
 
     private final UploadUtil uploadUtil;
     private final InterviewRepository interviewRepository;
-    private final CoverLetterRepository coverLetterRepository;
+    private final QuestionRepository questionRepository;
 
-    public void process(MultipartFile file, Long coverLetterId) {
-        CoverLetter coverLetter = coverLetterRepository.findById(coverLetterId)
+    public void process(MultipartFile file, Long questionId) {
+        Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
 
         Interview interview = new Interview();
-        interview.setCoverLetter(coverLetter);
+        interview.setQuestion(question);
+        question.setIs_answered(1);
 
         // 임시 인터뷰 저장
         Interview tempInterview = interviewRepository.saveAndFlush(interview);
@@ -44,6 +47,8 @@ public class InterviewUploadProcessor {
             // 영상 URL 업데이트
             tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/" + remoteFilePath);
             interviewRepository.save(tempInterview);
+            // 인터뷰 작성되면 question answered 1로 변경
+            questionRepository.save(question);
 
             log.info("Kafka Consumer - 영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
 

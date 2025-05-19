@@ -78,7 +78,7 @@ public class CoverLetterController {
         Long userId = jwtUtil.extractUserId(accessToken);
         log.info("자소서 상세 조회 요청: userId={}, coverLetterId={}", userId, id);
 
-        CoverLetterResponseDto response = coverLetterService.letterDetail(id, userId);
+        Map<String, Object> response = coverLetterService.letterDetail(id, userId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 }

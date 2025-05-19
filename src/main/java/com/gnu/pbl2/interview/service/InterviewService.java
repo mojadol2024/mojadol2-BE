@@ -4,6 +4,7 @@ import com.gnu.pbl2.exception.handler.InterviewHandler;
 import com.gnu.pbl2.interview.dto.InterviewResponseDto;
 import com.gnu.pbl2.interview.entity.Interview;
 import com.gnu.pbl2.interview.repository.InterviewRepository;
+import com.gnu.pbl2.kafka.IKafkaProducer;
 import com.gnu.pbl2.kafka.KafkaProducer;
 import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
@@ -25,15 +26,15 @@ public class InterviewService {
 
     private final UploadUtil uploadUtil;
     private final InterviewRepository interviewRepository;
-    private final KafkaProducer kafkaProducer;
+    private final IKafkaProducer kafkaProducer;
 
 
-    public void saveVideo(MultipartFile file, Long coverLetterId) {
+    public void saveVideo(MultipartFile file, Long questionId) {
         try {
 
             // Kafka로 전송할 Payload 구성
             KafkaVideoPayload payload = KafkaVideoPayload.builder()
-                    .coverLetterId(coverLetterId)
+                    .questionId(questionId)
                     .fileBytes(file.getBytes())
                     .originalFilename(file.getOriginalFilename())
                     .build();
@@ -41,10 +42,10 @@ public class InterviewService {
             // Kafka로 비동기 전송
             kafkaProducer.send(payload);
 
-            log.info("Kafka 전송 완료: coverLetterId={}, fileName={}", coverLetterId, file.getOriginalFilename());
+            log.info("Kafka 전송 완료: questionId={}, fileName={}", questionId, file.getOriginalFilename());
 
         } catch (Exception e) {
-            log.error("영상 저장 실패: coverLetterId={}, error={}", coverLetterId, e.getMessage());
+            log.error("영상 저장 실패: questionId={}, error={}", questionId, e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERVIEW_SAVE_ERROR);
         }
     }
@@ -66,9 +67,10 @@ public class InterviewService {
         }
     }
 
-    public List<InterviewResponseDto> interviewsList(Long coverLetterId) {
+    // 이거 안쓰지 않을까 싶음 아마도
+    public List<InterviewResponseDto> interviewsList(Long questionId) {
         try {
-            List<Interview> interviews = interviewRepository.findByCoverLetterIdAndDeletedAt(coverLetterId, 1);
+            List<Interview> interviews = interviewRepository.findByQuestionIdAndDeletedAt(questionId, 1);
 
             List<InterviewResponseDto> response = new ArrayList<>();
             for (Interview interview: interviews) {
@@ -76,11 +78,11 @@ public class InterviewService {
                 response.add(InterviewResponseDto.toDto(interview));
             }
 
-            log.info("인터뷰 리스트 조회 성공: coverLetterId={}, count={}개", coverLetterId, response.size());
+            log.info("인터뷰 리스트 조회 성공: questionId={}, count={}개", questionId, response.size());
 
             return response;
         } catch (Exception e) {
-            log.error("인터뷰 리스트 조회 실패: coverLetterId={}, error={}", coverLetterId, e.getMessage());
+            log.error("인터뷰 리스트 조회 실패: questionId={}, error={}", questionId, e.getMessage());
             throw new InterviewHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
         }
     }

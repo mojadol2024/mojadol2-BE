@@ -12,5 +12,5 @@ import lombok.*;
 public class KafkaVideoPayload {
     private byte[] fileBytes;
     private String originalFilename;
-    private Long coverLetterId;
+    private Long questionId;
 }

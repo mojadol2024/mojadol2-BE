@@ -1,11 +1,13 @@
 spring:
+  profiles:
+    active: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL_PBL2}?serverTimezone=Asia/Seoul
     username: ${DB_USER_NAME_PBL2}
     password: ${DB_PASSWORD_PBL2}
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
       show-sql: true # true ??? JPA ??? ?? ??
@@ -76,6 +78,10 @@ firebase:
   private-key: ${FIREBASE_PRIVATE_KEY_PBL2}
   client-email: ${FIREBASE_CLIENT_EMAIL_PBL2}
   client-id: ${FIREBASE_CLIENT_ID_PBL2}
+
+external:
+  django:
+    base-url: ${DJANGO_BASE_URL}
 
 management:
   endpoints:

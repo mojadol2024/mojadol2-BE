@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,8 @@ import org.springframework.stereotype.Component;
 @EnableKafka
 @Component
 @Slf4j
-public class KafkaProducer {
+@Profile("!local")
+public class KafkaProducer implements IKafkaProducer{
 
     private final KafkaTemplate<String, KafkaVideoPayload> kafkaTemplate;
 

@@ -5,6 +5,7 @@ import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import com.gnu.pbl2.utils.CustomMultipartFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+@Profile("!local")
 public class InterviewListener {
 
     private final InterviewUploadProcessor interviewUploadProcessor;
@@ -25,7 +27,7 @@ public class InterviewListener {
                     "video/mp4"
             );
 
-            interviewUploadProcessor.process(multipartFile, payload.getCoverLetterId());
+            interviewUploadProcessor.process(multipartFile, payload.getQuestionId());
             log.info("영상 처리 완료: {}", payload.getOriginalFilename());
         } catch (Exception e) {
             log.error("영상 처리 실패: {}", e.getMessage());

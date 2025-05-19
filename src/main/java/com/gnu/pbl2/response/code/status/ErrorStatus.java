@@ -58,7 +58,7 @@ public enum ErrorStatus implements BaseErrorCode {
     COVER_LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "COVER_LETTER4004", "자소서 데이터가 없습니다."),
     COVER_LETTER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "COVER_LETTER4000", "자소서 데이터가 없습니다."),
     COVER_LETTER_JSON_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COVER_LETTER5002", "데이터 파싱 중 에러가 발생했습니다. 변경태한테 물어보세요."),
-    SPELLCHECKER_PASSPORTKEY_NOT_FOUND(HttpStatus.NOT_FOUND, "COVER_LETTER4003", "맞춤법 검사 키가 없습니다. 변경태한테 물어보세요."),
+    SPELLCHECKER_PASSPORTKEY_NOT_FOUND(HttpStatus.NOT_FOUND, "COVER_LETTER4040", "맞춤법 검사 키가 없습니다. 변경태한테 물어보세요."),
     SPELLCHECKER_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SPELLCHECKER5001", "맞춤법 검사 중 서버에 에러가 발생하였습니다."),
 
     INTERVIEW_SFTP_CONNECT_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "SFTP_CONNECT_ERROR 5003", "sftp 연결 실패했습니다."),
@@ -72,7 +72,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Payment 관련 응답
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_ERROR 4004", "결제내역을 못 찾았습니다."),
-    PAYMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "PAYMENT_FORBIDDEN 4005", "본인 정보만 열람 할 수 있습니다.")
+    PAYMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "PAYMENT_FORBIDDEN 4005", "본인 정보만 열람 할 수 있습니다."),
+
+
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION_NOT_FOUND 4004", "질문 내용이 없습니다."),
+    QUESTION_BAD_REQUEST(HttpStatus.BAD_REQUEST, "QUESTION_NOT_FOUND 4000", "질문 생성 에러"),
+    QUESTION_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "QUESTION_INTERNAL_SERVER_ERROR 5000", "질문관련 서버 에러")
 
     ;
 

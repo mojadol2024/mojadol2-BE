@@ -118,6 +118,7 @@ jobs:
             echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> /home/bgt/pbl2/.env
+            echo "DJANGO_BASE_URL=${{ secrets.DJANGO_BASE_URL }}" >> /home/bgt/pbl2/.env
             chmod 600 /home/bgt/pbl2/.env
             
             
@@ -136,11 +137,12 @@ jobs:
             docker network create mojadol-network || true
 
             # docker-compose로 다운 & 업
-            docker-compose -f /home/bgt/pbl2/app.compose.yml \
+            docker compose -f /home/bgt/pbl2/app.compose.yml \
             -f /home/bgt/monitoring/monitoring.compose.yml \
-            -f /home/bgt/kafka/kafka.compose.yml down
-            
-            docker-compose --env-file /home/bgt/monitoring/.env -f /home/bgt/monitoring/monitoring.compose.yml up -d --pull always
-            docker-compose --env-file /home/bgt/pbl2/.env -f /home/bgt/pbl2/app.compose.yml up -d --pull always
-            docker-compose -f /home/bgt/kafka/kafka.compose.yml up -d --pull always
+            -f /home/bgt/kafka/kafka.compose.yml down -v --remove-orphans
+  
+            docker compose --env-file /home/bgt/monitoring/.env -f /home/bgt/monitoring/monitoring.compose.yml up -d --pull always --force-recreate
+            docker compose --env-file /home/bgt/pbl2/.env -f /home/bgt/pbl2/app.compose.yml up -d --pull always --force-recreate
+            docker compose -f /home/bgt/kafka/kafka.compose.yml up -d --pull always --force-recreate
+
 

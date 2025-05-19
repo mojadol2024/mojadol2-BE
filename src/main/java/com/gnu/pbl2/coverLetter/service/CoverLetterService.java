@@ -6,6 +6,9 @@ import com.gnu.pbl2.coverLetter.dto.CoverLetterResponseDto;
 import com.gnu.pbl2.coverLetter.entity.CoverLetter;
 import com.gnu.pbl2.coverLetter.repository.CoverLetterRepository;
 import com.gnu.pbl2.exception.handler.CoverLetterHandler;
+import com.gnu.pbl2.question.entity.Question;
+import com.gnu.pbl2.question.repository.QuestionRepository;
+import com.gnu.pbl2.question.service.QuestionService;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
@@ -33,6 +36,8 @@ public class CoverLetterService {
     private final CoverLetterRepository coverLetterRepository;
     private final UserRepository userRepository;
     private final SpellCheckerUtil spellCheckerUtil;
+    private final QuestionService questionService;
+    private final QuestionRepository questionRepository;
 
     public CoverLetterResponseDto letterWrite(CoverLetterRequestDto coverLetterRequestDto, Long id) {
         try {
@@ -40,7 +45,9 @@ public class CoverLetterService {
                     .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.USER_NOT_FOUND));
 
             CoverLetter coverLetter = new CoverLetter(coverLetterRequestDto.getData(), user, coverLetterRequestDto.getTitle());
-            CoverLetter savedCoverLetter = coverLetterRepository.save(coverLetter);
+            CoverLetter savedCoverLetter = coverLetterRepository.saveAndFlush(coverLetter);
+
+            questionService.generateQuestion(savedCoverLetter);
 
             log.info("자소서 저장 완료: coverLetterId={}", savedCoverLetter.getCoverLetterId());
 
@@ -115,16 +122,25 @@ public class CoverLetterService {
         }
     }
 
-    public CoverLetterResponseDto letterDetail(Long coverLetterId, Long userId) {
+
+    // 5월 19일 letter상세 coverLetter정보랑 question List로 반환하게 변경
+    public Map<String, Object> letterDetail(Long coverLetterId, Long userId) {
         try {
             CoverLetter coverLetter = coverLetterRepository.findByCoverLetterIdAndIsDeleted(coverLetterId, 1)
                     .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
 
             letterUserCheck(coverLetter.getUser(), userId);
 
+            List<Question> questions = questionRepository.findByCoverLetter(coverLetter);
+
+            Map<String, Object> response = new HashMap<>();
+
+            response.put("coverLetter", new CoverLetterResponseDto(coverLetter));
+            response.put("questions", questions);
+
             log.info("자소서 상세 조회 성공: coverLetterId={}", coverLetterId);
 
-            return new CoverLetterResponseDto(coverLetter);
+            return response;
         } catch (CoverLetterHandler e) {
             throw e;
         } catch (Exception e) {
@@ -178,6 +194,8 @@ public class CoverLetterService {
         }
     }
 
+
+    // 이거 interface클래스 기반으로 바꿔서 어떤 id가 들어와도 question coverLetter interview 등을 확인 할 수 있게 변경하기
     private boolean letterUserCheck(User user, Long id) {
         if (user.getUserId().equals(id)) {
             return true;

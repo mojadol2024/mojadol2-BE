@@ -1,6 +1,7 @@
 package com.gnu.pbl2.interview.entity;
 
 import com.gnu.pbl2.coverLetter.entity.CoverLetter;
+import com.gnu.pbl2.question.entity.Question;
 import com.gnu.pbl2.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,8 +33,8 @@ public class Interview {
     private LocalDateTime deletedAt;
 
     @ManyToOne
-    @JoinColumn(name = "cover_letter_id", nullable = false)
-    private CoverLetter coverLetter;
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 
     @PrePersist
     public void prePersist() {

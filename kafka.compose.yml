@@ -1,70 +1,84 @@
 version: '3.3'
 
 services:
-  zookeeper:
-    image: bitnami/zookeeper:latest
-    container_name: pbl2-zookeeper
-    ports:
-      - "2181:2181"
+  pbl2-zookeeper:
+    image: bitnami/zookeeper:3.8
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
       - mojadol-network
 
-  kafka-1:
-    image: wurstmeister/kafka:latest
+  pbl2-kafka1:
+    image: bitnami/kafka:3.4
     container_name: pbl2-kafka1
     ports:
       - "29092:29092"
     environment:
-        - KAFKA_LISTENERS=INSIDE://0.0.0.0:29092 # Kafka 브로커가 내부에서 수신할 주소와 포트 설정. 도커라서 일단 0.0.0.0으로 설정
-        - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka1:29092 # Kafka 클라이언트가 접속할 때 사용할 주소
-        - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT # 리스너 이름과 그에 해당하는 보안 프로토콜 매핑 INSIDE는 PLAINTEXT 암호화 없이 통신
-        - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE # 브로커들끼리 통신할 때 어떤 리스너를 사용할지 지정
-        - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 # Zookeeper의 호스트:포트 주소
-        - KAFKA_BROKER_ID=1 # 브로커 고유 ID.
+        - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:29092
+        - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://pbl2-kafka1:29092
+        - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+        - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+        - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:2181 # Zookeeper의 호스트:포트 주소
+        - KAFKA_BROKER_ID=1 # 브로커 고유 ID
         - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3 # Kafka 내부에서 사용하는 offset topic의 복제 계수
+        - KAFKA_CFG_KRAFT_MODE=false
+        - KAFKA_LISTENER_MAX_CONNECTIONS=1000
+        - KAFKA_LISTENER_MAX_MESSAGE_SIZE=52428800
+        - KAFKA_REPLICATION_MAX_BYTES=52428800
+        - KAFKA_MESSAGE_MAX_BYTES=52428800
     networks:
       - mojadol-network
     depends_on:
-      - zookeeper
+      - pbl2-zookeeper
+    volumes:
+      - /home/bgt/kafka/kafka-init:/docker-entrypoint-initdb.d/kafka-init.sh
 
-  kafka-2:
-    image: wurstmeister/kafka:latest
+  pbl2-kafka2:
+    image: bitnami/kafka:3.4
     container_name: pbl2-kafka2
     ports:
       - "29093:29093"
     environment:
-      - KAFKA_LISTENERS=INSIDE://0.0.0.0:29093
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka2:29093
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT
-      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:29093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://pbl2-kafka2:29093
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:2181
       - KAFKA_BROKER_ID=2
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_KRAFT_MODE=false
+      - KAFKA_LISTENER_MAX_CONNECTIONS=1000
+      - KAFKA_LISTENER_MAX_MESSAGE_SIZE=52428800
+      - KAFKA_REPLICATION_MAX_BYTES=52428800
+      - KAFKA_MESSAGE_MAX_BYTES=52428800
     networks:
       - mojadol-network
     depends_on:
-      - zookeeper
+      - pbl2-zookeeper
 
-  kafka-3:
-    image: wurstmeister/kafka:latest
+  pbl2-kafka3:
+    image: bitnami/kafka:3.4
     container_name: pbl2-kafka3
     ports:
       - "29094:29094"
     environment:
-      - KAFKA_LISTENERS=INSIDE://0.0.0.0:29094
-      - KAFKA_ADVERTISED_LISTENERS=INSIDE://pbl2-kafka3:29094
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT
-      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:29094
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://pbl2-kafka3:29094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_ZOOKEEPER_CONNECT=pbl2-zookeeper:2181
       - KAFKA_BROKER_ID=3
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_KRAFT_MODE=false
+      - KAFKA_LISTENER_MAX_CONNECTIONS=1000
+      - KAFKA_LISTENER_MAX_MESSAGE_SIZE=52428800
+      - KAFKA_REPLICATION_MAX_BYTES=52428800
+      - KAFKA_MESSAGE_MAX_BYTES=52428800
     networks:
       - mojadol-network
     depends_on:
-      - zookeeper
+      - pbl2-zookeeper
 
 networks:
   mojadol-network:

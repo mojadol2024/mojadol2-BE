@@ -1,6 +1,7 @@
 package com.gnu.pbl2.interview.repository;
 
 import com.gnu.pbl2.interview.entity.Interview;
+import com.gnu.pbl2.question.entity.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +15,10 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
     List<Interview> findByIsDeletedAndDeletedAtBefore(Integer isDeleted, LocalDateTime deleteDay);
 
-    @Query("SELECT i FROM Interview i WHERE i.coverLetter.coverLetterId = :coverLetterId AND i.isDeleted = :isDeleted")
-    List<Interview> findByCoverLetterIdAndDeletedAt(@Param("coverLetterId") Long coverLetterId, @Param("isDeleted") Integer isDeleted);
+    @Query("SELECT i FROM Interview i WHERE i.question.questionId = :coverLetterId AND i.isDeleted = :isDeleted")
+    List<Interview> findByQuestionIdAndDeletedAt(@Param("questionId") Long questionId, @Param("isDeleted") Integer isDeleted);
+
+    Interview findByQuestionAndIsDeleted(Question question, Integer isDeleted);
 
 
 }

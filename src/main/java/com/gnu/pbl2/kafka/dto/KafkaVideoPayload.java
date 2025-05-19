@@ -1,5 +1,7 @@
 package com.gnu.pbl2.kafka.dto;
 
+import com.gnu.pbl2.coverLetter.entity.CoverLetter;
+import com.gnu.pbl2.interview.entity.Interview;
 import lombok.*;
 
 @Getter
@@ -8,9 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KafkaVideoPayload {
-    private String videoKey;
     private byte[] fileBytes;
     private String originalFilename;
-    private Long coverLetterId;
-    private Long interviewId;
+    private Long questionId;
 }

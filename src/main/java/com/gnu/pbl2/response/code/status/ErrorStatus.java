@@ -70,11 +70,18 @@ public enum ErrorStatus implements BaseErrorCode {
     //INTERVIEW_DIRECTORY_NOTFOUND_ERROR(HttpStatus.NOT_FOUND, "SFTP_NOTFOUND_ERROR 5004", "sftp 디렉토리를 못 찾았습니다.")
 
 
+    FILE_UPLOAD_EXTENSION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FILE_UPLOAD_5001", "허용되지 않은 파일 확장자입니다."),
+    FILE_UPLOAD_INVALID_NAME(HttpStatus.BAD_REQUEST, "FILE_UPLOAD_5003", "유효하지 않은 파일 이름입니다."),
+    FILE_UPLOAD_MIME_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FILE_UPLOAD_5004", "허용되지 않은 MIME 타입입니다."),
+    FILE_UPLOAD_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_UPLOAD_5005", "파일 업로드 중 IO 오류가 발생했습니다."),
+
+
     // Payment 관련 응답
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_ERROR 4004", "결제내역을 못 찾았습니다."),
     PAYMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "PAYMENT_FORBIDDEN 4005", "본인 정보만 열람 할 수 있습니다."),
 
 
+    // Question 관련 응답
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION_NOT_FOUND 4004", "질문 내용이 없습니다."),
     QUESTION_BAD_REQUEST(HttpStatus.BAD_REQUEST, "QUESTION_NOT_FOUND 4000", "질문 생성 에러"),
     QUESTION_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "QUESTION_INTERNAL_SERVER_ERROR 5000", "질문관련 서버 에러")

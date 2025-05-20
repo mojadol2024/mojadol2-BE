@@ -3,6 +3,8 @@ package com.gnu.pbl2.coverLetter.entity;
 import com.gnu.pbl2.interview.entity.Interview;
 import com.gnu.pbl2.question.entity.Question;
 import com.gnu.pbl2.user.entity.User;
+import com.gnu.pbl2.voucher.entity.Voucher;
+import com.gnu.pbl2.voucher.entity.enums.VoucherTier;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,10 +41,14 @@ public class CoverLetter {
     @OneToMany(mappedBy = "coverLetter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 
-    public CoverLetter(String data, User user, String title) {
+    @Column(nullable = false)
+    private VoucherTier useVoucher;
+
+    public CoverLetter(String data, User user, String title, VoucherTier useVoucher) {
         this.title = title;
         this.data = data;
         this.user = user;
+        this.useVoucher = useVoucher;
         this.isDeleted = 1;
     }
 }

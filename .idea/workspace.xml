@@ -6,13 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="d41f7893-e1de-4165-87b1-c32c9f94b43b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nginx/nginx.conf.template" beforeDir="false" afterPath="$PROJECT_DIR$/nginx/nginx.conf.template" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/dto/PaymentResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/dto/PaymentResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/entity/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/entity/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/repository/PaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/repository/PaymentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/payment/service/PaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/coverLetter/dto/CoverLetterRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/coverLetter/dto/CoverLetterRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/coverLetter/entity/CoverLetter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/coverLetter/entity/CoverLetter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/coverLetter/service/CoverLetterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/coverLetter/service/CoverLetterService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/question/service/QuestionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/question/service/QuestionService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/scheduler/VoucherScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/scheduler/VoucherScheduler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/entity/Voucher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/entity/Voucher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/user/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/user/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/repository/VoucherRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/repository/VoucherRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/service/VoucherService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/service/VoucherService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -158,7 +158,7 @@
       <workItem from="1746025699059" duration="26633000" />
       <workItem from="1746521687576" duration="6666000" />
       <workItem from="1746662866549" duration="46000" />
-      <workItem from="1747631593601" duration="8438000" />
+      <workItem from="1747631593601" duration="13010000" />
     </task>
     <servers />
   </component>

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.gnu.pbl2.voucher.entity.Voucher.createFreeVoucher;
@@ -36,5 +37,11 @@ public class VoucherScheduler {
             log.info("유저 {}: 새 FREE 바우처 발급 완료", user.getUserId());
         }
         log.info("FREE 바우처 리프레시 완료");
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void deleteExpiredVouchers() {
+        voucherRepository.deleteByExpiredAtBefore(LocalDateTime.now());
+        log.info("voucher 제거 완료");
     }
 }

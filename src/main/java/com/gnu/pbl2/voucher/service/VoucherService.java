@@ -8,6 +8,9 @@ import com.gnu.pbl2.voucher.repository.VoucherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.gnu.pbl2.voucher.entity.Voucher.createFreeVoucher;
+import static com.gnu.pbl2.voucher.entity.Voucher.createPaidVoucher;
+
 @Service
 @RequiredArgsConstructor
 public class VoucherService {
@@ -16,11 +19,11 @@ public class VoucherService {
 
 
     public void freeVoucher(User user) {
-        voucherRepository.save(new Voucher(user, VoucherTier.FREE));
+        voucherRepository.save(createFreeVoucher(user, VoucherTier.FREE));
     }
 
-    public void goldVoucher(User user, Payment payment) {
-        voucherRepository.save(new Voucher(user, payment, VoucherTier.GOLD));
+    public Voucher goldVoucher(User user) {
+        return voucherRepository.save(createPaidVoucher(user, VoucherTier.GOLD));
     }
 
     public void cancelVoucherForPayment(Payment payment) {

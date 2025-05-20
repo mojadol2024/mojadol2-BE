@@ -41,7 +41,8 @@ public class Payment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne(mappedBy = "payment")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voucher_id")
     private Voucher voucher;
 
     public Payment(Integer amount, String title, String paymentMethod) {

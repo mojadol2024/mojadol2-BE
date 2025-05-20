@@ -9,12 +9,14 @@ import com.gnu.pbl2.payment.repository.PaymentRepository;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
+import com.gnu.pbl2.voucher.entity.Voucher;
 import com.gnu.pbl2.voucher.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final VoucherService voucherService;
 
+    @Transactional
     public PaymentResponseDto pay(PaymentRequestDto paymentRequestDto, Long userId) {
         try {
             User user = userRepository.findById(userId)
@@ -41,9 +44,13 @@ public class PaymentService {
             Payment payment = new Payment(paymentRequestDto.getAmount(), paymentRequestDto.getTitle(),paymentRequestDto.getPaymentMethod());
             payment.setUser(user);
 
+            Voucher voucher = voucherService.goldVoucher(user);
+            payment.setVoucher(voucher);
+
             Payment response = paymentRepository.save(payment);
 
-            voucherService.goldVoucher(user, response);
+
+
 
             log.info("결제 성공 - userId: {}, paymentId: {}", userId, response.getPaymentId());
             return PaymentResponseDto.toDto(response);
@@ -86,6 +93,7 @@ public class PaymentService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> list(Long userId, Pageable pageable) {
         try {
             Page<Payment> page = paymentRepository.findByUserId(userId, pageable);
@@ -107,6 +115,7 @@ public class PaymentService {
         }
     }
 
+    @Transactional(readOnly = true)
     public PaymentResponseDto detail(Long paymentId, Long userId) {
 
             Payment payment = paymentRepository.findById(paymentId)

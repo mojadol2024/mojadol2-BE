@@ -26,10 +26,6 @@ public class Voucher {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;  // 해당 이용권을 소유한 유저
 
-    @OneToOne
-    @JoinColumn(name = "payment_id")  // 결제와 연결
-    private Payment payment;  // 결제 정보 추가
-
     @Column(nullable = false)
     private Integer totalCount;  // 총 제공량 (1개 또는 10개 등, 유저에게 제공되는 이용권의 수)
 
@@ -43,24 +39,30 @@ public class Voucher {
     @Column
     private LocalDateTime expiredAt;  // 이용권의 만료 기한
 
+    @OneToOne(mappedBy = "voucher", fetch = FetchType.LAZY)
+    private Payment payment;
+
 
     // 무료 이용권 생성자
-    public Voucher(User user, VoucherTier type) {
-        this.user = user;
-        this.type = type;
-        this.totalCount = 1;
-        this.issuedAt = LocalDateTime.now();
-        this.expiredAt = LocalDateTime.now().plusMonths(1);
+    public static Voucher createFreeVoucher(User user, VoucherTier type) {
+        Voucher v = new Voucher(user, type);
+        v.totalCount = 1;
+        v.issuedAt = LocalDateTime.now();
+        v.expiredAt = LocalDateTime.now().plusMonths(1);
+        return v;
     }
 
-    // 유료 이용권 생성자
-    public Voucher(User user, Payment payment, VoucherTier type) {
+    public static Voucher createPaidVoucher(User user, VoucherTier type) {
+        Voucher v = new Voucher(user, type);
+        v.totalCount = 10;
+        v.issuedAt = LocalDateTime.now();
+        v.expiredAt = LocalDateTime.now().plusMonths(1);
+        return v;
+    }
+
+    private Voucher(User user, VoucherTier type) {
         this.user = user;
         this.type = type;
-        this.totalCount = 10;
-        this.payment = payment;
-        this.issuedAt = LocalDateTime.now();
-        this.expiredAt = LocalDateTime.now().plusMonths(1);
     }
 
 }

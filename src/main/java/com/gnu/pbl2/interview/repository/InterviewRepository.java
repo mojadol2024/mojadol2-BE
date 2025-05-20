@@ -15,7 +15,7 @@ public interface InterviewRepository extends JpaRepository<Interview, Long> {
 
     List<Interview> findByIsDeletedAndDeletedAtBefore(Integer isDeleted, LocalDateTime deleteDay);
 
-    @Query("SELECT i FROM Interview i WHERE i.question.questionId = :coverLetterId AND i.isDeleted = :isDeleted")
+    @Query("SELECT i FROM Interview i WHERE i.question.questionId = :questionId AND i.isDeleted = :isDeleted")
     List<Interview> findByQuestionIdAndDeletedAt(@Param("questionId") Long questionId, @Param("isDeleted") Integer isDeleted);
 
     Interview findByQuestionAndIsDeleted(Question question, Integer isDeleted);

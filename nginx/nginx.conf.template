@@ -33,7 +33,7 @@ http {
 
     # CORS 주소 동적 반응
     map $http_origin $cors_origin {
-            default "";
+            default "*";
             "http://localhost:4000" $http_origin;
             "https://myeonjub.store" $http_origin;
     }

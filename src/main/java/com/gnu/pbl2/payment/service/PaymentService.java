@@ -38,11 +38,9 @@ public class PaymentService {
                         return new UserHandler(ErrorStatus.USER_NOT_FOUND);
                     });
 
-            Payment payment = new Payment();
+            Payment payment = new Payment(paymentRequestDto.getAmount(), paymentRequestDto.getTitle(),paymentRequestDto.getPaymentMethod());
             payment.setUser(user);
-            payment.setPaymentMethod(paymentRequestDto.getPaymentMethod());
-            payment.setAmount(paymentRequestDto.getAmount());
-            payment.setTitle(paymentRequestDto.getTitle());
+
             Payment response = paymentRepository.save(payment);
 
             voucherService.goldVoucher(user, response);
@@ -51,7 +49,7 @@ public class PaymentService {
             return PaymentResponseDto.toDto(response);
         } catch (Exception e) {
             log.error("결제 처리 중 예외 발생", e);
-            throw e;
+            throw new PaymentHandler(ErrorStatus.PAYMENT_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -84,7 +82,7 @@ public class PaymentService {
             return PaymentResponseDto.toDto(payment);
         } catch (Exception e) {
             log.error("결제 취소 중 예외 발생", e);
-            throw e;
+            throw new PaymentHandler(ErrorStatus.PAYMENT_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -105,12 +103,12 @@ public class PaymentService {
             return result;
         } catch (Exception e) {
             log.error("결제 목록 조회 중 예외 발생", e);
-            throw e;
+            throw new PaymentHandler(ErrorStatus.PAYMENT_INTERNAL_SERVER_ERROR);
         }
     }
 
     public PaymentResponseDto detail(Long paymentId, Long userId) {
-        try {
+
             Payment payment = paymentRepository.findById(paymentId)
                     .orElseThrow(() -> {
                         log.warn("결제 상세 조회 실패 - 결제 없음: {}", paymentId);
@@ -121,12 +119,13 @@ public class PaymentService {
                 log.warn("결제 상세 조회 실패 - 권한 없음: userId {}, paymentUserId {}", userId, payment.getUser().getUserId());
                 throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
             }
+        try {
 
             log.info("결제 상세 조회 성공 - paymentId: {}", paymentId);
             return PaymentResponseDto.toDto(payment);
         } catch (Exception e) {
             log.error("결제 상세 조회 중 예외 발생", e);
-            throw e;
+            throw new PaymentHandler(ErrorStatus.PAYMENT_INTERNAL_SERVER_ERROR);
         }
     }
 }

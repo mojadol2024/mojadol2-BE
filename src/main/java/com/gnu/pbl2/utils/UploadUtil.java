@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -30,6 +31,8 @@ public class UploadUtil {
     @Value("${sftp.password}")
     private String password;
 
+    private static final List<String> ALLOWED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".mp4", ".mov");
+
     // 예시 base = lostitem-images / baseDirectory + id
     public String postDirectory(String base, Long id) {
         return "/home/bgt/pbl2/" + base + "/" + id + "/";
@@ -38,20 +41,39 @@ public class UploadUtil {
     public String save(MultipartFile multipartFile, ChannelSftp channelSftp, String postDirectory) {
         try {
 
-
-            // 파일 이름 난수로 저장
+            // 파일 이름 체크
             String originalFilename = multipartFile.getOriginalFilename();
-            String extension = originalFilename != null && originalFilename.contains(".") ?
-                    originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
+            if (originalFilename == null) {
+                throw new InterviewHandler(ErrorStatus.FILE_UPLOAD_INVALID_NAME);
+            }
+
+            // 확장자 추출
+            String extension = originalFilename.contains(".") ?
+                    originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase() : "";
+
+            // 허용된 확장자인지 체크
+            if (!ALLOWED_EXTENSIONS.contains(extension)) {
+                throw new InterviewHandler(ErrorStatus.FILE_UPLOAD_EXTENSION_NOT_ALLOWED);
+            }
+
+            // MIME 타입 체크
+            String contentType = multipartFile.getContentType();
+            if (contentType == null ||
+                    (!contentType.startsWith("image/") && !contentType.startsWith("video/"))) {
+                throw new InterviewHandler(ErrorStatus.FILE_UPLOAD_MIME_NOT_ALLOWED);
+            }
+
             String filePath = UUID.randomUUID().toString() + extension;
             String remoteFilePath = postDirectory + filePath;
 
-            // multipartFile을 inputStream으로 변환 후 SFTP 전송
             channelSftp.put(multipartFile.getInputStream(), remoteFilePath);
 
             return filePath;
 
-        }catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new InterviewHandler(ErrorStatus.FILE_UPLOAD_IO_ERROR);
+        } catch (Exception e) {
             e.printStackTrace();
             throw new InterviewHandler(ErrorStatus.INTERVIEW_SFTP_CONNECT_ERROR);
         }

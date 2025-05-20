@@ -18,6 +18,7 @@ public class PaymentResponseDto {
     private String title;
     private String paymentMethod;
     private LocalDateTime paymentDate;
+    private Integer quantity;
     private VoucherDto voucher;
 
 
@@ -31,6 +32,7 @@ public class PaymentResponseDto {
         response.setTitle(payment.getTitle());
         response.setPaymentMethod(payment.getPaymentMethod());
         response.setPaymentDate(payment.getPaymentDate());
+        response.setQuantity(payment.getQuantity());
         if (payment.getVoucher() != null) {
             response.setVoucher(VoucherDto.toDto(payment.getVoucher()));
         }

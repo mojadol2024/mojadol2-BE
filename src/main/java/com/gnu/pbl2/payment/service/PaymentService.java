@@ -41,7 +41,7 @@ public class PaymentService {
                         return new UserHandler(ErrorStatus.USER_NOT_FOUND);
                     });
 
-            Payment payment = new Payment(paymentRequestDto.getAmount(), paymentRequestDto.getTitle(),paymentRequestDto.getPaymentMethod());
+            Payment payment = new Payment(paymentRequestDto.getAmount(), paymentRequestDto.getTitle(),paymentRequestDto.getPaymentMethod(), paymentRequestDto.getQuantity());
             payment.setUser(user);
 
             Voucher voucher = voucherService.goldVoucher(user);

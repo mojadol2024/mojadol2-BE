@@ -45,11 +45,15 @@ public class Payment {
     @JoinColumn(name = "voucher_id")
     private Voucher voucher;
 
-    public Payment(Integer amount, String title, String paymentMethod) {
+    @Column(nullable = false)
+    private Integer quantity;
+
+    public Payment(Integer amount, String title, String paymentMethod, Integer quantity) {
         this.amount = amount;
         this.completed = 1;
         this.title = title;
         this.paymentMethod = paymentMethod;
         this.paymentDate = LocalDateTime.now();
+        this.quantity = quantity;
     }
 }

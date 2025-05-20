@@ -10,4 +10,5 @@ public class PaymentRequestDto {
     private Long paymentId;
     private String paymentMethod;
     private String title;
+    private Integer quantity;
 }

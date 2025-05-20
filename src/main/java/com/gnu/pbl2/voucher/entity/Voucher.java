@@ -52,9 +52,9 @@ public class Voucher {
         return v;
     }
 
-    public static Voucher createPaidVoucher(User user, VoucherTier type) {
+    public static Voucher createPaidVoucher(User user, Integer quantity, VoucherTier type) {
         Voucher v = new Voucher(user, type);
-        v.totalCount = 10;
+        v.totalCount = 10 * quantity;
         v.issuedAt = LocalDateTime.now();
         v.expiredAt = LocalDateTime.now().plusMonths(1);
         return v;

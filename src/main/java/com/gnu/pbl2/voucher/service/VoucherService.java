@@ -22,8 +22,8 @@ public class VoucherService {
         voucherRepository.save(createFreeVoucher(user, VoucherTier.FREE));
     }
 
-    public Voucher goldVoucher(User user) {
-        return voucherRepository.save(createPaidVoucher(user, VoucherTier.GOLD));
+    public Voucher goldVoucher(User user, Integer quantity) {
+        return voucherRepository.save(createPaidVoucher(user, quantity, VoucherTier.GOLD));
     }
 
     public void cancelVoucherForPayment(Payment payment) {

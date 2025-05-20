@@ -44,7 +44,7 @@ public class PaymentService {
             Payment payment = new Payment(paymentRequestDto.getAmount(), paymentRequestDto.getTitle(),paymentRequestDto.getPaymentMethod(), paymentRequestDto.getQuantity());
             payment.setUser(user);
 
-            Voucher voucher = voucherService.goldVoucher(user);
+            Voucher voucher = voucherService.goldVoucher(user, paymentRequestDto.getQuantity());
             payment.setVoucher(voucher);
 
             Payment response = paymentRepository.save(payment);

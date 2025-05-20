@@ -31,8 +31,9 @@ public class PaymentResponseDto {
         response.setTitle(payment.getTitle());
         response.setPaymentMethod(payment.getPaymentMethod());
         response.setPaymentDate(payment.getPaymentDate());
-        response.setVoucher(VoucherDto.toDto(payment.getVoucher()));
-
+        if (payment.getVoucher() != null) {
+            response.setVoucher(VoucherDto.toDto(payment.getVoucher()));
+        }
         return response;
     }
 }

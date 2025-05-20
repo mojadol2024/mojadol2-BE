@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.gnu.pbl2.voucher.entity.Voucher.createFreeVoucher;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -30,7 +32,7 @@ public class VoucherScheduler {
             voucherRepository.deleteByUserAndType(user, VoucherTier.FREE);
             log.info("유저 {}: 기존 FREE 바우처 삭제 완료", user.getUserId());
 
-            voucherRepository.save(new Voucher(user, VoucherTier.FREE));
+            voucherRepository.save(createFreeVoucher(user, VoucherTier.FREE));
             log.info("유저 {}: 새 FREE 바우처 발급 완료", user.getUserId());
         }
         log.info("FREE 바우처 리프레시 완료");

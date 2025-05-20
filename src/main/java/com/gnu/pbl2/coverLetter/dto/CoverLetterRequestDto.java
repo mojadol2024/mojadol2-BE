@@ -1,6 +1,7 @@
 package com.gnu.pbl2.coverLetter.dto;
 
 import com.gnu.pbl2.coverLetter.entity.CoverLetter;
+import com.gnu.pbl2.voucher.entity.enums.VoucherTier;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +12,6 @@ public class CoverLetterRequestDto {
     private String title;
     private String data;
     private Long userId;
+    private VoucherTier useVoucher;
 
 }

@@ -13,6 +13,7 @@ import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
 import com.gnu.pbl2.utils.SpellCheckerUtil;
+import com.gnu.pbl2.voucher.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,16 +39,23 @@ public class CoverLetterService {
     private final SpellCheckerUtil spellCheckerUtil;
     private final QuestionService questionService;
     private final QuestionRepository questionRepository;
+    private final VoucherService voucherService;
 
     public CoverLetterResponseDto letterWrite(CoverLetterRequestDto coverLetterRequestDto, Long id) {
         try {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.USER_NOT_FOUND));
 
-            CoverLetter coverLetter = new CoverLetter(coverLetterRequestDto.getData(), user, coverLetterRequestDto.getTitle());
-            CoverLetter savedCoverLetter = coverLetterRepository.saveAndFlush(coverLetter);
+            CoverLetter coverLetter = new CoverLetter(
+                    coverLetterRequestDto.getData(),
+                    user,
+                    coverLetterRequestDto.getTitle(),
+                    coverLetterRequestDto.getUseVoucher());
 
-            questionService.generateQuestion(savedCoverLetter);
+            CoverLetter savedCoverLetter = coverLetterRepository.saveAndFlush(coverLetter);
+            voucherService.minusVoucher(user, coverLetter.getUseVoucher());
+
+            questionService.generateQuestion(savedCoverLetter, coverLetter.getUseVoucher());
 
             log.info("자소서 저장 완료: coverLetterId={}", savedCoverLetter.getCoverLetterId());
 

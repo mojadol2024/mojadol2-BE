@@ -2,6 +2,7 @@ package com.gnu.pbl2.user.entity;
 
 import com.gnu.pbl2.coverLetter.entity.CoverLetter;
 import com.gnu.pbl2.payment.entity.Payment;
+import com.gnu.pbl2.voucher.entity.Voucher;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,6 +57,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Voucher> vouchers;
 
     @PrePersist
     protected void onCreate() {

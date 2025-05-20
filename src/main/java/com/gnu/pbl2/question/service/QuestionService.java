@@ -10,6 +10,7 @@ import com.gnu.pbl2.question.dto.QuestionResponseDto;
 import com.gnu.pbl2.question.entity.Question;
 import com.gnu.pbl2.question.repository.QuestionRepository;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
+import com.gnu.pbl2.voucher.entity.enums.VoucherTier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class QuestionService {
     @Value("external.django.base-url")
     private String djangoUrl;
 
-    public void generateQuestion(CoverLetter coverLetter) {
+    public void generateQuestion(CoverLetter coverLetter, VoucherTier useVoucher) {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = djangoUrl + "questions/generate";
@@ -43,6 +44,7 @@ public class QuestionService {
 
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("coverLetter", coverLetter.getData());
+        requestBody.put("voucher", useVoucher.toString());
 
         ObjectMapper objectMapper = new ObjectMapper();
 

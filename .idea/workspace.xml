@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d41f7893-e1de-4165-87b1-c32c9f94b43b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/pdf/controller/PdfController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/pdf/controller/PdfController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/pdf/service/PdfService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/pdf/service/PdfService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/config/SecurityConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,7 +151,7 @@
       <workItem from="1746025699059" duration="26633000" />
       <workItem from="1746521687576" duration="6666000" />
       <workItem from="1746662866549" duration="46000" />
-      <workItem from="1747631593601" duration="16982000" />
+      <workItem from="1747631593601" duration="18259000" />
     </task>
     <servers />
   </component>

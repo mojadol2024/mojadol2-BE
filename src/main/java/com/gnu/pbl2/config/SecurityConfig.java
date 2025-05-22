@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/mojadol/api/v1/auth/**", "/mojadol/api/v1/users/**","/actuator/**").permitAll()
+                        .requestMatchers("/mojadol/api/v1/auth/**", "/mojadol/api/v1/users/**","/actuator/**", "/mojadol/api/v1/mail/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

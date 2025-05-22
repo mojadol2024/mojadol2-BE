@@ -119,6 +119,8 @@ jobs:
             echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /home/bgt/pbl2/.env
             echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> /home/bgt/pbl2/.env
             echo "DJANGO_BASE_URL=${{ secrets.DJANGO_BASE_URL }}" >> /home/bgt/pbl2/.env
+            echo "MY_MAIL_USERNAME=${{ secrets.MY_MAIL_USERNAME }}" >> /home/bgt/pbl2/.env
+            echo "MY_MAIL_PASSWORD=${{ secrets.MY_MAIL_PASSWORD }}" >> /home/bgt/pbl2/.env
             chmod 600 /home/bgt/pbl2/.env
             
             

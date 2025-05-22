@@ -2,6 +2,7 @@ package com.gnu.pbl2.interview.entity;
 
 import com.gnu.pbl2.coverLetter.entity.CoverLetter;
 import com.gnu.pbl2.question.entity.Question;
+import com.gnu.pbl2.trackingResult.entity.Tracking;
 import com.gnu.pbl2.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,9 @@ public class Interview {
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
+
+    @OneToOne(mappedBy = "interview", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Tracking tracking;
 
     @PrePersist
     public void prePersist() {

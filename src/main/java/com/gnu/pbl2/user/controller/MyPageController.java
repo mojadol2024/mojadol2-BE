@@ -1,6 +1,7 @@
 package com.gnu.pbl2.user.controller;
 
 import com.gnu.pbl2.response.ApiResponse;
+import com.gnu.pbl2.user.dto.UserProfileDto;
 import com.gnu.pbl2.user.dto.UserRequestDto;
 import com.gnu.pbl2.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,14 @@ public class MyPageController {
         log.info("회원 탈퇴 요청");
 
         String response = userService.resignUser(accessToken);
+        return ResponseEntity.ok().body(ApiResponse.onSuccess(response));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> profile(@RequestHeader("Authorization") String accessToken) {
+        log.info("회원 정보 요청");
+
+        UserProfileDto response = userService.profile(accessToken);
         return ResponseEntity.ok().body(ApiResponse.onSuccess(response));
     }
 }

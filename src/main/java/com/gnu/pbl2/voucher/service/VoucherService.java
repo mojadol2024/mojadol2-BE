@@ -9,6 +9,7 @@ import com.gnu.pbl2.voucher.repository.VoucherRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.gnu.pbl2.voucher.entity.Voucher.createFreeVoucher;
 import static com.gnu.pbl2.voucher.entity.Voucher.createPaidVoucher;
@@ -21,6 +22,7 @@ public class VoucherService {
     private final VoucherRepository voucherRepository;
 
 
+    @Transactional
     public void freeVoucher(User user) {
         voucherRepository.save(createFreeVoucher(user, VoucherTier.FREE));
 

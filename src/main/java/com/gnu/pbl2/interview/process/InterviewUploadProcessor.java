@@ -8,6 +8,8 @@ import com.gnu.pbl2.interview.repository.InterviewRepository;
 import com.gnu.pbl2.question.entity.Question;
 import com.gnu.pbl2.question.repository.QuestionRepository;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
+import com.gnu.pbl2.trackingResult.repository.TrackingRepository;
+import com.gnu.pbl2.trackingResult.service.TrackingService;
 import com.gnu.pbl2.utils.UploadUtil;
 import com.jcraft.jsch.ChannelSftp;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class InterviewUploadProcessor {
     private final UploadUtil uploadUtil;
     private final InterviewRepository interviewRepository;
     private final QuestionRepository questionRepository;
+    private final TrackingService trackingService;
 
     public void process(MultipartFile file, Long questionId) {
         Question question = questionRepository.findById(questionId)
@@ -46,9 +49,11 @@ public class InterviewUploadProcessor {
 
             // 영상 URL 업데이트
             tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/" + remoteFilePath);
-            interviewRepository.save(tempInterview);
+            Interview interview1 = interviewRepository.save(tempInterview);
             // 인터뷰 작성되면 question answered 1로 변경
             questionRepository.save(question);
+
+            trackingService.trackingRequest(file, interview1);
 
             log.info("Kafka Consumer - 영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
 

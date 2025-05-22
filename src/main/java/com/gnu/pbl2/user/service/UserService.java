@@ -2,7 +2,9 @@ package com.gnu.pbl2.user.service;
 
 import com.gnu.pbl2.exception.handler.UserHandler;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
+import com.gnu.pbl2.user.dto.UserProfileDto;
 import com.gnu.pbl2.user.dto.UserRequestDto;
+import com.gnu.pbl2.user.dto.UserResponseDto;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.entity.enums.Tier;
 import com.gnu.pbl2.user.repository.UserRepository;
@@ -125,6 +127,23 @@ public class UserService {
         }
 
         return "회원 탈퇴 예약이 완료되었습니다.";
+    }
+
+    public UserProfileDto profile(String accessToken) {
+        Long userId = jwtUtil.extractUserId(accessToken);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        try {
+            UserProfileDto response = new UserProfileDto();
+            response.setEmail(user.getEmail());
+            response.setUserName(user.getUsername());
+            response.setPhoneNumber(user.getPhoneNumber());
+
+            return response;
+        } catch (Exception e) {
+            throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 스케줄러로 userdeletedtime이 되면 삭제 매일 낮12시에 작동

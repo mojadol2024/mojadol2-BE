@@ -54,6 +54,11 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
+
+external:
+  django:
+    url: ${DJANGO_BASE_URL}
+
 jwt:
   secret: ${JWT_TOKEN_PBL_2}
   access-token:
@@ -79,9 +84,7 @@ firebase:
   client-email: ${FIREBASE_CLIENT_EMAIL_PBL2}
   client-id: ${FIREBASE_CLIENT_ID_PBL2}
 
-external:
-  django:
-    base-url: ${DJANGO_BASE_URL}
+
 
 management:
   endpoints:

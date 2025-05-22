@@ -31,7 +31,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final InterviewRepository interviewRepository;
 
-    @Value("external.django.base-url")
+    @Value("${external.django.url}")
     private String djangoUrl;
 
     public void generateQuestion(CoverLetter coverLetter, VoucherTier useVoucher) {

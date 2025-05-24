@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d41f7893-e1de-4165-87b1-c32c9f94b43b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/interview/process/InterviewUploadProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/interview/process/InterviewUploadProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/response/code/status/ErrorStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/response/code/status/ErrorStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/trackingResult/controller/TrackingController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/trackingResult/dto/TrackingResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/trackingResult/dto/TrackingResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/trackingResult/service/TrackingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/trackingResult/service/TrackingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/service/VoucherService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/voucher/service/VoucherService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/nginx/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +154,7 @@
       <workItem from="1747631593601" duration="19987000" />
       <workItem from="1747875360902" duration="597000" />
       <workItem from="1747890418904" duration="5102000" />
-      <workItem from="1747896177146" duration="7630000" />
+      <workItem from="1747896177146" duration="12029000" />
     </task>
     <servers />
   </component>

@@ -7,6 +7,7 @@ import com.gnu.pbl2.trackingResult.dto.TrackingResponseDto;
 import com.gnu.pbl2.trackingResult.entity.Tracking;
 import com.gnu.pbl2.trackingResult.repository.TrackingRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TrackingService {
 
     private final TrackingRepository trackingRepository;
@@ -27,6 +29,7 @@ public class TrackingService {
 
 
     public void trackingRequest(MultipartFile multipartFile, Interview interview) {
+        log.info("[TrackinsService] tracking 시작");
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -55,8 +58,10 @@ public class TrackingService {
             tracking.setScore(score.getScore());
 
             trackingRepository.save(tracking);
+            log.info("[TrackinsService] tracking 저장완료");
 
         } catch (Exception e) {
+            log.error("[TrackinsService] tracking 서버에러");
             throw new TrackingHandler(ErrorStatus.TRACKING_INTERNAL_SERVER_ERROR);
         }
 

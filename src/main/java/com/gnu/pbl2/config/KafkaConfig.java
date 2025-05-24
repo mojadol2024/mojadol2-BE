@@ -27,7 +27,7 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-@Profile("!local")
+//@Profile("!local")
 public class KafkaConfig {
 
     @Bean

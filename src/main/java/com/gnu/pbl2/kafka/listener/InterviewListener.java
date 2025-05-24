@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@Profile("!local")
+//@Profile("!local")
 public class InterviewListener {
 
     private final InterviewUploadProcessor interviewUploadProcessor;

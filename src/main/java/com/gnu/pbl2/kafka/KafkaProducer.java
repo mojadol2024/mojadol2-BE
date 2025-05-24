@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @EnableKafka
 @Component
 @Slf4j
-@Profile("!local")
+//@Profile("!local")
 public class KafkaProducer implements IKafkaProducer{
 
     private final KafkaTemplate<String, KafkaVideoPayload> kafkaTemplate;

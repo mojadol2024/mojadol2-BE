@@ -27,6 +27,8 @@ public class InterviewUploadProcessor {
     private final QuestionRepository questionRepository;
     private final TrackingService trackingService;
 
+
+    // 리팩토링 예정  영상은 uploadUtil로 처리하고 kafka는 python 서버에 요청하는로직에 사용하겠습니다.
     public void process(MultipartFile file, Long questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));

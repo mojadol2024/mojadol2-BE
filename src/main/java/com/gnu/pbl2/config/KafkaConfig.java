@@ -27,7 +27,7 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-//@Profile("!local")
+@Profile("!local")
 public class KafkaConfig {
 
     @Bean
@@ -37,6 +37,7 @@ public class KafkaConfig {
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         producerProps.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 52428800);
+        producerProps.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 67108864);
 
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerProps));
     }

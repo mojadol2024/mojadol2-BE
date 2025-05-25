@@ -22,46 +22,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class InterviewUploadProcessor {
 
-    private final UploadUtil uploadUtil;
-    private final InterviewRepository interviewRepository;
-    private final QuestionRepository questionRepository;
+
     private final TrackingService trackingService;
 
 
     // 리팩토링 예정  영상은 uploadUtil로 처리하고 kafka는 python 서버에 요청하는로직에 사용하겠습니다.
     public void process(MultipartFile file, Long questionId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
 
-        Interview interview = new Interview();
-        interview.setQuestion(question);
-        question.setIs_answered(1);
-
-        // 임시 인터뷰 저장
-        Interview tempInterview = interviewRepository.saveAndFlush(interview);
-        try {
-
-            String directoryName = "interview-videos";
-
-            // 파일 처리
-            String postDirectory = uploadUtil.postDirectory(directoryName, tempInterview.getInterviewId());
-            ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
-            uploadUtil.recreateDirectory(channelSftp, postDirectory);
-            String remoteFilePath = uploadUtil.save(file, channelSftp, postDirectory);
-
-            // 영상 URL 업데이트
-            tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/" + remoteFilePath);
-            Interview interview1 = interviewRepository.save(tempInterview);
-            // 인터뷰 작성되면 question answered 1로 변경
-            questionRepository.save(question);
-
-            trackingService.trackingRequest(file, interview1);
-
-            log.info("Kafka Consumer - 영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
-
-        } catch (Exception e) {
-            log.error("Kafka Consumer - 영상 저장 실패: interviewId={}, error={}", tempInterview.getInterviewId(), e.getMessage());
-            throw new InterviewHandler(ErrorStatus.INTERVIEW_SAVE_ERROR);
-        }
     }
 }

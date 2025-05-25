@@ -55,10 +55,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // firebase
+    /*
     implementation 'com.google.firebase:firebase-admin:9.2.0'
     implementation group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '1.23.0'
     implementation group: 'com.google.firebase', name: 'firebase-messaging', version: '22.0.0'
-
+    */
     //mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
@@ -78,6 +79,15 @@ dependencies {
     // openhtmltopdf
     implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
     implementation 'com.openhtmltopdf:openhtmltopdf-core:1.0.10'
+
+    // webflux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // netty dns lookup
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.94.Final:osx-aarch_64'
+
+    implementation 'com.google.protobuf:protobuf-java:3.21.12'
+
 
 }
 

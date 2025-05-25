@@ -33,8 +33,14 @@ public class InterviewScheduler {
 
             for (Interview interview : expiredInterviews) {
                 String postDirectory = uploadUtil.postDirectory("interview-videos", interview.getInterviewId());
-                ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
-                uploadUtil.deleteDirectory(channelSftp, postDirectory);
+                UploadUtil.SftpConnection sftpConnection = uploadUtil.sessionConnect(postDirectory);
+                ChannelSftp channelSftp = sftpConnection.getChannelSftp();
+                try {
+                    uploadUtil.deleteDirectory(channelSftp, postDirectory);
+                } finally {
+                    sftpConnection.disconnect();
+                }
+
 
                 interviewRepository.delete(interview);
                 log.info("30일 경과 인터뷰 삭제 완료: interviewId={} ", interview.getInterviewId());

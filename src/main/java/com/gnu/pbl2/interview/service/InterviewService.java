@@ -36,7 +36,7 @@ public class InterviewService {
 
 
 
-    public void saveVideo(MultipartFile file, Long questionId) {
+    public InterviewResponseDto saveVideo(MultipartFile file, Long questionId) {
 
 
             Question question = questionRepository.findById(questionId)
@@ -51,14 +51,21 @@ public class InterviewService {
 
             String directoryName = "interview-videos";
 
-            // 파일 처리
+            // sftp
             String postDirectory = uploadUtil.postDirectory(directoryName, tempInterview.getInterviewId());
-            ChannelSftp channelSftp = uploadUtil.sessionConnect(postDirectory);
-            uploadUtil.recreateDirectory(channelSftp, postDirectory);
-            String remoteFilePath = uploadUtil.save(file, channelSftp, postDirectory);
+            UploadUtil.SftpConnection sftpConnection = uploadUtil.sessionConnect(postDirectory);
+            try {
+                ChannelSftp channelSftp = sftpConnection.getChannelSftp();
+                uploadUtil.recreateDirectory(channelSftp, postDirectory);
+                String remoteFilePath = uploadUtil.save(file, channelSftp, postDirectory);
 
-            // 영상 URL 업데이트
-            tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/" + remoteFilePath);
+                // 영상 URL 업데이트
+                tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/" + remoteFilePath);
+
+            }finally {
+                sftpConnection.disconnect();
+            }
+
             Interview interview1 = interviewRepository.save(tempInterview);
 
             // 인터뷰 작성되면 question answered 1로 변경
@@ -80,6 +87,7 @@ public class InterviewService {
 
             log.info("영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
 
+            return InterviewResponseDto.toDto(interview1);
 
         } catch (Exception e) {
             log.error("영상 저장 실패: questionId={}, error={}", questionId, e.getMessage());

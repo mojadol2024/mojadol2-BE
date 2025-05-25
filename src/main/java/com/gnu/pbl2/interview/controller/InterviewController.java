@@ -1,8 +1,10 @@
 package com.gnu.pbl2.interview.controller;
 
 import com.gnu.pbl2.interview.dto.InterviewResponseDto;
+import com.gnu.pbl2.interview.entity.Interview;
 import com.gnu.pbl2.interview.service.InterviewService;
 import com.gnu.pbl2.response.ApiResponse;
+import com.gnu.pbl2.trackingResult.service.TrackingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +20,16 @@ import java.util.List;
 public class InterviewController {
 
     private final InterviewService interviewService;
+    private final TrackingService trackingService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadVideo(@RequestParam("video") MultipartFile video,
                                          @RequestParam("id") Long questionId) {
         log.info("uploadVideo 요청 진입: questionId={}", questionId);
 
-        interviewService.saveVideo(video, questionId);
+        InterviewResponseDto interview = interviewService.saveVideo(video, questionId);
 
-        return ResponseEntity.ok().body(ApiResponse.onSuccess("비동기 처리 성공"));
+        return ResponseEntity.ok().body(ApiResponse.onSuccess(interview));
     }
 
     @DeleteMapping("/delete/{id}")

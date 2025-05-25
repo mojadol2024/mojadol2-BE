@@ -77,15 +77,6 @@ sftp:
   host: ${SSH_HOST_PBL2}
 
 
-firebase:
-  project-id: ${FIREBASE_PROJECT_ID_PBL2}
-  private-key-id: ${FIREBASE_PRIVATE_KEY_ID_PBL2}
-  private-key: ${FIREBASE_PRIVATE_KEY_PBL2}
-  client-email: ${FIREBASE_CLIENT_EMAIL_PBL2}
-  client-id: ${FIREBASE_CLIENT_ID_PBL2}
-
-
-
 management:
   endpoints:
     web:

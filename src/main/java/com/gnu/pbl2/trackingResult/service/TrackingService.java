@@ -1,21 +1,25 @@
 package com.gnu.pbl2.trackingResult.service;
 
-import com.gnu.pbl2.exception.handler.TrackingHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gnu.pbl2.interview.entity.Interview;
-import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.trackingResult.dto.TrackingResponseDto;
 import com.gnu.pbl2.trackingResult.entity.Tracking;
 import com.gnu.pbl2.trackingResult.repository.TrackingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpHeaders;
+
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,46 +31,43 @@ public class TrackingService {
     @Value("${external.django.url}")
     private String djangoUrl;
 
+    private final RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+
 
     public void trackingRequest(MultipartFile multipartFile, Interview interview) {
-        log.info("[TrackinsService] tracking 시작");
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        String url = djangoUrl + "tracking/tracking";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        log.info("[TrackingService] tracking 시작");
 
         try {
-            body.add("video", new ByteArrayResource(multipartFile.getBytes()) {
-                @Override
-                public String getFilename() {
-                    return multipartFile.getOriginalFilename();
-                }
-            });
+            byte[] fileBytes = multipartFile.getBytes();
+            String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
 
-            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("filename", multipartFile.getOriginalFilename());
+            requestBody.put("contentType", multipartFile.getContentType());
+            requestBody.put("fileData", base64Encoded);
 
-            ResponseEntity<TrackingResponseDto> response = restTemplate.postForEntity(url, requestEntity, TrackingResponseDto.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            TrackingResponseDto score = response.getBody();
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+            String response = restTemplate.postForObject(djangoUrl + "tracking/tracking", requestEntity, String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            TrackingResponseDto trackingResponse = objectMapper.readValue(response, TrackingResponseDto.class);
+
+            float score = trackingResponse.getScore();
+
             Tracking tracking = new Tracking();
+            tracking.setScore(score);
             tracking.setInterview(interview);
-            tracking.setScore(score.getScore());
-
             trackingRepository.save(tracking);
-            log.info("[TrackinsService] tracking 저장완료");
+
+            log.info("[TrackingService] 응답 결과: {}", response);
 
         } catch (Exception e) {
-            log.error("[TrackinsService] tracking 서버에러");
-            throw new TrackingHandler(ErrorStatus.TRACKING_INTERNAL_SERVER_ERROR);
+            log.error("[TrackingService] Django 서버 통신 오류", e);
         }
-
-
-
-
     }
+
+
 }

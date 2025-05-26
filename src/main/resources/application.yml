@@ -82,6 +82,9 @@ management:
     web:
       exposure:
         include: prometheus,health,info
+  metrics:
+    enable:
+      tomcat: true
 
 
 logging:

@@ -107,7 +107,14 @@ http {
                 proxy_set_header X-Real-IP $remote_addr;
         }
 
-        # 프로메테우스 요청 프록시
+        #프로메테우스 요청 프록시
+        location /prometheus/ {
+            proxy_pass http://pbl2-prometheus:9090/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # 프로메테우스 actuator 메트릭스 프록시
         location /actuator/prometheus {
             proxy_pass http://pbl2-be:4400/actuator/prometheus;
             proxy_set_header Host $host;

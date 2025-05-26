@@ -19,8 +19,8 @@ spring:
     open-in-view: false # Lazy Loading 경고 API응답속도 최적화를 위해 false
   web:
     client:
-      connection-timeout: 30000
-      read-timeout: 30000
+      connection-timeout: 300000
+      read-timeout: 300000
   data:
     redis:
       host: ${REDIS_HOST_PBL2}

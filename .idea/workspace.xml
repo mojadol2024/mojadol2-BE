@@ -6,14 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d41f7893-e1de-4165-87b1-c32c9f94b43b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/config/FirebaseConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/interview/controller/InterviewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/interview/controller/InterviewController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/interview/service/InterviewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/interview/service/InterviewService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/scheduler/InterviewScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/scheduler/InterviewScheduler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/trackingResult/service/TrackingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/trackingResult/service/TrackingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/utils/UploadUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/utils/UploadUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,7 +156,8 @@
       <workItem from="1747896177146" duration="22563000" />
       <workItem from="1748144521010" duration="193000" />
       <workItem from="1748144729199" duration="11015000" />
-      <workItem from="1748157882381" duration="11828000" />
+      <workItem from="1748157882381" duration="12374000" />
+      <workItem from="1748172173439" duration="621000" />
     </task>
     <servers />
   </component>

@@ -6,6 +6,7 @@ import com.gnu.pbl2.coverLetter.dto.CoverLetterResponseDto;
 import com.gnu.pbl2.coverLetter.entity.CoverLetter;
 import com.gnu.pbl2.coverLetter.repository.CoverLetterRepository;
 import com.gnu.pbl2.exception.handler.CoverLetterHandler;
+import com.gnu.pbl2.question.dto.QuestionResponseDto;
 import com.gnu.pbl2.question.entity.Question;
 import com.gnu.pbl2.question.repository.QuestionRepository;
 import com.gnu.pbl2.question.service.QuestionService;
@@ -141,10 +142,15 @@ public class CoverLetterService {
 
             List<Question> questions = questionRepository.findByCoverLetter(coverLetter);
 
+            List<QuestionResponseDto> questionDtos = questions.stream()
+                    .map(QuestionResponseDto::toDto)
+                    .collect(Collectors.toList());
+
+
             Map<String, Object> response = new HashMap<>();
 
             response.put("coverLetter", new CoverLetterResponseDto(coverLetter));
-            response.put("questions", questions);
+            response.put("questions", questionDtos);
 
             log.info("자소서 상세 조회 성공: coverLetterId={}", coverLetterId);
 

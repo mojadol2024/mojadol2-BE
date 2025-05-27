@@ -61,24 +61,28 @@ public class PaymentService {
     }
 
     public PaymentResponseDto cancel(Long paymentId, Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("결제 취소 실패 - 사용자 없음: {}", userId);
+                    return new UserHandler(ErrorStatus.USER_NOT_FOUND);
+                });
+
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> {
+                    log.warn("결제 취소 실패 - 결제 없음: {}", paymentId);
+                    return new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
+                });
+
+        if (!user.getUserId().equals(payment.getUser().getUserId())) {
+            log.warn("결제 취소 실패 - 권한 없음: userId {}, paymentUserId {}", userId, payment.getUser().getUserId());
+            throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
+        }
+
+        if ((payment.getQuantity() * 10) != (payment.getVoucher().getTotalCount())) {
+            throw new PaymentHandler(ErrorStatus.PAYMENT_NOT_MATCHED);
+        }
         try {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> {
-                        log.warn("결제 취소 실패 - 사용자 없음: {}", userId);
-                        return new UserHandler(ErrorStatus.USER_NOT_FOUND);
-                    });
-
-            Payment payment = paymentRepository.findById(paymentId)
-                    .orElseThrow(() -> {
-                        log.warn("결제 취소 실패 - 결제 없음: {}", paymentId);
-                        return new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
-                    });
-
-            if (!user.getUserId().equals(payment.getUser().getUserId())) {
-                log.warn("결제 취소 실패 - 권한 없음: userId {}, paymentUserId {}", userId, payment.getUser().getUserId());
-                throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
-            }
-
             //0으로 변경해서 삭제
             payment.setCompleted(0);
             paymentRepository.save(payment);

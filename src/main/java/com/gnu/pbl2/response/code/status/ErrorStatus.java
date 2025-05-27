@@ -80,6 +80,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_ERROR 4004", "결제내역을 못 찾았습니다."),
     PAYMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "PAYMENT_FORBIDDEN 4005", "본인 정보만 열람 할 수 있습니다."),
     PAYMENT_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PAYMENT_INTERNAL_SERVER_ERROR 5000", "결제 서버 에러"),
+    PAYMENT_NOT_MATCHED(HttpStatus.CONFLICT, "PAYMENT_NOT_MATCHED 4009", "상품권을 이미 사용하여 환불 불가합니다."),
 
     // Question 관련 응답
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION_NOT_FOUND 4004", "질문 내용이 없습니다."),

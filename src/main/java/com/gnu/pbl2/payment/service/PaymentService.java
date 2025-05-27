@@ -60,6 +60,7 @@ public class PaymentService {
         }
     }
 
+    @Transactional
     public PaymentResponseDto cancel(Long paymentId, Long userId) {
 
         User user = userRepository.findById(userId)

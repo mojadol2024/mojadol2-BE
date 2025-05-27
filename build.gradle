@@ -70,7 +70,6 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-core'
-    implementation 'io.micrometer:micrometer-spring-legacy'
 
     // kafka
     implementation 'org.springframework.kafka:spring-kafka'

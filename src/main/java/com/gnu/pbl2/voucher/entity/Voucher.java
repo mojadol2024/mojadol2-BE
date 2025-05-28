@@ -39,8 +39,11 @@ public class Voucher {
     @Column
     private LocalDateTime expiredAt;  // 이용권의 만료 기한
 
-    @OneToOne(mappedBy = "voucher", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "voucher", fetch = FetchType.LAZY)
     private Payment payment;
+
+    @Column(nullable = false)
+    private Integer deletedFlag;
 
 
     // 무료 이용권 생성자
@@ -49,6 +52,7 @@ public class Voucher {
         v.totalCount = 1;
         v.issuedAt = LocalDateTime.now();
         v.expiredAt = LocalDateTime.now().plusMonths(1);
+        v.deletedFlag = 1;
         return v;
     }
 
@@ -57,6 +61,7 @@ public class Voucher {
         v.totalCount = 10 * quantity;
         v.issuedAt = LocalDateTime.now();
         v.expiredAt = LocalDateTime.now().plusMonths(1);
+        v.deletedFlag = 1;
         return v;
     }
 

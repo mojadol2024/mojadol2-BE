@@ -34,13 +34,14 @@ public class VoucherService {
 
     public void cancelVoucherForPayment(Payment payment) {
         if (payment.getVoucher() != null) {
-            voucherRepository.delete(payment.getVoucher());
+            payment.getVoucher().setDeletedFlag(0);
+            voucherRepository.save(payment.getVoucher());
         }
     }
 
     public void minusVoucher(User user, VoucherTier type) {
 
-        Voucher voucher = voucherRepository.findFirstByUserAndTypeOrderByExpiredAtAsc(user, type);
+        Voucher voucher = voucherRepository.findFirstByUserAndTypeAndDeletedFlagOrderByExpiredAtAsc(user, type, 1);
 
         voucher.setTotalCount(voucher.getTotalCount() - 1);
         if (voucher.getTotalCount() == 0) {

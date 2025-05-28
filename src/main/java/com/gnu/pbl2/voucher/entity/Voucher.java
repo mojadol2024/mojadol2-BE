@@ -39,7 +39,7 @@ public class Voucher {
     @Column
     private LocalDateTime expiredAt;  // 이용권의 만료 기한
 
-    @OneToOne(mappedBy = "voucher", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "voucher", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Payment payment;
 
 

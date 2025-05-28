@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    @Query("SELECT p FROM Payment p WHERE p.user.userId = :userId AND p.completed = 1 ORDER BY p.paymentDate desc")
+    @Query("SELECT p FROM Payment p WHERE p.user.userId = :userId ORDER BY p.paymentDate desc")
     Page<Payment> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
 }

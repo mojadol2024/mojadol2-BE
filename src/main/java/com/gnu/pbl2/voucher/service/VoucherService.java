@@ -41,11 +41,12 @@ public class VoucherService {
 
     public void minusVoucher(User user, VoucherTier type) {
 
-        Voucher voucher = voucherRepository.findFirstByUserAndTypeAndDeletedFlagOrderByExpiredAtAsc(user, type, 1);
+        Voucher voucher = voucherRepository.findFirstByUserAndTypeOrderByExpiredAtAsc(user, type);
 
         voucher.setTotalCount(voucher.getTotalCount() - 1);
         if (voucher.getTotalCount() == 0) {
-            voucherRepository.delete(voucher);
+            voucher.setDeletedFlag(0);
+            voucherRepository.save(voucher);
         } else {
             voucherRepository.save(voucher);
         }

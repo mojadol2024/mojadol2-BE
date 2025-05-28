@@ -15,9 +15,6 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     void deleteByExpiredAtBefore(LocalDateTime time);
 
-    Voucher findFirstByUserAndTypeAndDeletedFlagOrderByExpiredAtAsc(User user, VoucherTier type, Integer deletedFlag);
-
-
-
+    Voucher findFirstByUserAndTypeOrderByExpiredAtAsc(User user, VoucherTier type);
 
 }

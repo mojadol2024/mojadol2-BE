@@ -9,4 +9,6 @@ public class UserProfileDto {
     private String userName;
     private String email;
     private String phoneNumber;
+    private String userLoginId;
+    private String nickname;
 }

@@ -139,6 +139,8 @@ public class UserService {
             response.setEmail(user.getEmail());
             response.setUserName(user.getUsername());
             response.setPhoneNumber(user.getPhoneNumber());
+            response.setNickname(user.getNickname());
+            response.setUserLoginId(user.getUserLoginId());
 
             return response;
         } catch (Exception e) {

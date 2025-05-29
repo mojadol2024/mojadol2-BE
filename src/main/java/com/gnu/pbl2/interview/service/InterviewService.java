@@ -35,7 +35,7 @@ public class InterviewService {
     private final TrackingService trackingService;
 
 
-
+    // db저장로직 연산 -> interview데이터 kafka 메시지 큐에 전송 ->  장고에서 kafka consume으로 데이터 받아 url로 영상 가져옴 -> 영상 처리 -> response
     public InterviewResponseDto saveVideo(MultipartFile file, Long questionId) {
 
 

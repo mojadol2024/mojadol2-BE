@@ -14,6 +14,7 @@ public class VoucherDto {
     private VoucherTier type;
     private LocalDateTime issuedAt;
     private LocalDateTime expiredAt;
+    private Integer deletedFlag;
 
     public static VoucherDto toDto(Voucher voucher) {
         VoucherDto dto = new VoucherDto();
@@ -21,6 +22,7 @@ public class VoucherDto {
         dto.setType(voucher.getType());
         dto.setIssuedAt(voucher.getIssuedAt());
         dto.setExpiredAt(voucher.getExpiredAt());
+        dto.setDeletedFlag(voucher.getDeletedFlag());
         return dto;
     }
 }

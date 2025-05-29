@@ -10,6 +10,7 @@ import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
 import com.gnu.pbl2.voucher.entity.Voucher;
+import com.gnu.pbl2.voucher.entity.enums.VoucherTier;
 import com.gnu.pbl2.voucher.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,16 +105,32 @@ public class PaymentService {
         try {
             Page<Payment> page = paymentRepository.findByUserId(userId, pageable);
 
-            List<PaymentResponseDto> content = page.getContent().stream()
+            List<PaymentResponseDto> contents = page.getContent().stream()
                     .map(PaymentResponseDto::toDto)
                     .collect(Collectors.toList());
+            LocalDateTime now = LocalDateTime.now();
+            int gold = contents.stream()
+                    .filter(content -> content.getVoucher().getType() == VoucherTier.GOLD)
+                    .filter(content -> content.getVoucher().getExpiredAt().isAfter(now))
+                    .filter(content -> content.getVoucher().getDeletedFlag() == 1)
+                    .mapToInt(content -> content.getVoucher().getTotalCount())
+                    .sum();
+
+            int free = contents.stream()
+                    .filter(content -> content.getVoucher().getType() == VoucherTier.FREE)
+                    .filter(content -> content.getVoucher().getExpiredAt().isAfter(now))
+                    .filter(content -> content.getVoucher().getDeletedFlag() == 1)
+                    .mapToInt(content -> content.getVoucher().getTotalCount())
+                    .sum();
 
             Map<String, Object> result = new HashMap<>();
-            result.put("content", content);
+            result.put("content", contents);
+            result.put("gold", gold);
+            result.put("free", free);
             result.put("first", page.isFirst());
             result.put("last", page.isLast());
 
-            log.info("결제 목록 조회 성공 - userId: {}, 항목 수: {}", userId, content.size());
+            log.info("결제 목록 조회 성공 - userId: {}, 항목 수: {}", userId, contents.size());
             return result;
         } catch (Exception e) {
             log.error("결제 목록 조회 중 예외 발생", e);

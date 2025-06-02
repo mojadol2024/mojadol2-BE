@@ -8,14 +8,15 @@ COPY build.gradle .
 COPY gradlew .
 COPY gradle gradle
 
-RUN ./gradlew build --no-daemon --refresh-dependencies || return 0
+RUN chmod +x ./gradlew
+RUN ./gradlew build --no-daemon --refresh-dependencies || true
 
 COPY src src
 
-RUN chmod +x gradlew && ./gradlew bootJar --no-daemon
+RUN ./gradlew bootJar --no-daemon
 
-# Step 2: Create the final image
-FROM openjdk:17
+# Step 2: Create the final image (Debian 기반 openjdk)
+FROM openjdk:17-buster
 
 WORKDIR /app
 

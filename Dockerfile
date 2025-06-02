@@ -29,7 +29,7 @@ WORKDIR /app
 
 # Copy the JAR file built in Step 1 into the container
 
-RUN apt-get update && apt-get install -y iputils-ping dnsutils && rm -rf /var/lib/apt/lists/*
+RUN apk update && apk add iputils bind-tools
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 

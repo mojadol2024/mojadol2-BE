@@ -32,7 +32,8 @@ services:
     depends_on:
       - pbl2-zookeeper
     volumes:
-      - /home/bgt/kafka/kafka-init:/docker-entrypoint-initdb.d/kafka-init.sh
+      - /home/bgt/kafka/kafka-init/kafka-init.sh:/docker-entrypoint-initdb.d/kafka-init.sh
+
 
   pbl2-kafka2:
     image: bitnami/kafka:3.4

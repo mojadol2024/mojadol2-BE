@@ -8,6 +8,7 @@ import com.gnu.pbl2.pdf.dto.PdfResponseDto;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
 import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
+import com.gnu.pbl2.utils.TimeUtil;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
 
@@ -171,13 +174,13 @@ public class PdfService {
                 "\n" +
                 "    <table>\n" +
                 "      <tr>\n" +
-                "        <th>이메일</th>\n" +
+                "        <th>"+ user.getEmail() +"</th>\n" +
                 "        <td>2024080064</td>\n" +
                 "        <th rowspan=\"2\">면접태도 점수</th>\n" +
                 "        <td rowspan=\"2\">0%</td>\n" +
                 "      </tr>\n" +
                 "      <tr>\n" +
-                "        <th>성명</th>\n" +
+                "        <th>" + user.getUsername() +"</th>\n" +
                 "        <td>자필로 기재하세요</td>\n" +
                 "      </tr>\n" +
                 "      <tr>\n" +
@@ -196,9 +199,7 @@ public class PdfService {
                 "      </tr>\n" +
                 "      <tr>\n" +
                 "        <th>발급일자</th>\n" +
-                "        <td>2025.05.28 20:22</td>\n" +
-                "        <th>검사일자</th>\n" +
-                "        <td>2025.05.28 20:22</td>\n" +
+                "        <td>"+ LocalDateTime.now() +"\n" +
                 "      </tr>\n" +
                 "      <tr>\n" +
                 "        <th>비고</th>\n" +

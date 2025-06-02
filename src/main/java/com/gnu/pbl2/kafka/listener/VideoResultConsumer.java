@@ -28,7 +28,6 @@ public class VideoResultConsumer {
             // JSON 파싱
             VideoResult result = objectMapper.readValue(message, VideoResult.class);
 
-            // 로그 출력 (필요에 따라 DB 저장이나 알림 처리)
             System.out.println("받은 결과: " + result);
             System.out.println("interviewId: " + result.getInterviewId());
             System.out.println("점수: " + result.getScore());

@@ -28,6 +28,9 @@ FROM openjdk:17
 WORKDIR /app
 
 # Copy the JAR file built in Step 1 into the container
+
+RUN apt-get update && apt-get install -y iputils-ping dnsutils && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 # Expose the port that your Spring Boot application listens on

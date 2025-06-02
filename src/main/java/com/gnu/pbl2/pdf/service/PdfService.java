@@ -1,5 +1,8 @@
 package com.gnu.pbl2.pdf.service;
 
+import com.gnu.pbl2.coverLetter.entity.CoverLetter;
+import com.gnu.pbl2.coverLetter.repository.CoverLetterRepository;
+import com.gnu.pbl2.exception.handler.CoverLetterHandler;
 import com.gnu.pbl2.exception.handler.UserHandler;
 import com.gnu.pbl2.pdf.dto.PdfResponseDto;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
@@ -25,15 +28,19 @@ import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
 public class PdfService {
 
     private final UserRepository userRepository;
+    private final CoverLetterRepository coverLetterRepository;
 
 
-    public byte[] createPdf(Long userId) {
+    public byte[] createPdf(Long userId, Long coverLetterId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        CoverLetter coverLetter = coverLetterRepository.findById(coverLetterId)
+                .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
+
         try {
 
-            String html = createHtml(user);
+            String html = createHtml(user, coverLetter);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             PdfRendererBuilder builder = new PdfRendererBuilder();
@@ -49,138 +56,183 @@ public class PdfService {
         }
     }
 
-
-
-    public String createHtml(User user) {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"ko\">\n" +
-                "  <head>\n" +
-                "    <meta charset=\"UTF-8\" />\n" +
-                "    <title>면접 결과 확인서</title>\n" +
-                "    <style type=\"text/css\">\n" +
-                "      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&amp;display=swap');\n" +
+    public String createHtml(User user, CoverLetter coverLetter) {
+        return "<!DOCTYPE html>\n" +
+                "<html lang=\"ko\">\n" +
+                "<head>\n" +
+                "  <meta charset=\"UTF-8\" />\n" +
+                "  <title>면접 결과 리포트</title>\n" +
+                "  <style>\n" +
+                "    * {\n" +
+                "      box-sizing: border-box;\n" +
+                "    }\n" +
                 "\n" +
-                "      body {\n" +
-                "        font-family: 'Noto Sans KR', sans-serif;\n" +
-                "        margin: 40px;\n" +
-                "      }\n" +
-                "      h1, h2 {\n" +
-                "        text-align: left;\n" +
-                "        color: #000;\n" +
-                "        line-height: 1.4;\n" +
-                "      }\n" +
-                "      h1 {\n" +
-                "        font-size: 20px;\n" +
-                "        margin-bottom: 5px;\n" +
-                "      }\n" +
-                "      h2 {\n" +
-                "        font-size: 16px;\n" +
-                "        margin-bottom: 20px;\n" +
-                "      }\n" +
-                "      table {\n" +
-                "        border-collapse: collapse;\n" +
-                "        width: 100%;\n" +
-                "        margin-bottom: 30px;\n" +
-                "      }\n" +
-                "      th, td {\n" +
-                "        border: 1px solid #ddd;\n" +
-                "        padding: 10px;\n" +
-                "        font-size: 13px;\n" +
-                "      }\n" +
-                "      th {\n" +
-                "        background-color: #51E0C4;\n" +
-                "        color: white;\n" +
-                "        text-align: left;\n" +
-                "      }\n" +
-                "      .highlight {\n" +
-                "        color: #51E0C4;\n" +
-                "        font-weight: bold;\n" +
-                "      }\n" +
-                "      .section-title {\n" +
-                "        background-color: #f1f1f1;\n" +
-                "        padding: 8px;\n" +
-                "        font-weight: bold;\n" +
-                "      }\n" +
-                "      .feedback-table th, .feedback-table td {\n" +
-                "        text-align: center;\n" +
-                "      }\n" +
-                "      .confirm-box {\n" +
-                "        float: right;\n" +
-                "        border: 1px solid #aaa;\n" +
-                "        width: 120px;\n" +
-                "        height: 80px;\n" +
-                "        text-align: center;\n" +
-                "        padding: 10px;\n" +
-                "        font-size: 13px;\n" +
-                "      }\n" +
-                "    </style>\n" +
-                "  </head>\n" +
-                "  <body>\n" +
-                "    <div>\n" +
-                "      <h1>면접의 정석</h1>\n" +
-                "      <h2>화상 면접 검사<br/>결과 확인서</h2>\n" +
-                "      <div class=\"confirm-box\">\n" +
-                "        확인<br/><br/>\n" +
-                "        성명<br/>\n" +
-                "        서명\n" +
+                "    body {\n" +
+                "      font-family: 'Noto Sans KR', sans-serif;\n" +
+                "      background-color: #fff;\n" +
+                "      margin: 0;\n" +
+                "      padding: 0;\n" +
+                "    }\n" +
+                "\n" +
+                "    .page-wrapper {\n" +
+                "      width: 794px;           /* A4 폭 */\n" +
+                "      height: 1123px;         /* A4 높이 */\n" +
+                "      padding: 60px 40px;\n" +
+                "      margin: 0 auto;\n" +
+                "      position: relative;\n" +
+                "      background: url('logo_mask.png') no-repeat center center;\n" +
+                "      background-size: 60%;\n" +
+                "    }\n" +
+                "\n" +
+                "    .logo-mask-text {\n" +
+                "      position: fixed;\n" +
+                "      top: 70%;\n" +
+                "      left: 50%;\n" +
+                "      transform: translate(-50%, -50%);\n" +
+                "      font-size: 100px;\n" +
+                "      font-weight: 800;\n" +
+                "      color: rgba(0, 0, 0, 0.05);\n" +
+                "      pointer-events: none;\n" +
+                "      z-index: 0;\n" +
+                "      white-space: nowrap;\n" +
+                "    }\n" +
+                "\n" +
+                "    .header {\n" +
+                "      text-align: center;\n" +
+                "      position: relative;\n" +
+                "      z-index: 1;\n" +
+                "    }\n" +
+                "\n" +
+                "    .logo {\n" +
+                "      font-size: 32px;\n" +
+                "      font-weight: bold;\n" +
+                "      margin-bottom: 8px;\n" +
+                "    }\n" +
+                "\n" +
+                "    .logoHighlight {\n" +
+                "      color: #51E0C4;\n" +
+                "    }\n" +
+                "\n" +
+                "    h2 {\n" +
+                "      font-size: 18px;\n" +
+                "      margin-bottom: 20px;\n" +
+                "    }\n" +
+                "\n" +
+                "    table {\n" +
+                "      width: 100%;\n" +
+                "      border-collapse: collapse;\n" +
+                "      margin-top: 24px;\n" +
+                "      position: relative;\n" +
+                "      z-index: 1;\n" +
+                "    }\n" +
+                "\n" +
+                "    th, td {\n" +
+                "      border: 1px solid #ccc;\n" +
+                "      padding: 6px 10px;\n" +
+                "      font-size: 13.5px;\n" +
+                "      text-align: left;\n" +
+                "    }\n" +
+                "\n" +
+                "    th {\n" +
+                "      background-color: #f2f2f2;\n" +
+                "    }\n" +
+                "\n" +
+                "    .section-title {\n" +
+                "      background-color: #e6f7f6;\n" +
+                "      font-weight: bold;\n" +
+                "      text-align: center;\n" +
+                "    }\n" +
+                "\n" +
+                "    .footer {\n" +
+                "      margin-top: 40px;\n" +
+                "      font-size: 14px;\n" +
+                "      position: relative;\n" +
+                "      z-index: 1;\n" +
+                "    }\n" +
+                "\n" +
+                "    .signature-line {\n" +
+                "      border: 1px solid #ccc;\n" +
+                "      height: 60px;\n" +
+                "      margin-top: 10px;\n" +
+                "    }\n" +
+                "  </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "\n" +
+                "  <div class=\"page-wrapper\">\n" +
+                "    <div class=\"logo-mask-text\">면접의 정석</div>\n" +
+                "\n" +
+                "    <div class=\"header\">\n" +
+                "      <div class=\"logo\">\n" +
+                "        면접의<span class=\"logoHighlight\">정석</span>\n" +
                 "      </div>\n" +
-                "\n" +
-                "      <table>\n" +
-                "        <tr>\n" +
-                "          <th>이메일</th>\n" +
-                "          <td colspan=\"2\">test@example.com</td>\n" +
-                "          <th>점수</th>\n" +
-                "          <td class=\"highlight\">good</td>\n" +
-                "        </tr>\n" +
-                "        <tr>\n" +
-                "          <th>성명</th>\n" +
-                "          <td>홍길동</td>\n" +
-                "          <th>검사번호</th>\n" +
-                "          <td colspan=\"2\">00294400434</td>\n" +
-                "        </tr>\n" +
-                "        <tr>\n" +
-                "          <th>검사명</th>\n" +
-                "          <td>미입력</td>\n" +
-                "          <th>문서형</th>\n" +
-                "          <td colspan=\"2\">[면접제출문서]</td>\n" +
-                "        </tr>\n" +
-                "        <tr>\n" +
-                "          <th>비교범위</th>\n" +
-                "          <td>[현재첨부문서]</td>\n" +
-                "          <th>평가유형</th>\n" +
-                "          <td>✔</td>\n" +
-                "          <td>발급형태</td>\n" +
-                "        </tr>\n" +
-                "        <tr>\n" +
-                "          <th>발급일자</th>\n" +
-                "          <td>2025.03.06 17:32</td>\n" +
-                "          <th>검사일자</th>\n" +
-                "          <td colspan=\"2\">2025.03.06 17:31</td>\n" +
-                "        </tr>\n" +
-                "        <tr>\n" +
-                "          <th>비고</th>\n" +
-                "          <td colspan=\"4\"></td>\n" +
-                "        </tr>\n" +
-                "      </table>\n" +
-                "\n" +
-                "      <table class=\"feedback-table\">\n" +
-                "        <tr>\n" +
-                "          <th colspan=\"3\">피드백</th>\n" +
-                "        </tr>\n" +
-                "        <tr>\n" +
-                "          <th>어절</th>\n" +
-                "          <th>문장</th>\n" +
-                "          <th>의견</th>\n" +
-                "        </tr>\n" +
-                "        <tr>\n" +
-                "          <td colspan=\"3\" style=\"height: 100px;\"></td>\n" +
-                "        </tr>\n" +
-                "      </table>\n" +
-                "\n" +
-                "      <div class=\"section-title\">검토 의견</div>\n" +
-                "      <div style=\"border: 1px solid #ddd; height: 100px;\"></div>\n" +
+                "      <h2>AI 면접 결과 리포트</h2>\n" +
                 "    </div>\n" +
-                "  </body>\n" +
+                "\n" +
+                "    <table>\n" +
+                "      <tr>\n" +
+                "        <th>이메일</th>\n" +
+                "        <td>2024080064</td>\n" +
+                "        <th rowspan=\"2\">면접태도 점수</th>\n" +
+                "        <td rowspan=\"2\">0%</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>성명</th>\n" +
+                "        <td>자필로 기재하세요</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>검사번호</th>\n" +
+                "        <td colspan=\"3\">00310672367</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>문서명</th>\n" +
+                "        <td>지원자의 강점에 대해 소개하세요.txt</td>\n" +
+                "        <th>검사명</th>\n" +
+                "        <td>면접태도 검사</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>평가유형</th>\n" +
+                "        <td colspan=\"3\">✔ 면접질문 생성 ✔ 면접태도 분석</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>발급일자</th>\n" +
+                "        <td>2025.05.28 20:22</td>\n" +
+                "        <th>검사일자</th>\n" +
+                "        <td>2025.05.28 20:22</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>비고</th>\n" +
+                "        <td colspan=\"3\"></td>\n" +
+                "      </tr>\n" +
+                "    </table>\n" +
+                "\n" +
+                "    <table>\n" +
+                "      <tr class=\"section-title\"><td colspan=\"2\">면접 태도 분석</td></tr>\n" +
+                "      <tr>\n" +
+                "        <th>동공 흔들림 횟수</th>\n" +
+                "        <td>7회</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>말이 느린 구간 수</th>\n" +
+                "        <td>3회 (WPM &lt; 100)</td>\n" +
+                "      </tr>\n" +
+                "      <tr>\n" +
+                "        <th>말이 빠른 구간 수</th>\n" +
+                "        <td>5회 (WPM &gt; 180)</td>\n" +
+                "      </tr>\n" +
+                "    </table>\n" +
+                "\n" +
+                "    <p style=\"margin-top: 8px; font-size: 13px;\">\n" +
+                "      ※ WPM = 사용자의 답변 단어 수 / 사용자의 답변 시간(분)\n" +
+                "    </p>\n" +
+                "\n" +
+                "    <div class=\"footer\">\n" +
+                "      <p><strong>검토 의견</strong></p>\n" +
+                "      <div class=\"signature-line\"></div>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "\n" +
+                "</body>\n" +
                 "</html>\n";
     }
 

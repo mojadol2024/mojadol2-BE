@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KafkaVideoPayload {
-    private byte[] fileBytes;
+    private String videoUrl;
     private String originalFilename;
-    private Long questionId;
+    private Long interviewId;
 }

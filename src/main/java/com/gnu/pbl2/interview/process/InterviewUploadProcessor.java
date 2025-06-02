@@ -5,6 +5,7 @@ import com.gnu.pbl2.coverLetter.repository.CoverLetterRepository;
 import com.gnu.pbl2.exception.handler.InterviewHandler;
 import com.gnu.pbl2.interview.entity.Interview;
 import com.gnu.pbl2.interview.repository.InterviewRepository;
+import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import com.gnu.pbl2.question.entity.Question;
 import com.gnu.pbl2.question.repository.QuestionRepository;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
@@ -27,7 +28,7 @@ public class InterviewUploadProcessor {
 
 
     // 리팩토링 예정  영상은 uploadUtil로 처리하고 kafka는 python 서버에 요청하는로직에 사용하겠습니다.
-    public void process(MultipartFile file, Long questionId) {
+    public void process(KafkaVideoPayload payload) {
 
     }
 }

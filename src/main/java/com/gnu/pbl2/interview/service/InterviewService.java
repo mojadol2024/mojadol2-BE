@@ -30,14 +30,14 @@ public class InterviewService {
 
     private final UploadUtil uploadUtil;
     private final InterviewRepository interviewRepository;
-    //private final IKafkaProducer kafkaProducer;
+    private final IKafkaProducer kafkaProducer;
     private final QuestionRepository questionRepository;
     private final TrackingService trackingService;
 
 
     // db저장로직 연산 -> interview데이터 kafka 메시지 큐에 전송 ->  장고에서 kafka consume으로 데이터 받아 url로 영상 가져옴 -> 영상 처리 -> response
+    @Transactional
     public InterviewResponseDto saveVideo(MultipartFile file, Long questionId) {
-
 
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
@@ -65,25 +65,23 @@ public class InterviewService {
             }finally {
                 sftpConnection.disconnect();
             }
-
+            questionRepository.save(question);
             Interview interview1 = interviewRepository.save(tempInterview);
 
             // 인터뷰 작성되면 question answered 1로 변경
-            questionRepository.save(question);
-            /*
+
             // Kafka로 전송할 Payload 구성
             KafkaVideoPayload payload = KafkaVideoPayload.builder()
-                    .questionId(questionId)
-                    .fileBytes(file.getBytes())
+                    .interviewId(interview1.getInterviewId())
+                    .videoUrl(uploadUtil.filePath(interview1.getVideoUrl()))
                     .originalFilename(file.getOriginalFilename())
                     .build();
 
             // Kafka로 비동기 전송
             kafkaProducer.send(payload);
             log.info("Kafka 전송 완료: questionId={}, fileName={}", questionId, file.getOriginalFilename());
-            */
 
-            trackingService.trackingRequest(file, interview1);
+            // trackingService.trackingRequest(file, interview1);
 
             log.info("영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
 

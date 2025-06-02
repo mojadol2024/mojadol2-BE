@@ -26,6 +26,7 @@ public class KafkaProducer implements IKafkaProducer{
     // 메시지 보내기 메서드
     public void send(KafkaVideoPayload payload) {
         try {
+            log.info("Kafka [send] 메시지 전송");
             kafkaTemplate.send(TOPIC, payload);
         } catch (Exception e) {
             log.error("Kafka 메시지 전송 실패: {}", e.getMessage());

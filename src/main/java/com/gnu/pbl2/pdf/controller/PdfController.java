@@ -5,10 +5,7 @@ import com.gnu.pbl2.response.ApiResponse;
 import com.gnu.pbl2.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,11 +17,12 @@ public class PdfController {
 
 
     @GetMapping("/create")
-    public ResponseEntity<?> createPdf(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<?> createPdf(@RequestHeader("Authorization") String accessToken,
+                                       @RequestParam Long coverLetterId) {
 
         Long userId = jwtUtil.extractUserId(accessToken);
 
-        byte[] response = pdfService.createPdf(userId);
+        byte[] response = pdfService.createPdf(userId, coverLetterId);
 
         // 답변 피드백
 

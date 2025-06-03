@@ -2,6 +2,7 @@ package com.gnu.pbl2.trackingResult.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gnu.pbl2.interview.entity.Interview;
+import com.gnu.pbl2.trackingResult.dto.SttResponseDto;
 import com.gnu.pbl2.trackingResult.dto.TrackingResponseDto;
 import com.gnu.pbl2.trackingResult.entity.Tracking;
 import com.gnu.pbl2.trackingResult.repository.TrackingRepository;
@@ -51,18 +52,31 @@ public class TrackingService {
 
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-            String response = restTemplate.postForObject(djangoUrl + "tracking/tracking", requestEntity, String.class);
+            String trackingResponse = restTemplate.postForObject(djangoUrl + "tracking/tracking", requestEntity, String.class);
             ObjectMapper objectMapper = new ObjectMapper();
-            TrackingResponseDto trackingResponse = objectMapper.readValue(response, TrackingResponseDto.class);
+            TrackingResponseDto trackingResponseDto = objectMapper.readValue(trackingResponse, TrackingResponseDto.class);
 
-            float score = trackingResponse.getScore();
+            float score = trackingResponseDto.getScore();
 
             Tracking tracking = new Tracking();
             tracking.setScore(score);
             tracking.setInterview(interview);
+
+
+            log.info("[TrackingService] Tracking 응답 결과: {}", trackingResponse);
+
+            String sttResponse = restTemplate.postForObject(djangoUrl + "speech/stt", requestEntity, String.class);
+            SttResponseDto sttResponseDto = objectMapper.readValue(sttResponse, SttResponseDto.class);
+
+            tracking.setText(sttResponseDto.getText());
+            tracking.setWpm(sttResponseDto.getWpm());
+            tracking.setFeedback(sttResponseDto.getFeedback());
+            tracking.setDurationSec(sttResponseDto.getDuration_sec());
+            tracking.setSpeedLabel(sttResponseDto.getSpeed_label());
+
             trackingRepository.save(tracking);
 
-            log.info("[TrackingService] 응답 결과: {}", response);
+            log.info("[TrackingService] Stt 응답 결과: {}", sttResponseDto);
 
         } catch (Exception e) {
             log.error("[TrackingService] Django 서버 통신 오류", e);

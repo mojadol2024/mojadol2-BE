@@ -20,6 +20,21 @@ public class Tracking {
     @Column(nullable = false)
     private float score;
 
+    @Column(nullable = false)
+    private String text;
+
+    @Column(nullable = false)
+    private float durationSec;
+
+    @Column(nullable = false)
+    private float wpm;
+
+    @Column(nullable = false)
+    private String speedLabel;
+
+    @Column(nullable = false)
+    private String feedback;
+
     @OneToOne
     @JoinColumn(name = "interview_id")
     private Interview interview;

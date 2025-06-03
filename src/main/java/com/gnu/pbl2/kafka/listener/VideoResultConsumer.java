@@ -10,12 +10,14 @@ import com.gnu.pbl2.trackingResult.entity.Tracking;
 import com.gnu.pbl2.trackingResult.repository.TrackingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Profile("!local")
 public class VideoResultConsumer {
 
     private final ObjectMapper objectMapper = new ObjectMapper();

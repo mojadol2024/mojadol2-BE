@@ -10,6 +10,9 @@ import com.gnu.pbl2.kafka.dto.KafkaVideoPayload;
 import com.gnu.pbl2.question.entity.Question;
 import com.gnu.pbl2.question.repository.QuestionRepository;
 import com.gnu.pbl2.response.code.status.ErrorStatus;
+import com.gnu.pbl2.trackingResult.dto.TrackingClientResponseDto;
+import com.gnu.pbl2.trackingResult.entity.Tracking;
+import com.gnu.pbl2.trackingResult.repository.TrackingRepository;
 import com.gnu.pbl2.trackingResult.service.TrackingService;
 import com.gnu.pbl2.utils.UploadUtil;
 import com.jcraft.jsch.ChannelSftp;
@@ -21,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class InterviewService {
     private final IKafkaProducer kafkaProducer;
     private final QuestionRepository questionRepository;
     private final TrackingService trackingService;
+    private final TrackingRepository trackingRepository;
 
 
     // db저장로직 연산 -> interview데이터 kafka 메시지 큐에 전송 ->  장고에서 kafka consume으로 데이터 받아 url로 영상 가져옴 -> 영상 처리 -> response
@@ -78,10 +84,10 @@ public class InterviewService {
                     .build();
 
             // Kafka로 비동기 전송
-            kafkaProducer.send(payload);
+            //kafkaProducer.send(payload);
             log.info("Kafka 전송 완료: questionId={}, fileName={}", questionId, file.getOriginalFilename());
 
-            // trackingService.trackingRequest(file, interview1);
+            trackingService.trackingRequest(file, interview1);
 
             log.info("영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
 
@@ -130,12 +136,22 @@ public class InterviewService {
         }
     }
 
-    public InterviewResponseDto interviewDetail(Long interviewId) {
-        Interview response = interviewRepository.findById(interviewId)
+    public Map<String, Object> interviewDetail(Long interviewId) {
+        Interview interview = interviewRepository.findById(interviewId)
                 .orElseThrow(() -> new InterviewHandler(ErrorStatus.INTERVIEW_NOT_FOUND));
+
+        Tracking tracking = trackingRepository.findByInterview(interview);
+
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("tracking", TrackingClientResponseDto.toDto(tracking));
+        response.put("interview", InterviewResponseDto.toDto(interview));
+
+
 
         log.info("인터뷰 상세 조회 성공: interviewId={} ", interviewId);
 
-        return InterviewResponseDto.toDto(response);
+        return response;
     }
 }

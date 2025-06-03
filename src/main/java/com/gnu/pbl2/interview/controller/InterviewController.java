@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -54,7 +55,7 @@ public class InterviewController {
     public ResponseEntity<?> interviewDetail(@PathVariable Long id) {
         log.info("interviewDetail 요청 진입: interviewId={}", id);
 
-        InterviewResponseDto response = interviewService.interviewDetail(id);
+        Map<String, Object> response = interviewService.interviewDetail(id);
 
         return ResponseEntity.ok().body(ApiResponse.onSuccess(response));
     }

@@ -1,6 +1,6 @@
 spring:
-  #profiles:
-    #active: local
+  profiles:
+    active: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL_PBL2}?serverTimezone=Asia/Seoul
@@ -19,8 +19,8 @@ spring:
     open-in-view: false # Lazy Loading 경고 API응답속도 최적화를 위해 false
   web:
     client:
-      connection-timeout: 600000
-      read-timeout: 600000
+      connection-timeout: 1200000
+      read-timeout: 1200000
   data:
     redis:
       host: ${REDIS_HOST_PBL2}

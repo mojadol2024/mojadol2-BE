@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TrackingRepository extends JpaRepository<Tracking, Long> {
     boolean existsByInterview(Interview interview);
+
+    Tracking findByInterview(Interview interview);
 }

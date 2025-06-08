@@ -15,6 +15,7 @@ import com.gnu.pbl2.trackingResult.entity.Tracking;
 import com.gnu.pbl2.trackingResult.repository.TrackingRepository;
 import com.gnu.pbl2.trackingResult.service.TrackingService;
 import com.gnu.pbl2.utils.UploadUtil;
+import com.gnu.pbl2.utils.VideoConvertUtil;
 import com.jcraft.jsch.ChannelSftp;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,15 +34,24 @@ public class InterviewService {
 
     private final UploadUtil uploadUtil;
     private final InterviewRepository interviewRepository;
-    private final IKafkaProducer kafkaProducer;
+    //private final IKafkaProducer kafkaProducer;
     private final QuestionRepository questionRepository;
     private final TrackingService trackingService;
     private final TrackingRepository trackingRepository;
+    private final VideoConvertUtil videoConvertUtil;
 
 
     // db저장로직 연산 -> interview데이터 kafka 메시지 큐에 전송 ->  장고에서 kafka consume으로 데이터 받아 url로 영상 가져옴 -> 영상 처리 -> response
     @Transactional
     public InterviewResponseDto saveVideo(MultipartFile file, Long questionId) {
+
+        File convertFile;
+        try {
+            convertFile = videoConvertUtil.convertMultipartWebmToMp4(file);
+        } catch (Exception e) {
+            throw new InterviewHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+        }
+
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
@@ -66,7 +77,7 @@ public class InterviewService {
             try {
                 ChannelSftp channelSftp = sftpConnection.getChannelSftp();
                 uploadUtil.recreateDirectory(channelSftp, postDirectory);
-                String remoteFilePath = uploadUtil.save(file, channelSftp, postDirectory);
+                String remoteFilePath = uploadUtil.save(convertFile, channelSftp, postDirectory);
 
                 // 영상 URL 업데이트
                 tempInterview.setVideoUrl(directoryName + "/" + tempInterview.getInterviewId() + "/" + remoteFilePath);
@@ -89,7 +100,7 @@ public class InterviewService {
             */
             // Kafka로 비동기 전송
             //kafkaProducer.send(payload);
-            trackingService.trackingRequest(file, interview1);
+            trackingService.trackingRequest(convertFile, interview1);
 
             log.info("영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());
 

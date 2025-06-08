@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -37,9 +39,9 @@ public class UploadUtil {
         return "/home/bgt/pbl2/" + base + "/" + id + "/";
     }
 
-    public String save(MultipartFile multipartFile, ChannelSftp channelSftp, String postDirectory) {
+    public String save(File file, ChannelSftp channelSftp, String postDirectory) {
         try {
-            String originalFilename = multipartFile.getOriginalFilename();
+            String originalFilename = file.getName();
             if (originalFilename == null) {
                 throw new InterviewHandler(ErrorStatus.FILE_UPLOAD_INVALID_NAME);
             }
@@ -51,16 +53,12 @@ public class UploadUtil {
                 throw new InterviewHandler(ErrorStatus.FILE_UPLOAD_EXTENSION_NOT_ALLOWED);
             }
 
-            String contentType = multipartFile.getContentType();
-            if (contentType == null ||
-                    (!contentType.startsWith("image/") && !contentType.startsWith("video/"))) {
-                throw new InterviewHandler(ErrorStatus.FILE_UPLOAD_MIME_NOT_ALLOWED);
-            }
-
             String filePath = UUID.randomUUID().toString() + extension;
             String remoteFilePath = postDirectory + filePath;
 
-            channelSftp.put(multipartFile.getInputStream(), remoteFilePath);
+            try (FileInputStream fis = new FileInputStream(file)) {
+                channelSftp.put(fis, remoteFilePath);
+            }
 
             return filePath;
 

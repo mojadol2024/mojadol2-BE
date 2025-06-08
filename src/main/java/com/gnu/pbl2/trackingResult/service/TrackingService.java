@@ -18,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpHeaders;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,16 +37,16 @@ public class TrackingService {
     private final RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
 
-    public void trackingRequest(MultipartFile multipartFile, Interview interview) {
+    public void trackingRequest(File file, Interview interview) {
         log.info("[TrackingService] tracking 시작");
 
         try {
-            byte[] fileBytes = multipartFile.getBytes();
+            byte[] fileBytes = Files.readAllBytes(file.toPath());
             String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
 
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("filename", multipartFile.getOriginalFilename());
-            requestBody.put("contentType", multipartFile.getContentType());
+            requestBody.put("filename", file.getName());
+            requestBody.put("contentType", "application/octet-stream");
             requestBody.put("fileData", base64Encoded);
 
             HttpHeaders headers = new HttpHeaders();

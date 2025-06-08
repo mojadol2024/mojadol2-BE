@@ -20,7 +20,9 @@ FROM openjdk:17-buster
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y iputils-ping dnsutils && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y iputils-ping dnsutils ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 

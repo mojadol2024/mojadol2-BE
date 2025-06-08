@@ -70,6 +70,7 @@ public enum ErrorStatus implements BaseErrorCode {
     //INTERVIEW_DIRECTORY_NOTFOUND_ERROR(HttpStatus.NOT_FOUND, "SFTP_NOTFOUND_ERROR 5004", "sftp 디렉토리를 못 찾았습니다.")
 
     INTERVIEW_DUPLICATE_ERROR(HttpStatus.CONFLICT, "INTERVIEW_DUPLICATE_ERROR 4005", "해당 질문 ID로 이미 인터뷰가 존재합니다"),
+    INTERVIEW_CONVERT_VIDEO_ERROR(HttpStatus.BAD_REQUEST, "INTERVIEW_CONVERT_VIDEO_ERROR 4000", "비디오 타입이 잘못되었습니다."),
 
 
 

@@ -49,7 +49,7 @@ public class InterviewService {
         try {
             convertFile = videoConvertUtil.convertMultipartWebmToMp4(file);
         } catch (Exception e) {
-            throw new InterviewHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+            throw new InterviewHandler(ErrorStatus.INTERVIEW_CONVERT_VIDEO_ERROR);
         }
 
 

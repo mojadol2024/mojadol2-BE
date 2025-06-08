@@ -77,16 +77,15 @@ public class InterviewService {
             // 인터뷰 작성되면 question answered 1로 변경
 
             // Kafka로 전송할 Payload 구성
+            /*
             KafkaVideoPayload payload = KafkaVideoPayload.builder()
                     .interviewId(interview1.getInterviewId())
                     .videoUrl(uploadUtil.filePath(interview1.getVideoUrl()))
                     .originalFilename(file.getOriginalFilename())
                     .build();
-
+            */
             // Kafka로 비동기 전송
             //kafkaProducer.send(payload);
-            log.info("Kafka 전송 완료: questionId={}, fileName={}", questionId, file.getOriginalFilename());
-
             trackingService.trackingRequest(file, interview1);
 
             log.info("영상 저장 완료: interviewId={}, videoUrl={}", tempInterview.getInterviewId(), tempInterview.getVideoUrl());

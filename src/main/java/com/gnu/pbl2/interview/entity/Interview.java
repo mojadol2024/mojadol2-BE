@@ -33,7 +33,7 @@ public class Interview {
     @Column
     private LocalDateTime deletedAt;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 

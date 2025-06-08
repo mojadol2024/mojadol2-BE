@@ -35,6 +35,18 @@ public class Tracking {
     @Column(nullable = false)
     private String feedback;
 
+    @Column
+    private Integer center;
+
+    @Column
+    private Integer left;
+
+    @Column
+    private Integer right;
+
+    @Column
+    private Integer frameCount;
+
     @OneToOne
     @JoinColumn(name = "interview_id")
     private Interview interview;

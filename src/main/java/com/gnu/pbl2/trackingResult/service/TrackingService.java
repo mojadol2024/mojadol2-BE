@@ -56,12 +56,13 @@ public class TrackingService {
             ObjectMapper objectMapper = new ObjectMapper();
             TrackingResponseDto trackingResponseDto = objectMapper.readValue(trackingResponse, TrackingResponseDto.class);
 
-            float score = trackingResponseDto.getScore();
-
             Tracking tracking = new Tracking();
-            tracking.setScore(score);
+            tracking.setScore(trackingResponseDto.getScore());
+            tracking.setCenter(trackingResponseDto.getCenter());
+            tracking.setLeft(trackingResponseDto.getLeft());
+            tracking.setRight(trackingResponseDto.getRight());
+            tracking.setFrameCount(trackingResponseDto.getFrameCount());
             tracking.setInterview(interview);
-
 
             log.info("[TrackingService] Tracking 응답 결과: {}", trackingResponse);
 

@@ -7,4 +7,9 @@ import lombok.Setter;
 @Setter
 public class TrackingResponseDto {
     private float score;
+    private Integer center;
+    private Integer left;
+    private Integer right;
+    private Integer blinking;
+    private Integer frameCount;
 }

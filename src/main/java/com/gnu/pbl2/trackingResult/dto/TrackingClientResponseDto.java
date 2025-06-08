@@ -16,6 +16,10 @@ public class TrackingClientResponseDto {
     private String feedback;
     private float score;
     private Long trackingId;
+    private Integer center;
+    private Integer left;
+    private Integer right;
+    private Integer frameCount;
 
     public static TrackingClientResponseDto toDto(Tracking tracking) {
         return TrackingClientResponseDto.builder()
@@ -26,6 +30,10 @@ public class TrackingClientResponseDto {
                 .feedback(tracking.getFeedback())
                 .score(tracking.getScore())
                 .trackingId(tracking.getTrackingId())
+                .center(tracking.getCenter())
+                .left(tracking.getLeft())
+                .right(tracking.getRight())
+                .frameCount(tracking.getFrameCount())
                 .build();
     }
 }

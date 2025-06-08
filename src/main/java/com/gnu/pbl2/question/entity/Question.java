@@ -26,4 +26,7 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "cover_letter_id", nullable = false)
     private CoverLetter coverLetter;
+
+    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Interview interview;
 }

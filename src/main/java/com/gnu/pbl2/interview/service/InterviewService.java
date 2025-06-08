@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +42,14 @@ public class InterviewService {
     @Transactional
     public InterviewResponseDto saveVideo(MultipartFile file, Long questionId) {
 
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new InterviewHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
+
+        // 같은 질문에 두번 영상 저장 금지
+        Optional<Interview> existing = interviewRepository.findByQuestionId(questionId);
+        if (existing.isPresent()) {
+            throw new InterviewHandler(ErrorStatus.INTERVIEW_DUPLICATE_ERROR);
+        }
 
             Interview interview = new Interview();
             interview.setQuestion(question);

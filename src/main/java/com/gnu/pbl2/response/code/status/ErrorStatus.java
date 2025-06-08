@@ -69,6 +69,9 @@ public enum ErrorStatus implements BaseErrorCode {
     INTERVIEW_SCHEDULE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SFTP_CONNECT_ERROR 4004", "영상삭제 스케줄링에서 에러 발생"),
     //INTERVIEW_DIRECTORY_NOTFOUND_ERROR(HttpStatus.NOT_FOUND, "SFTP_NOTFOUND_ERROR 5004", "sftp 디렉토리를 못 찾았습니다.")
 
+    INTERVIEW_DUPLICATE_ERROR(HttpStatus.CONFLICT, "INTERVIEW_DUPLICATE_ERROR 4005", "해당 질문 ID로 이미 인터뷰가 존재합니다"),
+
+
 
     FILE_UPLOAD_EXTENSION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FILE_UPLOAD_5001", "허용되지 않은 파일 확장자입니다."),
     FILE_UPLOAD_INVALID_NAME(HttpStatus.BAD_REQUEST, "FILE_UPLOAD_5003", "유효하지 않은 파일 이름입니다."),

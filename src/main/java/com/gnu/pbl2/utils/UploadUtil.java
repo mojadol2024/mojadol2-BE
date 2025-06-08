@@ -31,7 +31,7 @@ public class UploadUtil {
     @Value("${sftp.password}")
     private String password;
 
-    private static final List<String> ALLOWED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".mp4", ".mov");
+    private static final List<String> ALLOWED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".mp4", ".mov", "webm");
 
     public String postDirectory(String base, Long id) {
         return "/home/bgt/pbl2/" + base + "/" + id + "/";

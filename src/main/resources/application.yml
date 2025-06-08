@@ -76,7 +76,7 @@ management:
 
 logging:
   level:
-    org.springframework: error
+    org.springframework: info
     org.hibernate: warn
-    com.gnu.pbl2: error
+    com.gnu.pbl2: info
 

@@ -11,16 +11,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/mojadol/api/v1/pdf-controller")
+@RequestMapping("/mojadol/api/v1/pdf")
 public class PdfController {
 
     private final PdfService pdfService;
     private final JwtUtil jwtUtil;
 
 
-    @GetMapping("/create")
+    @GetMapping("/create/{coverLetterId}")
     public ResponseEntity<?> createPdf(@RequestHeader("Authorization") String accessToken,
-                                       @RequestParam Long coverLetterId) {
+                                       @PathVariable Long coverLetterId) {
         log.info("[Pdf create] coverLetterId = {}", coverLetterId);
 
         Long userId = jwtUtil.extractUserId(accessToken);

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/mojadol/api/v1/pdf")
+@RequestMapping("/mojadol/api/v1/pdf-controller")
 public class PdfController {
 
     private final PdfService pdfService;

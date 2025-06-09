@@ -33,11 +33,16 @@ public class UserService {
     private final VoucherService voucherService;
 
     public String signUp(UserRequestDto userRequestDto) {
-        try {
-            User user = userRequestDto.toEntity(userRequestDto);
-            user.setTier(Tier.FREE);
-            user.setUserPw(passwordEncoder.encode(user.getUserPw()));
 
+        User user = userRequestDto.toEntity(userRequestDto);
+        user.setTier(Tier.FREE);
+        if (user.getUserPw().isEmpty()) {
+            throw new UserHandler(ErrorStatus.USER_BAD_REQUEST);
+        }else {
+            user.setUserPw(passwordEncoder.encode(user.getUserPw()));
+        }
+
+        try {
             User response = userRepository.save(user);
 
             voucherService.freeVoucher(response);

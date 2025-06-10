@@ -198,7 +198,7 @@ public class PdfService {
                     Interview interview = interviews.get(i);
                     response += "    <table>\n" +
                             "      <tr class=\"section-title\"><td colspan=\"3\">면접 태도 세부 정보</td></tr>\n" +
-                            "      <tr><th style=\"white-space: nowrap; width: 50px;\">" + (i + 1) + "</th><td>" + questions.get(i).getContent() + "</td></tr>\n" +
+                            "      <tr><th style=\"white-space: nowrap; width: 50px;\">" + (i + 1) + "</th><td>" + interviews.get(i).getQuestion().getContent() + "</td></tr>\n" +
                             "      <tr>\n" +
                             "        <td colspan=\"2\">\n" +
                             "          총 " + interview.getTracking().getFrameCount() + "개 프레임 중 정면 응시는 " + interview.getTracking().getCenter() + "회였으며, 동공이 좌우로 흔들린 횟수는 각각 " + interview.getTracking().getLeft() + "회, " + interview.getTracking().getRight() + "회입니다. 평균 시선 점수는 " + interview.getTracking().getScore() + "점입니다.\n" +

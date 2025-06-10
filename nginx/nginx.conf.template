@@ -52,6 +52,10 @@ http {
         listen 443 ssl;  # 443 포트에서 SSL 사용
         server_name www.myeonjub.store myeonjub.store; #HTTPS 도메인
 
+        if ($http_user_agent ~* "(nvdorz|curl|wget|python-requests|bot|crawler|spider|crawlerbot|slurp|ahrefsbot|semrushbot|mj12bot|seznam|duckduckbot)") { 
+            return 403;
+        }
+
         # SSL 인증서 경로 설정
         ssl_certificate ${SSL_CERTIFICATE_PATH}fullchain.pem;  # 인증서 경로
         ssl_certificate_key ${SSL_CERTIFICATE_PATH}privkey.pem;  # 개인키 경로

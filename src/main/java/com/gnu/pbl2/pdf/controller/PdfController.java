@@ -18,9 +18,9 @@ public class PdfController {
     private final JwtUtil jwtUtil;
 
 
-    @GetMapping("/create")
+    @GetMapping("/create/{coverLetterId}")
     public ResponseEntity<?> createPdf(@RequestHeader("Authorization") String accessToken,
-                                       @RequestParam Long coverLetterId) {
+                                       @PathVariable Long coverLetterId) {
         log.info("[Pdf create] coverLetterId = {}", coverLetterId);
 
         Long userId = jwtUtil.extractUserId(accessToken);

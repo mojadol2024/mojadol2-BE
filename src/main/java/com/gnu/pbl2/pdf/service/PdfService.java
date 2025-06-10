@@ -104,10 +104,14 @@ public class PdfService {
                 "  margin: 0;\n" +
                 "  padding: 0;\n" +
                 "}\n" +
+                "@page {\n" +
+                "   size: A4;\n" +
+                "   margin: 0;\n" +
+                "}\n" +
                 ".page-wrapper {\n" +
-                "  width: 794px;\n" +
-                "  height: 1123px;\n" +
-                "  padding: 60px 40px;\n" +
+                "  width: 210mm;\n" +
+                "  height: 257mm;\n" +
+                "  padding: 20mm 25mm;\n" +
                 "  margin: 0 auto;\n" +
                 "  position: relative;\n" +
                 "  background-size: 60%;\n" +

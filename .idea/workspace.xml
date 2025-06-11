@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d41f7893-e1de-4165-87b1-c32c9f94b43b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/pdf/service/PdfService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gnu/pbl2/pdf/service/PdfService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,7 +165,7 @@
       <workItem from="1749280262864" duration="29182000" />
       <workItem from="1749430635008" duration="611000" />
       <workItem from="1749467154784" duration="512000" />
-      <workItem from="1749540863980" duration="2894000" />
+      <workItem from="1749540863980" duration="5825000" />
     </task>
     <servers />
   </component>

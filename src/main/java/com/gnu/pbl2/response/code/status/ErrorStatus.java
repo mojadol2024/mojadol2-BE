@@ -95,7 +95,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // PDF
 
-    PDF_BAD_REQUEST(HttpStatus.BAD_REQUEST, "PDF_BAD_REQUEST 4000", "해당 자소서에 대한 평가가 이루어지지 않았습니다.")
+    PDF_BAD_REQUEST(HttpStatus.BAD_REQUEST, "PDF_BAD_REQUEST 4000", "해당 자소서에 대한 평가가 이루어지지 않았습니다."),
+
+    // Voucher
+    VOUCHER_NOT_FOUND(HttpStatus.NOT_FOUND, "VOUCHER_NOT_FOUND 4004", "해당 유저의 이용권을 찾지 못했습니다.")
 
     ;
 

@@ -54,9 +54,10 @@ public class CoverLetterService {
                     coverLetterRequestDto.getUseVoucher());
 
             CoverLetter savedCoverLetter = coverLetterRepository.saveAndFlush(coverLetter);
-            voucherService.minusVoucher(user, coverLetter.getUseVoucher());
 
             questionService.generateQuestion(savedCoverLetter, coverLetter.getUseVoucher());
+
+            voucherService.minusVoucher(user, coverLetter.getUseVoucher());
 
             log.info("자소서 저장 완료: coverLetterId={}", savedCoverLetter.getCoverLetterId());
 

@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -42,6 +43,7 @@ public class CoverLetterService {
     private final QuestionRepository questionRepository;
     private final VoucherService voucherService;
 
+    @Transactional
     public CoverLetterResponseDto letterWrite(CoverLetterRequestDto coverLetterRequestDto, Long id) {
         try {
             User user = userRepository.findById(id)
@@ -55,9 +57,9 @@ public class CoverLetterService {
 
             CoverLetter savedCoverLetter = coverLetterRepository.saveAndFlush(coverLetter);
 
-            questionService.generateQuestion(savedCoverLetter, coverLetter.getUseVoucher());
-
             voucherService.minusVoucher(user, coverLetter.getUseVoucher());
+
+            questionService.generateQuestion(savedCoverLetter, coverLetter.getUseVoucher());
 
             log.info("자소서 저장 완료: coverLetterId={}", savedCoverLetter.getCoverLetterId());
 

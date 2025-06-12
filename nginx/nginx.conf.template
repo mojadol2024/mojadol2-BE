@@ -36,6 +36,7 @@ http {
             default "";
             "http://localhost:4000" $http_origin;
             "https://www.myeonjub.store" $http_origin;
+            "https://myeonjub.store" $http_origin;
     }
 
 

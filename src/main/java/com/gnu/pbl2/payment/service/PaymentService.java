@@ -11,6 +11,7 @@ import com.gnu.pbl2.user.entity.User;
 import com.gnu.pbl2.user.repository.UserRepository;
 import com.gnu.pbl2.voucher.entity.Voucher;
 import com.gnu.pbl2.voucher.entity.enums.VoucherTier;
+import com.gnu.pbl2.voucher.repository.VoucherRepository;
 import com.gnu.pbl2.voucher.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final VoucherService voucherService;
+    private final VoucherRepository voucherRepository;
 
     @Transactional
     public PaymentResponseDto pay(PaymentRequestDto paymentRequestDto, Long userId) {
@@ -103,6 +105,9 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public Map<String, Object> list(Long userId, Pageable pageable) {
         try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
             Page<Payment> page = paymentRepository.findByUserId(userId, pageable);
 
             List<PaymentResponseDto> contents = page.getContent().stream()
@@ -116,12 +121,12 @@ public class PaymentService {
                     .mapToInt(content -> content.getVoucher().getTotalCount())
                     .sum();
 
-            int free = contents.stream()
-                    .filter(content -> content.getVoucher().getType() == VoucherTier.FREE)
-                    .filter(content -> content.getVoucher().getExpiredAt().isAfter(now))
-                    .filter(content -> content.getVoucher().getDeletedFlag() == 1)
-                    .mapToInt(content -> content.getVoucher().getTotalCount())
-                    .sum();
+            List<Voucher> vouchers = voucherRepository.findByUserAndDeletedFlag(user, 1);
+
+            int free = 0;
+            for(Voucher voucher : vouchers) {
+                free += voucher.getTotalCount();
+            }
 
             Map<String, Object> result = new HashMap<>();
             result.put("content", contents);

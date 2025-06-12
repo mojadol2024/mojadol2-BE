@@ -49,6 +49,7 @@ public class VoucherService {
 
 
         if(voucher == null) {
+            log.info("[minusVoucher] 이용권이 없습니다.");
             throw new CoverLetterHandler(ErrorStatus.VOUCHER_NOT_FOUND);
         }
 
@@ -59,6 +60,7 @@ public class VoucherService {
         } else {
             voucherRepository.save(voucher);
         }
+        log.info("[minusVoucher] 메서드 종료");
     }
 
 }

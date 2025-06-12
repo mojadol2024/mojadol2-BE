@@ -45,31 +45,32 @@ public class CoverLetterService {
 
     @Transactional
     public CoverLetterResponseDto letterWrite(CoverLetterRequestDto coverLetterRequestDto, Long id) {
+        User user;
+        CoverLetter coverLetter;
+        CoverLetter savedCoverLetter;
         try {
-            User user = userRepository.findById(id)
+            user = userRepository.findById(id)
                     .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.USER_NOT_FOUND));
 
-            CoverLetter coverLetter = new CoverLetter(
+            coverLetter = new CoverLetter(
                     coverLetterRequestDto.getData(),
                     user,
                     coverLetterRequestDto.getTitle(),
                     coverLetterRequestDto.getUseVoucher());
 
-            CoverLetter savedCoverLetter = coverLetterRepository.saveAndFlush(coverLetter);
-
-            voucherService.minusVoucher(user, coverLetter.getUseVoucher());
-
-            questionService.generateQuestion(savedCoverLetter, coverLetter.getUseVoucher());
-
-            log.info("자소서 저장 완료: coverLetterId={}", savedCoverLetter.getCoverLetterId());
-
-            return new CoverLetterResponseDto(savedCoverLetter);
-        } catch (CoverLetterHandler e) {
-            throw e;
+            savedCoverLetter = coverLetterRepository.saveAndFlush(coverLetter);
         } catch (Exception e) {
             log.error("자소서 저장 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);
         }
+
+        voucherService.minusVoucher(user, coverLetter.getUseVoucher());
+
+        questionService.generateQuestion(savedCoverLetter, coverLetter.getUseVoucher());
+
+        log.info("자소서 저장 완료: coverLetterId={}", savedCoverLetter.getCoverLetterId());
+
+        return new CoverLetterResponseDto(savedCoverLetter);
     }
 
     public CoverLetterResponseDto letterUpdate(CoverLetterRequestDto coverLetterRequestDto, Long id) {

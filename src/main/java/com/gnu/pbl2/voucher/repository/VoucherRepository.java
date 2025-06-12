@@ -23,7 +23,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     List<Voucher> findValidByUserAndType(@Param("user") User user, @Param("type") VoucherTier type, Pageable pageable);
 
 
-    List<Voucher> findByUserAndDeletedFlag(User user, int deletedFlag);
+    List<Voucher> findByUserAndDeletedFlagAndType(User user, int deletedFlag, VoucherTier type);
 
 
 }

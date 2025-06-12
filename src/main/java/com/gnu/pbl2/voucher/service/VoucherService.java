@@ -47,7 +47,6 @@ public class VoucherService {
 
         Voucher voucher = voucherRepository.findValidByUserAndType(user, type, PageRequest.of(0, 1)).stream().findFirst().orElse(null);
 
-
         if(voucher == null) {
             log.info("[minusVoucher] 이용권이 없습니다.");
             throw new CoverLetterHandler(ErrorStatus.VOUCHER_NOT_FOUND);

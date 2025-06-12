@@ -45,13 +45,13 @@ public class CoverLetterService {
 
     @Transactional
     public CoverLetterResponseDto letterWrite(CoverLetterRequestDto coverLetterRequestDto, Long id) {
-        User user;
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.USER_NOT_FOUND));
+
         CoverLetter coverLetter;
         CoverLetter savedCoverLetter;
-        try {
-            user = userRepository.findById(id)
-                    .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.USER_NOT_FOUND));
 
+        try {
             coverLetter = new CoverLetter(
                     coverLetterRequestDto.getData(),
                     user,
@@ -74,10 +74,10 @@ public class CoverLetterService {
     }
 
     public CoverLetterResponseDto letterUpdate(CoverLetterRequestDto coverLetterRequestDto, Long id) {
-        try {
-            CoverLetter coverLetter = coverLetterRepository.findById(coverLetterRequestDto.getCoverLetterId())
-                    .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
 
+        CoverLetter coverLetter = coverLetterRepository.findById(coverLetterRequestDto.getCoverLetterId())
+                .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
+        try {
             letterUserCheck(coverLetter.getUser(), id);
 
             coverLetter.setTitle(coverLetterRequestDto.getTitle());
@@ -87,8 +87,7 @@ public class CoverLetterService {
             log.info("자소서 수정 완료: coverLetterId={}", updatedCoverLetter.getCoverLetterId());
 
             return new CoverLetterResponseDto(updatedCoverLetter);
-        } catch (CoverLetterHandler e) {
-            throw e;
+
         } catch (Exception e) {
             log.error("자소서 수정 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);
@@ -96,10 +95,9 @@ public class CoverLetterService {
     }
 
     public void letterDelete(Long coverLetterId, Long id) {
+        CoverLetter coverLetter = coverLetterRepository.findById(coverLetterId)
+                .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
         try {
-            CoverLetter coverLetter = coverLetterRepository.findById(coverLetterId)
-                    .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
-
             letterUserCheck(coverLetter.getUser(), id);
             coverLetter.setIsDeleted(0);
             coverLetterRepository.save(coverLetter);
@@ -138,10 +136,9 @@ public class CoverLetterService {
 
     // 5월 19일 letter상세 coverLetter정보랑 question List로 반환하게 변경
     public Map<String, Object> letterDetail(Long coverLetterId, Long userId) {
+        CoverLetter coverLetter = coverLetterRepository.findByCoverLetterIdAndIsDeleted(coverLetterId, 1)
+                .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
         try {
-            CoverLetter coverLetter = coverLetterRepository.findByCoverLetterIdAndIsDeleted(coverLetterId, 1)
-                    .orElseThrow(() -> new CoverLetterHandler(ErrorStatus.COVER_LETTER_NOT_FOUND));
-
             letterUserCheck(coverLetter.getUser(), userId);
 
             List<Question> questions = questionRepository.findByCoverLetter(coverLetter);
@@ -159,8 +156,6 @@ public class CoverLetterService {
             log.info("자소서 상세 조회 성공: coverLetterId={}", coverLetterId);
 
             return response;
-        } catch (CoverLetterHandler e) {
-            throw e;
         } catch (Exception e) {
             log.error("자소서 상세 조회 중 내부 에러", e);
             throw new CoverLetterHandler(ErrorStatus.COVER_LETTER_INTERNAL_SERVER_ERROR);

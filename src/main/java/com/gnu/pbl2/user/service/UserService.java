@@ -98,11 +98,9 @@ public class UserService {
 
     public String updateProfile(UserRequestDto userRequestDto, String accessToken) {
         Long userId = jwtUtil.extractUserId(accessToken);
-
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         try {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
             user.setUserPw(passwordEncoder.encode(userRequestDto.getUserPw()));
             user.setNickname(userRequestDto.getNickname());
 

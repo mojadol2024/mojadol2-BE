@@ -38,12 +38,12 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponseDto pay(PaymentRequestDto paymentRequestDto, Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> {
+                log.warn("결제 실패 - 사용자 없음: {}", userId);
+                return new UserHandler(ErrorStatus.USER_NOT_FOUND);
+            });
         try {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> {
-                        log.warn("결제 실패 - 사용자 없음: {}", userId);
-                        return new UserHandler(ErrorStatus.USER_NOT_FOUND);
-                    });
 
             Payment payment = new Payment(paymentRequestDto.getAmount(), paymentRequestDto.getTitle(),paymentRequestDto.getPaymentMethod(), paymentRequestDto.getQuantity());
             payment.setUser(user);
@@ -52,9 +52,6 @@ public class PaymentService {
             payment.setVoucher(voucher);
 
             Payment response = paymentRepository.save(payment);
-
-
-
 
             log.info("결제 성공 - userId: {}, paymentId: {}", userId, response.getPaymentId());
             return PaymentResponseDto.toDto(response);
@@ -104,10 +101,10 @@ public class PaymentService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> list(Long userId, Pageable pageable) {
-        try {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        try {
             Page<Payment> page = paymentRepository.findByUserId(userId, pageable);
 
             List<PaymentResponseDto> contents = page.getContent().stream()
@@ -121,7 +118,7 @@ public class PaymentService {
                     .mapToInt(content -> content.getVoucher().getTotalCount())
                     .sum();
 
-            List<Voucher> vouchers = voucherRepository.findByUserAndDeletedFlag(user, 1);
+            List<Voucher> vouchers = voucherRepository.findByUserAndDeletedFlagAndType(user, 1, VoucherTier.FREE);
 
             int free = 0;
             for(Voucher voucher : vouchers) {
@@ -146,18 +143,17 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public PaymentResponseDto detail(Long paymentId, Long userId) {
 
-            Payment payment = paymentRepository.findById(paymentId)
-                    .orElseThrow(() -> {
-                        log.warn("결제 상세 조회 실패 - 결제 없음: {}", paymentId);
-                        return new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
-                    });
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> {
+                    log.warn("결제 상세 조회 실패 - 결제 없음: {}", paymentId);
+                    return new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
+                });
 
-            if (!payment.getUser().getUserId().equals(userId)) {
-                log.warn("결제 상세 조회 실패 - 권한 없음: userId {}, paymentUserId {}", userId, payment.getUser().getUserId());
-                throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
-            }
+        if (!payment.getUser().getUserId().equals(userId)) {
+            log.warn("결제 상세 조회 실패 - 권한 없음: userId {}, paymentUserId {}", userId, payment.getUser().getUserId());
+            throw new PaymentHandler(ErrorStatus.PAYMENT_FORBIDDEN);
+        }
         try {
-
             log.info("결제 상세 조회 성공 - paymentId: {}", paymentId);
             return PaymentResponseDto.toDto(payment);
         } catch (Exception e) {

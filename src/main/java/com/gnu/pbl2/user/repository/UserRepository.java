@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByPhoneNumber(String phoneNumber);
+
     Optional<User> findByUserLoginIdAndEmail(String userLoginId, String email);
 
     List<User> findByDeletedTimeBefore(LocalDateTime time);

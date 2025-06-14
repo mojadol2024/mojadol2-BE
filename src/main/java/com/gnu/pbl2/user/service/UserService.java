@@ -60,20 +60,25 @@ public class UserService {
     }
 
     public Optional<User> signUpCheck(UserRequestDto userRequestDto) {
-        try {
-            if(userRequestDto.getUserLoginId() != null) {
-                return userRepository.findByUserLoginId(userRequestDto.getUserLoginId());
-            } else if (userRequestDto.getEmail() != null) {
-                return userRepository.findByEmail(userRequestDto.getEmail());
-            } else if (userRequestDto.getNickname() != null) {
-                return userRepository.findByNickname(userRequestDto.getNickname());
-            }
-            throw new UserHandler(ErrorStatus.USER_BAD_REQUEST);
 
-        } catch (Exception e) {
-            log.error("회원가입 중복 검사 중 내부 에러", e);
-            throw new UserHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+        log.info("회원가입 중복 체크 : userRequestDto={}", userRequestDto);
+        if(userRequestDto.getUserLoginId() != null) {
+            return userRepository.findByUserLoginId(userRequestDto.getUserLoginId());
         }
+
+        if (userRequestDto.getEmail() != null) {
+            return userRepository.findByEmail(userRequestDto.getEmail());
+        }
+
+        if (userRequestDto.getNickname() != null) {
+            return userRepository.findByNickname(userRequestDto.getNickname());
+        }
+
+        if (userRequestDto.getPhoneNumber() != null) {
+            return userRepository.findByPhoneNumber(userRequestDto.getPhoneNumber());
+        }
+
+        throw new UserHandler(ErrorStatus.USER_BAD_REQUEST);
     }
 
     @Transactional

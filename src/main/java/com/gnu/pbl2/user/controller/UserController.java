@@ -115,7 +115,8 @@ public class UserController {
     @GetMapping("/users/check")
     public ResponseEntity<?> signUpCheck(@RequestParam(required = false) String userLoginId,
                                          @RequestParam(required = false) String email,
-                                         @RequestParam(required = false) String nickname
+                                         @RequestParam(required = false) String nickname,
+                                         @RequestParam(required = false) String phoneNumber
                                          ) {
         log.info("[GET] 회원가입 중복체크 요청");
         try {
@@ -123,6 +124,7 @@ public class UserController {
             userRequestDto.setUserLoginId(userLoginId);
             userRequestDto.setNickname(nickname);
             userRequestDto.setEmail(email);
+            userRequestDto.setPhoneNumber(phoneNumber);
 
             Optional<User> user = userService.signUpCheck(userRequestDto);
 

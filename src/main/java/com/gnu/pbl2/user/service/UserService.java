@@ -74,10 +74,6 @@ public class UserService {
             return userRepository.findByNickname(userRequestDto.getNickname());
         }
 
-        if (userRequestDto.getPhoneNumber() != null) {
-            return userRepository.findByPhoneNumber(userRequestDto.getPhoneNumber());
-        }
-
         throw new UserHandler(ErrorStatus.USER_BAD_REQUEST);
     }
 

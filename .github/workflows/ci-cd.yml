@@ -124,7 +124,7 @@ jobs:
             chmod 600 /home/bgt/pbl2/.env
             
             
-            # 모니터링 환경변수
+            # 모니터링 환경변수.
             touch /home/bgt/monitoring/.env
             
             echo "GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }}" > /home/bgt/monitoring/.env

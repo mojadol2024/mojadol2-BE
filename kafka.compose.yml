@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   pbl2-zookeeper:
-    image: bitnami/zookeeper:3.8
+    image: bitnami/zookeeper:3.9
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
       - ALLOW_ANONYMOUS_LOGIN=yes
@@ -10,7 +10,7 @@ services:
       - mojadol-network
 
   pbl2-kafka1:
-    image: bitnami/kafka:3.4
+    image: bitnami/kafka:3.6
     container_name: pbl2-kafka1
     ports:
       - "29092:29092"
@@ -36,7 +36,7 @@ services:
 
 
   pbl2-kafka2:
-    image: bitnami/kafka:3.4
+    image: bitnami/kafka:3.6
     container_name: pbl2-kafka2
     ports:
       - "29093:29093"
@@ -59,7 +59,7 @@ services:
       - pbl2-zookeeper
 
   pbl2-kafka3:
-    image: bitnami/kafka:3.4
+    image: bitnami/kafka:3.6
     container_name: pbl2-kafka3
     ports:
       - "29094:29094"

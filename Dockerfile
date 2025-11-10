@@ -16,7 +16,7 @@ COPY src src
 RUN ./gradlew bootJar --no-daemon
 
 # Step 2: Create the final image (Debian 기반 openjdk)
-FROM openjdk:17-buster
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
